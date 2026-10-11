@@ -2,8 +2,9 @@
 
 import {
   Bar,
-  BarChart,
   CartesianGrid,
+  ComposedChart,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -11,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { hiringPressure, workforceTrend } from "@/lib/mock-data";
+import { hiringPressure, workforceTrend } from "@/lib/benchmark-data";
 
 const tooltipStyle = {
   borderRadius: 16,
@@ -24,13 +25,32 @@ export function WorkforceTrendChart() {
   return (
     <div className="h-[290px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={workforceTrend} margin={{ top: 8, right: 10, left: -18, bottom: 0 }}>
+        <LineChart data={workforceTrend} margin={{ top: 8, right: 10, left: -6, bottom: 0 }}>
           <CartesianGrid stroke="#eef2f6" vertical={false} />
           <XAxis dataKey="period" tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
-          <Tooltip contentStyle={tooltipStyle} />
-          <Line type="monotone" dataKey="benchmark" stroke="#9aa8b8" strokeWidth={2} dot={false} strokeDasharray="5 5" />
-          <Line type="monotone" dataKey="headcount" stroke="#0ea5b7" strokeWidth={3} dot={{ r: 4, fill: "#0ea5b7" }} />
+          <YAxis tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} domain={[30000, 54000]} />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            formatter={(value, name) => [Number(value).toLocaleString("es-MX"), name === "reportedHeadcount" ? "Reportado" : "Ajustado por calidad"]}
+          />
+          <Legend wrapperStyle={{ fontSize: 11 }} />
+          <Line
+            type="monotone"
+            dataKey="reportedHeadcount"
+            name="Reportado"
+            stroke="#94a3b8"
+            strokeWidth={2}
+            dot={{ r: 3, fill: "#94a3b8" }}
+            strokeDasharray="5 5"
+          />
+          <Line
+            type="monotone"
+            dataKey="qualityAdjustedHeadcount"
+            name="Ajustado por calidad"
+            stroke="#0ea5b7"
+            strokeWidth={3}
+            dot={{ r: 4, fill: "#0ea5b7" }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -41,13 +61,16 @@ export function HiringPressureChart() {
   return (
     <div className="h-[290px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={hiringPressure} margin={{ top: 8, right: 4, left: -22, bottom: 0 }}>
+        <ComposedChart data={hiringPressure} margin={{ top: 8, right: 6, left: -18, bottom: 0 }}>
           <CartesianGrid stroke="#eef2f6" vertical={false} />
           <XAxis dataKey="role" tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
+          <YAxis yAxisId="left" tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
+          <YAxis yAxisId="right" orientation="right" tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} />
           <Tooltip contentStyle={tooltipStyle} />
-          <Bar dataKey="vacancies" fill="#163c67" radius={[8, 8, 2, 2]} />
-        </BarChart>
+          <Legend wrapperStyle={{ fontSize: 11 }} />
+          <Bar yAxisId="left" dataKey="vacancies" name="Vacantes próximas" fill="#163c67" radius={[8, 8, 2, 2]} />
+          <Line yAxisId="right" type="monotone" dataKey="timeToFill" name="Time-to-fill (días)" stroke="#0ea5b7" strokeWidth={3} dot={{ r: 4 }} />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );
