@@ -1,182 +1,286 @@
+import Link from "next/link";
 import {
+  ArrowRight,
   BadgeDollarSign,
   BriefcaseBusiness,
-  CircleGauge,
-  ShieldAlert,
+  CheckCircle2,
+  Clock3,
+  Database,
+  ShieldCheck,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
   UsersRound,
 } from "lucide-react";
 import { HiringPressureChart, WorkforceTrendChart } from "@/components/charts";
-import { KpiCard } from "@/components/kpi-card";
-import { Sidebar } from "@/components/sidebar";
-import { Topbar } from "@/components/topbar";
+import { DashboardFrame } from "@/components/dashboard-frame";
 import {
   benchmarkData,
   latestMarket,
   marketChange,
   qualitySummary,
 } from "@/lib/benchmark-data";
+import peopleData from "../../data/processed/people-intelligence.json";
 
 const formatInt = (value: number) => new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
-const formatMoney = (value: number) => new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(value);
+const formatMoney = (value: number) => new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(value);
 
 export default function Home() {
   const previous = benchmarkData.periods.at(-2)!;
   const beforePrevious = benchmarkData.periods.at(-3)!;
   const previousTurnover = previous.exits / ((beforePrevious.qualityAdjustedHeadcount + previous.qualityAdjustedHeadcount) / 2) * 100;
   const turnoverDelta = latestMarket.turnoverBimonthlyPct - previousTurnover;
+  const earlyAttrition = peopleData.retention.earlyAttritionUnder3MonthsPct;
 
-  const marketRows = [
-    { metric: "Salario ingreso mediano", value: `${formatMoney(latestMarket.salaryBandsDaily.entryMedian)}/día`, context: `máximo mediano ${formatMoney(latestMarket.salaryBandsDaily.maxMedian)}` },
-    { metric: "Time-to-fill técnico", value: `${latestMarket.timeToFillDays.technical} días`, context: `+${marketChange.technicalTimeToFillDays} días vs. bimestre anterior` },
-    { metric: "Candidatos adecuados", value: `${latestMarket.candidateAcceptancePer10Median}/10`, context: "mediana de la muestra" },
-    { metric: "Capacitación", value: `${latestMarket.trainingHoursPerHead} h/persona`, context: "intensidad bimestral agregada" },
+  const stabilityScore = Math.max(0, 100 - latestMarket.turnoverBimonthlyPct * 4.5);
+  const capacityScore = Math.max(0, 100 - latestMarket.hiringPressurePct * 3);
+  const hiringSpeedScore = Math.max(0, 100 - Math.max(0, latestMarket.timeToFillDays.technical - 15) * 2.5);
+  const healthScore = Math.round(stabilityScore * 0.35 + capacityScore * 0.25 + hiringSpeedScore * 0.2 + qualitySummary.score * 0.2);
+
+  const pulseMetrics = [
+    {
+      label: "Headcount muestra",
+      value: formatInt(latestMarket.headcount),
+      note: `${latestMarket.headcountChangePct >= 0 ? "+" : ""}${latestMarket.headcountChangePct}% vs. corte anterior`,
+      icon: UsersRound,
+      tone: "text-cyan-700 bg-cyan-50",
+    },
+    {
+      label: "Rotación bimestral",
+      value: `${latestMarket.turnoverBimonthlyPct.toFixed(1)}%`,
+      note: `${turnoverDelta >= 0 ? "+" : ""}${turnoverDelta.toFixed(2)} pp vs. anterior`,
+      icon: TrendingUp,
+      tone: "text-amber-700 bg-amber-50",
+    },
+    {
+      label: "Contrataciones",
+      value: formatInt(latestMarket.hires),
+      note: `${marketChange.hiresPct.toFixed(1)}% vs. corte anterior`,
+      icon: BriefcaseBusiness,
+      tone: "text-violet-700 bg-violet-50",
+    },
+    {
+      label: "Salario ingreso",
+      value: formatMoney(latestMarket.salaryBandsDaily.entryMedian),
+      note: "mediana diaria · estable",
+      icon: BadgeDollarSign,
+      tone: "text-emerald-700 bg-emerald-50",
+    },
   ];
 
-  const alerts = [
+  const insights = [
     {
-      level: "high",
-      title: "Contratación técnica más lenta",
-      body: `La mediana de time-to-fill técnico subió de ${previous.timeToFill.technical} a ${latestMarket.timeToFillDays.technical} días.`,
+      severity: "Crítico",
+      color: "bg-rose-500",
+      title: "La contratación técnica perdió velocidad",
+      detail: `El time-to-fill técnico pasó de ${previous.timeToFill.technical} a ${latestMarket.timeToFillDays.technical} días en un bimestre.`,
+      meta: `+${marketChange.technicalTimeToFillDays} días · señal de capacidad`,
+      href: "/talent-acquisition",
+      cta: "Analizar contratación",
     },
     {
-      level: "medium",
-      title: "Presión de contratación",
-      body: `La muestra reporta ${formatInt(latestMarket.vacancies.total)} plazas operativas y administrativas próximas a cubrir (${latestMarket.hiringPressurePct}% del headcount).`,
+      severity: "Atención",
+      color: "bg-amber-400",
+      title: "La rotación temprana concentra el riesgo",
+      detail: `En las empresas con distribución válida por antigüedad, ${earlyAttrition}% de las bajas ocurre antes de cumplir tres meses.`,
+      meta: `${peopleData.retention.tenureValidCompanies} empresas con base conciliada`,
+      href: "/retencion",
+      cta: "Abrir rotación",
     },
     {
-      level: "good",
-      title: "Salario de entrada estable",
-      body: `La mediana de salario diario de ingreso se mantiene en ${formatMoney(latestMarket.salaryBandsDaily.entryMedian)} frente al bimestre anterior.`,
+      severity: "Oportunidad",
+      color: "bg-emerald-500",
+      title: "La compensación de entrada se mantiene estable",
+      detail: `La mediana de salario diario de ingreso permanece en ${formatMoney(latestMarket.salaryBandsDaily.entryMedian)} frente al corte anterior.`,
+      meta: "Úsalo como referencia para escenarios salariales",
+      href: "/what-if",
+      cta: "Simular escenario",
     },
   ];
 
   return (
-    <div className="flex min-h-screen bg-transparent">
-      <Sidebar />
-      <div className="min-w-0 flex-1">
-        <Topbar />
-        <main className="mx-auto max-w-[1600px] p-5 md:p-8">
-          <section className="mb-7 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+    <DashboardFrame>
+      <section className="animate-reveal overflow-hidden rounded-[32px] border border-slate-200/60 bg-white/75 shadow-[0_30px_80px_rgba(20,40,75,.08)] backdrop-blur-xl">
+        <div className="grid lg:grid-cols-[1.28fr_.72fr]">
+          <div className="relative overflow-hidden p-6 md:p-9 xl:p-11">
+            <div className="pointer-events-none absolute -left-16 top-6 h-52 w-52 rounded-full bg-cyan-300/15 blur-3xl" />
+            <div className="relative">
+              <div className="mb-5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-700">
+                <Sparkles size={14} /> Catch Consulting · Executive Brief
+              </div>
+              <h1 className="max-w-4xl text-3xl font-black tracking-[-0.045em] text-[#07182d] md:text-5xl md:leading-[1.02] xl:text-[3.5rem]">
+                Esto es lo más importante que está ocurriendo en tu mercado laboral.
+              </h1>
+              <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-500 md:text-base">
+                El mercado permanece relativamente estable, pero hay dos señales que merecen atención inmediata: la contratación técnica está tardando más y la rotación temprana concentra una parte relevante de las bajas.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/talent-acquisition" className="inline-flex items-center gap-2 rounded-xl bg-[#0b2140] px-4 py-3 text-xs font-black text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5">
+                  Ver qué cambió <ArrowRight size={14} />
+                </Link>
+                <Link href="/copilot" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 transition hover:border-cyan-300 hover:text-cyan-800">
+                  <Sparkles size={14} className="text-cyan-600" /> Explícame qué está pasando
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden bg-[#07182d] p-7 text-white md:p-9">
+            <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-cyan-400/20 blur-3xl" />
+            <div className="absolute -bottom-20 left-8 h-52 w-52 rounded-full bg-violet-500/15 blur-3xl" />
+            <div className="relative flex h-full flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">Market Health Score</div>
+                <div className="mt-5 flex items-end gap-3">
+                  <div className="text-7xl font-black tracking-[-0.07em]">{healthScore}</div>
+                  <div className="pb-2 text-sm font-bold text-slate-400">/ 100</div>
+                </div>
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-cyan-100">
+                  <span className="h-2 w-2 rounded-full bg-amber-300" /> Estable, con señales de atención
+                </div>
+              </div>
+
+              <div className="mt-10 grid grid-cols-2 gap-3 text-xs">
+                <div className="rounded-2xl bg-white/[0.055] p-4 ring-1 ring-inset ring-white/10">
+                  <div className="text-slate-400">Data Health</div>
+                  <div className="mt-1 text-xl font-black">{qualitySummary.score}/100</div>
+                </div>
+                <div className="rounded-2xl bg-white/[0.055] p-4 ring-1 ring-inset ring-white/10">
+                  <div className="text-slate-400">Hiring pressure</div>
+                  <div className="mt-1 text-xl font-black">{latestMarket.hiringPressurePct}%</div>
+                </div>
+              </div>
+              <p className="mb-0 mt-5 text-[10px] leading-5 text-slate-500">Score compuesto para orientación ejecutiva: estabilidad, presión de contratación, velocidad de cobertura y calidad del dato. No sustituye el análisis de cada indicador.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="animate-reveal-delay-1 mt-5 panel overflow-hidden">
+        <div className="grid divide-y divide-slate-100 md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4">
+          {pulseMetrics.map((metric) => {
+            const Icon = metric.icon;
+            return (
+              <div key={metric.label} className="p-5 xl:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="metric-label">{metric.label}</div>
+                    <div className="mt-2 text-2xl font-black tracking-[-0.04em] text-[#0b2140]">{metric.value}</div>
+                  </div>
+                  <div className={`grid h-9 w-9 place-items-center rounded-xl ${metric.tone}`}><Icon size={16} /></div>
+                </div>
+                <div className="mt-2 text-[11px] font-semibold text-slate-400">{metric.note}</div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="animate-reveal-delay-2 mt-5">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <div className="eyebrow">Decision Journey</div>
+            <h2 className="mt-1 text-xl font-black tracking-tight text-[#0b2140]">De la señal a la decisión</h2>
+          </div>
+          <div className="hidden text-xs font-semibold text-slate-400 md:block">Jul–Ago 2025 · muestra anonimizada</div>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-4">
+          <div className="story-card">
+            <div className="flex items-center justify-between"><span className="metric-label">01 · Qué pasó</span><TrendingDown size={16} className="text-rose-500" /></div>
+            <div className="mt-3 text-sm font-black text-slate-900">La velocidad de contratación técnica empeoró.</div>
+            <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">El time-to-fill subió de {previous.timeToFill.technical} a {latestMarket.timeToFillDays.technical} días y las contrataciones bajaron {Math.abs(marketChange.hiresPct).toFixed(1)}%.</p>
+          </div>
+          <div className="story-card">
+            <div className="flex items-center justify-between"><span className="metric-label">02 · Por qué importa</span><Clock3 size={16} className="text-amber-500" /></div>
+            <div className="mt-3 text-sm font-black text-slate-900">La demanda futura no desapareció.</div>
+            <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">Hay {formatInt(latestMarket.vacancies.total)} plazas próximas reportadas, equivalentes a {latestMarket.hiringPressurePct}% del headcount de la muestra.</p>
+          </div>
+          <div className="story-card">
+            <div className="flex items-center justify-between"><span className="metric-label">03 · Dónde mirar</span><UsersRound size={16} className="text-violet-500" /></div>
+            <div className="mt-3 text-sm font-black text-slate-900">Retención temprana y talento técnico.</div>
+            <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">{earlyAttrition}% de las bajas de la base conciliada ocurre antes de tres meses: contratar más sin retener puede amplificar el problema.</p>
+          </div>
+          <div className="story-card border-cyan-200/70 bg-gradient-to-br from-cyan-50/80 to-white">
+            <div className="flex items-center justify-between"><span className="metric-label !text-cyan-700">04 · Qué hacer ahora</span><CheckCircle2 size={16} className="text-cyan-600" /></div>
+            <div className="mt-3 text-sm font-black text-slate-900">Probar escenarios antes de decidir.</div>
+            <p className="mb-3 mt-2 text-xs leading-5 text-slate-500">Simula menor rotación, ajustes salariales o nuevas vacantes y observa el impacto en capacidad y costo.</p>
+            <Link href="/what-if" className="inline-flex items-center gap-1 text-xs font-black text-cyan-800">Abrir Scenario Lab <ArrowRight size={13} /></Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
+        <article className="panel p-5 md:p-6">
+          <div className="mb-5 flex items-start justify-between gap-4">
             <div>
-              <div className="eyebrow">Executive Pulse · {latestMarket.period}</div>
-              <h1 className="mb-2 mt-2 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">El mercado de talento, sin esconder la calidad del dato.</h1>
-              <p className="m-0 max-w-2xl text-sm leading-6 text-slate-500">Vista agregada de 40 compañías y siete bimestres. Las métricas reportadas se conservan y cualquier ajuste analítico queda señalado de forma explícita.</p>
+              <div className="eyebrow">Workforce signal</div>
+              <h2 className="mt-1 text-lg font-black text-[#0b2140]">Cómo se ha movido la plantilla</h2>
+              <p className="mt-1 text-xs leading-5 text-slate-400">Reportado vs. ajuste analítico; el dato original nunca se reemplaza.</p>
             </div>
+            <Link href="/contexto" className="hidden rounded-xl border border-slate-200 px-3 py-2 text-[11px] font-bold text-slate-500 md:block">Ver contexto →</Link>
+          </div>
+          <WorkforceTrendChart />
+        </article>
 
-            <div className="flex flex-wrap gap-2">
-              {[`Periodo · ${latestMarket.period}`, "Vista · Mercado / 40 empresas", "Benchmark · Muestra anonimizada"].map((label) => (
-                <button key={label} className="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm">{label}</button>
-              ))}
+        <article className="panel p-5 md:p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="eyebrow">Intelligence Feed</div>
+              <h2 className="mt-1 text-lg font-black text-[#0b2140]">Lo que merece atención</h2>
             </div>
-          </section>
-
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <KpiCard label="Headcount muestra" value={formatInt(latestMarket.headcount)} change={latestMarket.headcountChangePct} changeLabel="vs. bimestre anterior" icon={UsersRound} />
-            <KpiCard label="Rotación bimestral" value={`${latestMarket.turnoverBimonthlyPct.toFixed(1)}%`} change={Number(turnoverDelta.toFixed(2))} changeLabel="pp vs. anterior" icon={CircleGauge} inverse />
-            <KpiCard label="Contrataciones" value={formatInt(latestMarket.hires)} change={Number(marketChange.hiresPct.toFixed(1))} changeLabel="vs. bimestre anterior" icon={BriefcaseBusiness} />
-            <KpiCard label="Salario ingreso mediano" value={formatMoney(latestMarket.salaryBandsDaily.entryMedian)} change={0} changeLabel="MXN diarios · estable" icon={BadgeDollarSign} />
-          </section>
-
-          <section className="mt-4 grid gap-4 xl:grid-cols-[1.45fr_.9fr]">
-            <article className="panel p-5 md:p-6">
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <div className="eyebrow">Workforce Intelligence</div>
-                  <h2 className="mt-1 text-lg font-extrabold text-slate-950">Evolución de personal · reportado vs. ajustado</h2>
+            <Sparkles size={18} className="text-cyan-600" />
+          </div>
+          <div className="mt-5 space-y-3">
+            {insights.map((insight) => (
+              <div key={insight.title} className="rounded-2xl border border-slate-100 bg-slate-50/65 p-4">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+                  <span className={`h-2 w-2 rounded-full ${insight.color}`} /> {insight.severity}
                 </div>
-                <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-800">7 bimestres</span>
-              </div>
-              <WorkforceTrendChart />
-              <p className="mb-0 mt-3 text-xs leading-5 text-slate-400">El ajuste analítico solo se usa para comparación y modelado; nunca reemplaza el valor reportado en la fuente.</p>
-            </article>
-
-            <article className="overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-soft">
-              <div className="mb-9 flex items-center justify-between">
-                <div className="eyebrow !text-cyan-300">Evidence Insight</div>
-                <div className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-cyan-100">Datos Jul–Ago 2025</div>
-              </div>
-              <h2 className="max-w-lg text-2xl font-black leading-tight">El cuello de botella visible está en la velocidad de contratación técnica.</h2>
-              <p className="mt-4 text-sm leading-6 text-slate-300">La mediana técnica pasó de {previous.timeToFill.technical} a {latestMarket.timeToFillDays.technical} días. Al mismo tiempo, las empresas reportan {formatInt(latestMarket.vacancies.total)} plazas operativas y administrativas próximas a cubrir.</p>
-              <div className="mt-7 grid grid-cols-3 gap-2">
-                {[[`+${marketChange.technicalTimeToFillDays} d`, "time-to-fill técnico"], [formatInt(latestMarket.vacancies.total), "vacantes próximas"], [`${latestMarket.candidateAcceptancePer10Median}/10`, "candidatos adecuados"]].map(([value, label]) => (
-                  <div key={label} className="rounded-2xl bg-white/5 p-3">
-                    <div className="text-lg font-black">{value}</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">{label}</div>
-                  </div>
-                ))}
-              </div>
-              <button className="mt-7 rounded-2xl bg-cyan-400 px-4 py-2.5 text-xs font-black text-slate-950">Explorar evidencia →</button>
-            </article>
-          </section>
-
-          <section className="mt-4 grid gap-4 xl:grid-cols-[1fr_1fr]">
-            <article className="panel p-5 md:p-6">
-              <div className="mb-5">
-                <div className="eyebrow">Talent Acquisition</div>
-                <h2 className="mt-1 text-lg font-extrabold text-slate-950">Vacantes próximas + tiempo de contratación</h2>
-              </div>
-              <HiringPressureChart />
-            </article>
-
-            <article className="panel p-5 md:p-6">
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <div className="eyebrow">Benchmark Studio</div>
-                  <h2 className="mt-1 text-lg font-extrabold text-slate-950">Pulso de la muestra</h2>
-                </div>
-                <span className="text-xs font-semibold text-slate-400">medianas / agregados</span>
-              </div>
-              <div className="space-y-3">
-                {marketRows.map((row) => (
-                  <div key={row.metric} className="grid grid-cols-[1.1fr_auto] items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
-                    <div>
-                      <div className="text-sm font-bold text-slate-800">{row.metric}</div>
-                      <div className="mt-1 text-[11px] text-slate-400">{row.context}</div>
-                    </div>
-                    <div className="text-right text-sm font-black text-slate-900">{row.value}</div>
-                  </div>
-                ))}
-              </div>
-            </article>
-          </section>
-
-          <section className="mt-4 grid gap-4 xl:grid-cols-[1.35fr_.65fr]">
-            <article className="panel p-5 md:p-6">
-              <div className="mb-5 flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-amber-50 text-amber-700"><ShieldAlert size={19} /></div>
-                <div>
-                  <div className="eyebrow">Risks & Opportunities</div>
-                  <h2 className="mt-1 text-lg font-extrabold text-slate-950">Qué atender primero</h2>
+                <div className="mt-2 text-sm font-black text-slate-900">{insight.title}</div>
+                <p className="mb-0 mt-1.5 text-xs leading-5 text-slate-500">{insight.detail}</p>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-semibold text-slate-400">{insight.meta}</span>
+                  <Link href={insight.href} className="shrink-0 text-[11px] font-black text-cyan-800">{insight.cta} →</Link>
                 </div>
               </div>
-              <div className="grid gap-3 md:grid-cols-3">
-                {alerts.map((alert) => (
-                  <div key={alert.title} className="rounded-2xl border border-slate-100 p-4">
-                    <span className={`mb-3 inline-block h-2.5 w-2.5 rounded-full ${alert.level === "high" ? "bg-rose-500" : alert.level === "medium" ? "bg-amber-400" : "bg-emerald-500"}`} />
-                    <div className="text-sm font-extrabold text-slate-900">{alert.title}</div>
-                    <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">{alert.body}</p>
-                  </div>
-                ))}
-              </div>
-            </article>
+            ))}
+          </div>
+        </article>
+      </section>
 
-            <article className="panel p-5 md:p-6">
-              <div className="eyebrow">Data Quality</div>
-              <div className="mt-4 flex items-end gap-3">
-                <div className="text-5xl font-black tracking-tight text-slate-950">{qualitySummary.score}</div>
-                <div className="pb-1 text-sm font-bold text-emerald-600">/ 100 · Controlado</div>
-              </div>
-              <p className="mt-4 text-xs leading-5 text-slate-500">El score se calcula sobre reglas de reconciliación, consistencia de porcentajes, orden salarial y anomalías longitudinales.</p>
-              <div className="mt-5 space-y-2 text-xs font-semibold text-slate-600">
-                <div className="flex justify-between"><span>Reglas evaluadas</span><strong>{qualitySummary.rulesEvaluated}</strong></div>
-                <div className="flex justify-between"><span>Reglas correctas</span><strong className="text-emerald-600">{qualitySummary.rulesPassed}</strong></div>
-                <div className="flex justify-between"><span>Fallos de regla</span><strong className="text-amber-600">{qualitySummary.ruleFailures}</strong></div>
-                <div className="flex justify-between"><span>Anomalías críticas</span><strong className="text-rose-600">{qualitySummary.criticalAnomalies}</strong></div>
-              </div>
-            </article>
-          </section>
-        </main>
-      </div>
-    </div>
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1fr_.9fr]">
+        <article className="panel p-5 md:p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <div className="eyebrow">Talent capacity</div>
+              <h2 className="mt-1 text-lg font-black text-[#0b2140]">Vacantes próximas vs. tiempo de cobertura</h2>
+            </div>
+            <BriefcaseBusiness size={18} className="text-violet-600" />
+          </div>
+          <HiringPressureChart />
+        </article>
+
+        <article className="panel p-5 md:p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="eyebrow">Trust layer</div>
+              <h2 className="mt-1 text-lg font-black text-[#0b2140]">¿Qué tan confiable es esta lectura?</h2>
+            </div>
+            <ShieldCheck size={19} className="text-emerald-600" />
+          </div>
+          <div className="mt-6 flex items-end gap-3">
+            <div className="text-5xl font-black tracking-[-0.06em] text-[#0b2140]">{qualitySummary.score}</div>
+            <div className="pb-1 text-sm font-bold text-emerald-600">/100 · controlado</div>
+          </div>
+          <p className="mt-4 text-xs leading-5 text-slate-500">La plataforma revisa reconciliaciones, porcentajes, orden salarial y anomalías longitudinales antes de usar un dato para benchmark o recomendación.</p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><Database size={15} className="text-slate-400" /><div className="mt-2 text-xl font-black text-slate-900">{qualitySummary.rulesEvaluated}</div><div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">reglas evaluadas</div></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><ShieldCheck size={15} className="text-emerald-500" /><div className="mt-2 text-xl font-black text-slate-900">{qualitySummary.rulesPassed}</div><div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">reglas correctas</div></div>
+          </div>
+          <Link href="/data-quality" className="mt-5 inline-flex items-center gap-1 text-xs font-black text-cyan-800">Revisar calidad del dato <ArrowRight size={13} /></Link>
+        </article>
+      </section>
+    </DashboardFrame>
   );
 }
