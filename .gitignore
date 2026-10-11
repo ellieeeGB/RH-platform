@@ -30,6 +30,10 @@ data/raw/*
 *.xlsx
 *.xls
 
+# normalized private HR records
+data/processed/*.private.json
+data/processed/*.tmp.json
+
 # python
 __pycache__/
 *.py[cod]
