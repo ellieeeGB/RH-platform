@@ -4,7 +4,9 @@ import {
   COMPANIES,
   PERIODS,
   getCompanySnapshot,
+  getMarketExtendedStats,
   getMarketSnapshot,
+  getPeriodSnapshots,
 } from "../src/lib/company-panel";
 
 test("company panel exposes seven periods and forty anonymized companies", () => {
@@ -12,6 +14,7 @@ test("company panel exposes seven periods and forty anonymized companies", () =>
   assert.equal(COMPANIES.length, 40);
   assert.equal(COMPANIES[0], "COMPAÑIA 1");
   assert.equal(COMPANIES.at(-1), "COMPAÑIA 40");
+  for (const period of PERIODS) assert.equal(getPeriodSnapshots(period).length, 40, `${period}: company count`);
 });
 
 test("latest market aggregates reconcile to validated headline totals", () => {
@@ -45,7 +48,25 @@ test("vacancy totals reconcile in every historical period", () => {
   }
 });
 
-test("company selection returns the correct company-period row", () => {
+test("latest attendance and training totals reconcile to source workbook", () => {
+  const market = getMarketSnapshot("Jul-Ago 25");
+  assert.equal(market.attendance.absences, 31360);
+  assert.equal(market.attendance.incapacityCases, 13204);
+  assert.equal(market.training.operationalHours, 122940);
+  assert.equal(market.training.administrativeHours, 36911);
+  assert.equal(market.training.totalHours, 159851);
+});
+
+test("latest labor and benefit prevalence reconcile", () => {
+  const stats = getMarketExtendedStats("Jul-Ago 25");
+  assert.equal(stats.laborRelations.unionizedCompanies, 32);
+  assert.equal(stats.laborRelations.unionizationPct, 80);
+  assert.deepEqual(stats.benefits.lifeInsurance, { yes: 33, valid: 40, pct: 82.5 });
+  assert.deepEqual(stats.benefits.transport, { yes: 32, valid: 40, pct: 80 });
+  assert.deepEqual(stats.benefits.cafeteria, { yes: 25, valid: 40, pct: 62.5 });
+});
+
+test("company selection returns extended company-period evidence", () => {
   const company = getCompanySnapshot("COMPAÑIA 1", "Jul-Ago 25");
   assert.ok(company);
   assert.equal(company.headcount.operational, 143);
@@ -53,6 +74,14 @@ test("company selection returns the correct company-period row", () => {
   assert.equal(company.headcount.other, 40);
   assert.equal(company.headcount.total, 207);
   assert.equal(company.salaryDaily.entry, 278.8);
+  assert.equal(company.attendance.absences, 366);
+  assert.equal(company.attendance.incapacityCases, 79);
+  assert.equal(company.laborRelations.unionized, false);
+  assert.equal(company.benefits.voucherOperationalPct, 15);
+  assert.equal(company.benefits.savingsOperationalPct, 8);
+  assert.equal(company.benefits.lifeInsurance, true);
+  assert.equal(company.benefits.transport, true);
+  assert.equal(company.benefits.cafeteria, true);
 });
 
 test("latest salary bands remain ordered for every company with complete data", () => {
