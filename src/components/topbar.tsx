@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarDays, Search, Sparkles, Building2 } from "lucide-react";
+import { Building2, CalendarDays, Sparkles } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { MARKET_SCOPE } from "@/lib/company-panel";
 
@@ -10,13 +10,10 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-[#f7f9fc]/92 backdrop-blur-2xl">
-      <div className="flex min-h-[72px] flex-wrap items-center gap-2 px-5 py-2 md:px-7">
-        <div className="hidden min-w-0 flex-1 items-center gap-3 xl:flex">
-          <div className="flex min-w-[260px] items-center gap-2 rounded-xl border border-slate-200/80 bg-white/85 px-3.5 py-2.5 shadow-sm">
-            <Search size={16} className="text-slate-400" />
-            <span className="truncate text-xs text-slate-400">Buscar tema, indicador o módulo…</span>
-          </div>
-          <div className="text-[11px] font-semibold text-slate-400">HR Toolkit · Catch Consulting</div>
+      <div className="flex min-h-[72px] flex-wrap items-center gap-3 px-5 py-2 md:px-7">
+        <div className="hidden min-w-0 flex-1 xl:block">
+          <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Catch Consulting</div>
+          <div className="mt-0.5 text-sm font-black text-[#07182d]">Dashboard de Recursos Humanos</div>
         </div>
 
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
