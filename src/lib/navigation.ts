@@ -49,7 +49,7 @@ export const navigation: NavigationGroup[] = [
       { label: "Benchmark Studio", icon: Activity, href: "/benchmark" },
       { label: "Data Quality", icon: ShieldCheck, href: "/data-quality" },
       { label: "AI HR Copilot", icon: Bot },
-      { label: "What-If Lab", icon: ClipboardCheck },
+      { label: "What-If Lab", icon: ClipboardCheck, href: "/what-if" },
     ],
   },
 ];
