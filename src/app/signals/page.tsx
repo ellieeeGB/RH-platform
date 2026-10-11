@@ -4,6 +4,7 @@ import { DashboardFrame } from "@/components/dashboard-frame";
 import { SignatureMetricStrip } from "@/components/signature-metric-strip";
 import { SignatureSignalField } from "@/components/signature-signal-field";
 import { signatureMetrics } from "@/lib/signature-metrics";
+import people from "../../../data/processed/people-intelligence.json";
 import rewards from "../../../data/processed/workforce-rewards.json";
 
 const moves = [
@@ -35,6 +36,8 @@ const moves = [
     className: "bg-[#0a2141] text-white",
   },
 ];
+
+const bubbleSizes = [190, 110, 82, 76, 66, 58];
 
 export default function SignalsPage() {
   return (
@@ -92,6 +95,67 @@ export default function SignalsPage() {
                   </Link>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-[#07182d] px-6 py-24 text-white md:px-10 xl:px-14 xl:py-32">
+          <div className="mx-auto max-w-[1660px]">
+            <div className="mb-12 grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-300">Visual evidence</div>
+                <h2 className="mt-3 text-4xl font-black tracking-[-.05em] md:text-6xl">Dos dibujos. Dos problemas obvios.</h2>
+              </div>
+              <p className="max-w-2xl text-sm leading-7 text-slate-400 lg:justify-self-end">En lugar de otra cuadrícula de barras, la forma visual cambia según la pregunta: una fuga para antigüedad y una constelación para demanda.</p>
+            </div>
+
+            <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+              <article className="rounded-[34px] border border-white/10 bg-white/[.055] p-6 md:p-8">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[.18em] text-amber-300">Leak path</div>
+                    <h3 className="mt-2 text-2xl font-black">¿Cuándo se nos va la gente?</h3>
+                  </div>
+                  <div className="text-right"><div className="text-4xl font-black text-amber-300">{signatureMetrics.earlyAttritionSharePct}%</div><div className="text-[10px] text-slate-500">antes de 3 meses</div></div>
+                </div>
+                <div className="mt-9 space-y-2.5">
+                  {people.retention.tenureDistributionPct.map((item, index) => (
+                    <div key={item.bucket} className="grid grid-cols-[88px_1fr_48px] items-center gap-3">
+                      <div className="text-[10px] font-bold text-slate-400">{item.bucket}</div>
+                      <div className="h-9 overflow-hidden rounded-full bg-white/[.04]">
+                        <div className={`h-full rounded-full transition-all ${index < 2 ? "bg-gradient-to-r from-rose-400 to-amber-300" : "bg-white/15"}`} style={{ width: `${Math.min(100, item.value * 2.8)}%` }} />
+                      </div>
+                      <div className={`text-right text-sm font-black ${index < 2 ? "text-amber-200" : "text-slate-400"}`}>{item.value}%</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mb-0 mt-7 text-xs leading-6 text-slate-500">La forma se estrecha conforme aumenta la antigüedad: la pérdida está cargada hacia el inicio de la relación laboral.</p>
+              </article>
+
+              <article className="relative min-h-[520px] overflow-hidden rounded-[34px] border border-white/10 bg-[#0a2141] p-6 md:p-8">
+                <div className="absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:24px_24px]" />
+                <div className="relative z-10 flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-300">Demand constellation</div>
+                    <h3 className="mt-2 text-2xl font-black">¿Dónde está concentrada la demanda?</h3>
+                  </div>
+                  <div className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-[10px] font-black text-violet-200">Tamaño = demanda</div>
+                </div>
+                <div className="relative z-10 mt-8 flex min-h-[360px] flex-wrap items-center justify-center gap-4">
+                  {rewards.workforcePlanning.hotspots.slice(0, 6).map((item, index) => {
+                    const size = bubbleSizes[index];
+                    return (
+                      <div key={`${item.role}-${item.education}`} className={`group flex shrink-0 items-center justify-center rounded-full border text-center shadow-[0_12px_50px_rgba(0,0,0,.18)] transition duration-300 hover:scale-105 ${index === 0 ? "border-cyan-300/50 bg-cyan-300 text-[#07182d]" : index < 3 ? "border-violet-300/30 bg-violet-400/20 text-white" : "border-white/15 bg-white/[.06] text-white"}`} style={{ width: size, height: size }}>
+                        <div className="px-3">
+                          <div className={`${index === 0 ? "text-4xl" : "text-xl"} font-black tracking-[-.05em]`}>{item.demand}</div>
+                          <div className={`${index === 0 ? "mt-2 text-[11px]" : "mt-1 text-[9px]"} font-black uppercase leading-4 opacity-70`}>{item.role}</div>
+                          {index < 3 && <div className="mt-1 text-[8px] opacity-55">{item.education}</div>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
             </div>
           </div>
         </section>
