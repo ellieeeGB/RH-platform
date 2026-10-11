@@ -6,27 +6,26 @@ import marAbr25 from "../../data/processed/company-periods/mar-abr-25.json";
 import mayJun25 from "../../data/processed/company-periods/may-jun-25.json";
 import julAgo25 from "../../data/processed/company-periods/jul-ago-25.json";
 
-type RawValue = string | number | null;
+type RawValue = string | number | boolean | null;
 type RawDataset = { period: string; columns: string[]; rows: RawValue[][] };
 
 const datasets = [julAgo24, sepOct24, novDic24, eneFeb25, marAbr25, mayJun25, julAgo25] as RawDataset[];
 
-// The original row extraction omitted the final three vacancy responses even though
-// they are present in the source workbook. These values were revalidated directly
-// against the vacancy columns (RB:RC) before enabling company-level filtering.
-const vacancyOverrides: Record<string, Record<string, [number, number]>> = {
-  "Jul-Ago 24": { "COMPAÑIA 38": [320, 60], "COMPAÑIA 39": [75, 15], "COMPAÑIA 40": [0, 2] },
-  "Sep-Oct 24": { "COMPAÑIA 38": [320, 60], "COMPAÑIA 39": [75, 15], "COMPAÑIA 40": [0, 2] },
-  "Nov-Dic 24": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [100, 10], "COMPAÑIA 40": [10, 2] },
-  "Ene-Feb 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [2, 1] },
-  "Mar-Abr 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [3, 4] },
-  "May-Jun 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [0, 1] },
-  "Jul-Ago 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [0, 1] },
-};
-
 export const PERIODS = datasets.map((item) => item.period);
 export const COMPANIES = Array.from({ length: 40 }, (_, index) => `COMPAÑIA ${index + 1}`);
 export const MARKET_SCOPE = "market";
+
+export type RejectionMix = {
+  antidoping: number | null;
+  schooling: number | null;
+  vision: number | null;
+  lumbar: number | null;
+  audiometry: number | null;
+  experience: number | null;
+  residence: number | null;
+  numerical: number | null;
+  psychometric: number | null;
+};
 
 export type CompanySnapshot = {
   company: string;
@@ -37,29 +36,73 @@ export type CompanySnapshot = {
   exits: number | null;
   timeToFill: { operational: number | null; technical: number | null; administrative: number | null; managerial: number | null };
   acceptedPer10: number | null;
+  rejectionPct: RejectionMix;
   vacancies: { operational: number | null; administrative: number | null; total: number | null };
+  attendance: {
+    absences: number | null;
+    incapacityCases: number | null;
+    workRisk: number | null;
+    generalIllness: number | null;
+    maternity: number | null;
+  };
+  training: { operationalHours: number | null; administrativeHours: number | null; totalHours: number | null };
+  laborRelations: {
+    unionized: boolean | null;
+    relationship: string | null;
+    negotiationStatus: string | null;
+    grantedSalaryOperationalPct: number | null;
+    grantedSalaryAdministrativePct: number | null;
+    grantedBenefitsOperationalPct: number | null;
+    grantedBenefitsAdministrativePct: number | null;
+  };
+  benefits: {
+    voucherOperationalPct: number | null;
+    voucherAdministrativePct: number | null;
+    voucherManagerialPct: number | null;
+    savingsOperationalPct: number | null;
+    savingsAdministrativePct: number | null;
+    savingsManagerialPct: number | null;
+    vacationOperationalYear1: number | null;
+    vacationAdministrativeYear1: number | null;
+    lifeInsurance: boolean | null;
+    transport: boolean | null;
+    cafeteria: boolean | null;
+  };
 };
 
 function num(value: RawValue): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
+function bool(value: RawValue): boolean | null {
+  return typeof value === "boolean" ? value : null;
+}
+
+function text(value: RawValue): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
 function toSnapshot(dataset: RawDataset, row: RawValue[]): CompanySnapshot {
   const index = Object.fromEntries(dataset.columns.map((column, idx) => [column, idx]));
-  const value = (column: string) => num(row[index[column]]);
+  const numberValue = (column: string) => num(row[index[column]]);
+  const boolValue = (column: string) => bool(row[index[column]]);
+  const textValue = (column: string) => text(row[index[column]]);
   const company = String(row[index.company]);
-  const operational = value("hcOperational");
-  const administrative = value("hcAdministrative");
-  const other = value("hcOther");
+  const operational = numberValue("hcOperational");
+  const administrative = numberValue("hcAdministrative");
+  const other = numberValue("hcOther");
   const total = [operational, administrative, other].some((item) => item !== null)
     ? (operational ?? 0) + (administrative ?? 0) + (other ?? 0)
     : null;
-
-  const override = vacancyOverrides[dataset.period]?.[company];
-  const vacanciesOperational = override?.[0] ?? value("vacanciesOperational");
-  const vacanciesAdministrative = override?.[1] ?? value("vacanciesAdministrative");
+  const vacanciesOperational = numberValue("vacanciesOperational");
+  const vacanciesAdministrative = numberValue("vacanciesAdministrative");
   const vacanciesTotal = vacanciesOperational !== null || vacanciesAdministrative !== null
     ? (vacanciesOperational ?? 0) + (vacanciesAdministrative ?? 0)
+    : null;
+  const trainingOperational = numberValue("trainingOperational");
+  const trainingAdministrative = numberValue("trainingAdministrative");
+  const trainingTotal = trainingOperational !== null || trainingAdministrative !== null
+    ? (trainingOperational ?? 0) + (trainingAdministrative ?? 0)
     : null;
 
   return {
@@ -67,15 +110,66 @@ function toSnapshot(dataset: RawDataset, row: RawValue[]): CompanySnapshot {
     period: dataset.period,
     headcount: { operational, administrative, other, total },
     salaryDaily: {
-      entry: value("salaryEntry"), low: value("salaryLow"), high: value("salaryHigh"), max: value("salaryMax"),
+      entry: numberValue("salaryEntry"),
+      low: numberValue("salaryLow"),
+      high: numberValue("salaryHigh"),
+      max: numberValue("salaryMax"),
     },
-    hires: value("hires"),
-    exits: value("exits"),
+    hires: numberValue("hires"),
+    exits: numberValue("exits"),
     timeToFill: {
-      operational: value("ttfOperational"), technical: value("ttfTechnical"), administrative: value("ttfAdministrative"), managerial: value("ttfManagerial"),
+      operational: numberValue("ttfOperational"),
+      technical: numberValue("ttfTechnical"),
+      administrative: numberValue("ttfAdministrative"),
+      managerial: numberValue("ttfManagerial"),
     },
-    acceptedPer10: value("acceptedPer10"),
+    acceptedPer10: numberValue("acceptedPer10"),
+    rejectionPct: {
+      antidoping: numberValue("rejectionAntidoping"),
+      schooling: numberValue("rejectionSchooling"),
+      vision: numberValue("rejectionVision"),
+      lumbar: numberValue("rejectionLumbar"),
+      audiometry: numberValue("rejectionAudiometry"),
+      experience: numberValue("rejectionExperience"),
+      residence: numberValue("rejectionResidence"),
+      numerical: numberValue("rejectionNumerical"),
+      psychometric: numberValue("rejectionPsychometric"),
+    },
     vacancies: { operational: vacanciesOperational, administrative: vacanciesAdministrative, total: vacanciesTotal },
+    attendance: {
+      absences: numberValue("absencesTotal"),
+      incapacityCases: numberValue("incapacityCases"),
+      workRisk: numberValue("incapacityWorkRisk"),
+      generalIllness: numberValue("incapacityGeneralIllness"),
+      maternity: numberValue("incapacityMaternity"),
+    },
+    training: {
+      operationalHours: trainingOperational,
+      administrativeHours: trainingAdministrative,
+      totalHours: trainingTotal,
+    },
+    laborRelations: {
+      unionized: boolValue("unionized"),
+      relationship: textValue("unionRelationship"),
+      negotiationStatus: textValue("negotiationStatus"),
+      grantedSalaryOperationalPct: numberValue("grantedSalaryOperationalPct"),
+      grantedSalaryAdministrativePct: numberValue("grantedSalaryAdministrativePct"),
+      grantedBenefitsOperationalPct: numberValue("grantedBenefitsOperationalPct"),
+      grantedBenefitsAdministrativePct: numberValue("grantedBenefitsAdministrativePct"),
+    },
+    benefits: {
+      voucherOperationalPct: numberValue("voucherOperationalPct"),
+      voucherAdministrativePct: numberValue("voucherAdministrativePct"),
+      voucherManagerialPct: numberValue("voucherManagerialPct"),
+      savingsOperationalPct: numberValue("savingsOperationalPct"),
+      savingsAdministrativePct: numberValue("savingsAdministrativePct"),
+      savingsManagerialPct: numberValue("savingsManagerialPct"),
+      vacationOperationalYear1: numberValue("vacationOperationalYear1"),
+      vacationAdministrativeYear1: numberValue("vacationAdministrativeYear1"),
+      lifeInsurance: boolValue("lifeInsurance"),
+      transport: boolValue("transportBenefit"),
+      cafeteria: boolValue("cafeteriaBenefit"),
+    },
   };
 }
 
@@ -85,7 +179,7 @@ function values(items: (number | null)[]) {
   return items.filter((value): value is number => value !== null && Number.isFinite(value));
 }
 
-function median(items: (number | null)[]): number | null {
+export function median(items: (number | null)[]): number | null {
   const sorted = values(items).sort((a, b) => a - b);
   if (!sorted.length) return null;
   const middle = Math.floor(sorted.length / 2);
@@ -97,12 +191,16 @@ function sum(items: (number | null)[]): number | null {
   return valid.length ? valid.reduce((total, value) => total + value, 0) : null;
 }
 
+export function getPeriodSnapshots(period: string) {
+  return snapshots.filter((row) => row.period === period);
+}
+
 export function getCompanySnapshot(company: string, period: string) {
   return snapshots.find((row) => row.company === company && row.period === period) ?? null;
 }
 
 export function getMarketSnapshot(period: string): CompanySnapshot & { companyCount: number } {
-  const rows = snapshots.filter((row) => row.period === period);
+  const rows = getPeriodSnapshots(period);
   const operational = sum(rows.map((row) => row.headcount.operational));
   const administrative = sum(rows.map((row) => row.headcount.administrative));
   const other = sum(rows.map((row) => row.headcount.other));
@@ -111,6 +209,8 @@ export function getMarketSnapshot(period: string): CompanySnapshot & { companyCo
     : null;
   const vacancyOperational = sum(rows.map((row) => row.vacancies.operational));
   const vacancyAdministrative = sum(rows.map((row) => row.vacancies.administrative));
+  const trainingOperational = sum(rows.map((row) => row.training.operationalHours));
+  const trainingAdministrative = sum(rows.map((row) => row.training.administrativeHours));
 
   return {
     company: "Mercado",
@@ -132,10 +232,57 @@ export function getMarketSnapshot(period: string): CompanySnapshot & { companyCo
       managerial: median(rows.map((row) => row.timeToFill.managerial)),
     },
     acceptedPer10: median(rows.map((row) => row.acceptedPer10)),
+    rejectionPct: {
+      antidoping: median(rows.map((row) => row.rejectionPct.antidoping)),
+      schooling: median(rows.map((row) => row.rejectionPct.schooling)),
+      vision: median(rows.map((row) => row.rejectionPct.vision)),
+      lumbar: median(rows.map((row) => row.rejectionPct.lumbar)),
+      audiometry: median(rows.map((row) => row.rejectionPct.audiometry)),
+      experience: median(rows.map((row) => row.rejectionPct.experience)),
+      residence: median(rows.map((row) => row.rejectionPct.residence)),
+      numerical: median(rows.map((row) => row.rejectionPct.numerical)),
+      psychometric: median(rows.map((row) => row.rejectionPct.psychometric)),
+    },
     vacancies: {
       operational: vacancyOperational,
       administrative: vacancyAdministrative,
       total: vacancyOperational !== null || vacancyAdministrative !== null ? (vacancyOperational ?? 0) + (vacancyAdministrative ?? 0) : null,
+    },
+    attendance: {
+      absences: sum(rows.map((row) => row.attendance.absences)),
+      incapacityCases: sum(rows.map((row) => row.attendance.incapacityCases)),
+      workRisk: sum(rows.map((row) => row.attendance.workRisk)),
+      generalIllness: sum(rows.map((row) => row.attendance.generalIllness)),
+      maternity: sum(rows.map((row) => row.attendance.maternity)),
+    },
+    training: {
+      operationalHours: trainingOperational,
+      administrativeHours: trainingAdministrative,
+      totalHours: trainingOperational !== null || trainingAdministrative !== null
+        ? (trainingOperational ?? 0) + (trainingAdministrative ?? 0)
+        : null,
+    },
+    laborRelations: {
+      unionized: null,
+      relationship: null,
+      negotiationStatus: null,
+      grantedSalaryOperationalPct: median(rows.map((row) => row.laborRelations.grantedSalaryOperationalPct)),
+      grantedSalaryAdministrativePct: median(rows.map((row) => row.laborRelations.grantedSalaryAdministrativePct)),
+      grantedBenefitsOperationalPct: median(rows.map((row) => row.laborRelations.grantedBenefitsOperationalPct)),
+      grantedBenefitsAdministrativePct: median(rows.map((row) => row.laborRelations.grantedBenefitsAdministrativePct)),
+    },
+    benefits: {
+      voucherOperationalPct: median(rows.map((row) => row.benefits.voucherOperationalPct)),
+      voucherAdministrativePct: median(rows.map((row) => row.benefits.voucherAdministrativePct)),
+      voucherManagerialPct: median(rows.map((row) => row.benefits.voucherManagerialPct)),
+      savingsOperationalPct: median(rows.map((row) => row.benefits.savingsOperationalPct)),
+      savingsAdministrativePct: median(rows.map((row) => row.benefits.savingsAdministrativePct)),
+      savingsManagerialPct: median(rows.map((row) => row.benefits.savingsManagerialPct)),
+      vacationOperationalYear1: median(rows.map((row) => row.benefits.vacationOperationalYear1)),
+      vacationAdministrativeYear1: median(rows.map((row) => row.benefits.vacationAdministrativeYear1)),
+      lifeInsurance: null,
+      transport: null,
+      cafeteria: null,
     },
   };
 }
@@ -149,10 +296,15 @@ export function getPreviousPeriod(period: string) {
   return index > 0 ? PERIODS[index - 1] : null;
 }
 
+export function getPreviousScopeSnapshot(company: string, period: string) {
+  const previousPeriod = getPreviousPeriod(period);
+  return previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
+}
+
 export function getMarketSalaryPercentile(value: number | null, period: string) {
   if (value === null) return null;
-  const salaryValues = snapshots
-    .filter((row) => row.period === period && row.salaryDaily.entry !== null)
+  const salaryValues = getPeriodSnapshots(period)
+    .filter((row) => row.salaryDaily.entry !== null)
     .map((row) => row.salaryDaily.entry as number)
     .sort((a, b) => a - b);
   if (!salaryValues.length) return null;
@@ -160,8 +312,56 @@ export function getMarketSalaryPercentile(value: number | null, period: string) 
   return Math.round((belowOrEqual / salaryValues.length) * 100);
 }
 
+export function getMarketExtendedStats(period: string) {
+  const rows = getPeriodSnapshots(period);
+  const market = getMarketSnapshot(period);
+  const unionized = rows.filter((row) => row.laborRelations.unionized === true).length;
+  const relationshipCounts = rows.reduce<Record<string, number>>((acc, row) => {
+    const value = row.laborRelations.relationship;
+    if (!value) return acc;
+    acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+  const availability = (selector: (row: CompanySnapshot) => boolean | null) => {
+    const valid = rows.map(selector).filter((value): value is boolean => value !== null);
+    const yes = valid.filter(Boolean).length;
+    return { yes, valid: valid.length, pct: valid.length ? (yes / valid.length) * 100 : null };
+  };
+
+  return {
+    attendance: {
+      absenceEventsPer100: market.headcount.total && market.attendance.absences !== null
+        ? (market.attendance.absences / market.headcount.total) * 100
+        : null,
+      incapacityCasesPer100: market.headcount.total && market.attendance.incapacityCases !== null
+        ? (market.attendance.incapacityCases / market.headcount.total) * 100
+        : null,
+    },
+    laborRelations: {
+      unionizedCompanies: unionized,
+      unionizationPct: rows.length ? (unionized / rows.length) * 100 : null,
+      relationshipCounts,
+    },
+    benefits: {
+      lifeInsurance: availability((row) => row.benefits.lifeInsurance),
+      transport: availability((row) => row.benefits.transport),
+      cafeteria: availability((row) => row.benefits.cafeteria),
+    },
+  };
+}
+
 export function deriveScopeMetrics(snapshot: CompanySnapshot | null) {
-  if (!snapshot) return { netMovement: null, movementLoadPct: null, turnoverPct: null, hiringPressurePct: null };
+  if (!snapshot) {
+    return {
+      netMovement: null,
+      movementLoadPct: null,
+      turnoverPct: null,
+      hiringPressurePct: null,
+      absenceEventsPer100: null,
+      incapacityCasesPer100: null,
+      trainingHoursPerHead: null,
+    };
+  }
   const hc = snapshot.headcount.total;
   const hires = snapshot.hires;
   const exits = snapshot.exits;
@@ -171,5 +371,8 @@ export function deriveScopeMetrics(snapshot: CompanySnapshot | null) {
     movementLoadPct: hc && hires !== null && exits !== null ? ((hires + exits) / hc) * 100 : null,
     turnoverPct: hc && exits !== null ? (exits / hc) * 100 : null,
     hiringPressurePct: hc && vacancies !== null ? (vacancies / hc) * 100 : null,
+    absenceEventsPer100: hc && snapshot.attendance.absences !== null ? (snapshot.attendance.absences / hc) * 100 : null,
+    incapacityCasesPer100: hc && snapshot.attendance.incapacityCases !== null ? (snapshot.attendance.incapacityCases / hc) * 100 : null,
+    trainingHoursPerHead: hc && snapshot.training.totalHours !== null ? snapshot.training.totalHours / hc : null,
   };
 }
