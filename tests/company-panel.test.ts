@@ -27,6 +27,24 @@ test("latest market aggregates reconcile to validated headline totals", () => {
   assert.equal(market.vacancies.administrative, 471);
 });
 
+test("vacancy totals reconcile in every historical period", () => {
+  const expected: Record<string, [number, number]> = {
+    "Jul-Ago 24": [1618, 338],
+    "Sep-Oct 24": [1208, 253],
+    "Nov-Dic 24": [1353, 457],
+    "Ene-Feb 25": [1442, 408],
+    "Mar-Abr 25": [1418, 354],
+    "May-Jun 25": [2022, 472],
+    "Jul-Ago 25": [1853, 471],
+  };
+
+  for (const [period, [operational, administrative]] of Object.entries(expected)) {
+    const market = getMarketSnapshot(period);
+    assert.equal(market.vacancies.operational, operational, `${period}: operational vacancies`);
+    assert.equal(market.vacancies.administrative, administrative, `${period}: administrative vacancies`);
+  }
+});
+
 test("company selection returns the correct company-period row", () => {
   const company = getCompanySnapshot("COMPAÑIA 1", "Jul-Ago 25");
   assert.ok(company);
