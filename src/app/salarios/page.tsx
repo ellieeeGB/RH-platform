@@ -1,87 +1,94 @@
-import { BadgeDollarSign, ChartNoAxesCombined, Gauge, TrendingUp } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { KpiCard } from "@/components/kpi-card";
-import { SalaryDistributionChart, SalaryEntryTrendChart } from "@/components/people-intelligence-charts";
-import { compensationBandCards, compensationData } from "@/lib/people-intelligence-data";
+"use client";
 
-const mxn = (value: number) => new Intl.NumberFormat("es-MX", {
-  style: "currency",
-  currency: "MXN",
-  maximumFractionDigits: 2,
-}).format(value);
+import { BadgeDollarSign, Gauge, TrendingUp } from "lucide-react";
+import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
+import { useFilters } from "@/components/filter-context";
+import { SalaryEntryTrendChart } from "@/components/people-intelligence-charts";
+import { getMarketSalaryPercentile, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
+
+const mxn = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(value);
+const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 
 export default function SalariesPage() {
-  const entry = compensationData.bands[0];
-  const maximum = compensationData.bands[3];
-  const annualEntryGrowth = ((compensationData.entryMedianTrend.at(-1)!.value / compensationData.entryMedianTrend[0].value) - 1) * 100;
+  const { period, company, companyLabel, isMarket } = useFilters();
+  const scope = getScopeSnapshot(company, period);
+  const market = getMarketSnapshot(period);
+  const entry = scope?.salaryDaily.entry ?? null;
+  const maximum = scope?.salaryDaily.max ?? null;
+  const progression = entry && maximum ? maximum / entry : null;
+  const marketGap = !isMarket && entry != null && market.salaryDaily.entry != null ? ((entry / market.salaryDaily.entry) - 1) * 100 : null;
+  const percentile = !isMarket ? getMarketSalaryPercentile(entry, period) : null;
+
+  const bands = [
+    ["Ingreso", scope?.salaryDaily.entry ?? null, market.salaryDaily.entry],
+    ["Intermedio bajo", scope?.salaryDaily.low ?? null, market.salaryDaily.low],
+    ["Intermedio alto", scope?.salaryDaily.high ?? null, market.salaryDaily.high],
+    ["Máximo", scope?.salaryDaily.max ?? null, market.salaryDaily.max],
+  ] as const;
+
+  const maxScale = Math.max(...bands.flatMap(([, own, benchmark]) => [own ?? 0, benchmark ?? 0]), 1);
 
   return (
     <DashboardFrame>
       <PageHeader
-        eyebrow="Compensation Intelligence · benchmark real"
+        eyebrow="Compensación"
         title="Personal y Salarios"
-        description="Conserva las bandas salariales del dashboard original, pero las convierte en distribuciones de mercado con cuartiles, progresión salarial y tendencia histórica."
+        description={isMarket
+          ? "Bandas salariales diarias del mercado para el periodo seleccionado, con una lectura clara de progresión y dispersión."
+          : `${companyLabel}: posición salarial frente a la mediana del mercado en ${period}.`}
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Ingreso mediano" value={mxn(entry.median)} change={Number(annualEntryGrowth.toFixed(1))} changeLabel="vs. Jul–Ago 2024" icon={BadgeDollarSign} />
-        <KpiCard label="Q1–Q3 ingreso" value={`${mxn(entry.q1)}–${mxn(entry.q3)}`} change={0} changeLabel="50% central de la muestra" icon={Gauge} />
-        <KpiCard label="Progresión salarial" value={`${compensationData.salaryProgressionRatio.toFixed(2)}×`} change={0} changeLabel="máximo mediano / ingreso" icon={TrendingUp} />
-        <KpiCard label="Máximo mediano" value={mxn(maximum.median)} change={compensationData.highToMaxPct} changeLabel="salto desde intermedio alto" icon={ChartNoAxesCombined} />
+        <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Salario de ingreso</div><BadgeDollarSign size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{mxn(entry)}</div><div className="mt-2 text-xs text-slate-500">MXN por día</div></article>
+        <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Salario máximo</div><TrendingUp size={18} className="text-violet-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{mxn(maximum)}</div><div className="mt-2 text-xs text-slate-500">banda superior</div></article>
+        <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Progresión</div><Gauge size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{progression == null ? "—" : `${progression.toFixed(2)}×`}</div><div className="mt-2 text-xs text-slate-500">máximo / ingreso</div></article>
+        <article className="panel p-5"><div className="metric-label">{isMarket ? "Referencia" : "Posición de ingreso"}</div><div className="mt-3 text-3xl font-black text-[#07182d]">{isMarket ? "Mediana" : percentile == null ? "—" : `P${percentile}`}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? "40 empresas" : `${pct(marketGap)} vs. mercado`}</div></article>
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_.8fr]">
+      <section className="mt-4 grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
         <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Mercado</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Distribución de bandas salariales</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">Q1, mediana y Q3 de salario diario operativo para 40 compañías. Esto permite ver dispersión y no solo un único promedio.</p>
-          <SalaryDistributionChart />
-        </article>
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Historia</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Mediana del salario de ingreso</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">El mercado pasó de {mxn(compensationData.entryMedianTrend[0].value)} a {mxn(compensationData.entryMedianTrend.at(-1)!.value)} diarios durante la ventana histórica.</p>
-          <SalaryEntryTrendChart />
-        </article>
-      </section>
-
-      <section className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {compensationBandCards.map((row) => (
-          <article key={row.band} className="panel p-5">
-            <div className="eyebrow">{row.band}</div>
-            <div className="mt-2 text-2xl font-black text-slate-950">{mxn(row.median)}</div>
-            <div className="mt-1 text-xs font-semibold text-slate-400">mediana diaria · n={row.n}</div>
-            <div className="mt-5 grid grid-cols-2 gap-2 text-xs">
-              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-[10px] uppercase tracking-wide text-slate-400">Q1</span><strong className="mt-1 block text-slate-800">{mxn(row.q1)}</strong></div>
-              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-[10px] uppercase tracking-wide text-slate-400">Q3</span><strong className="mt-1 block text-slate-800">{mxn(row.q3)}</strong></div>
-              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-[10px] uppercase tracking-wide text-slate-400">Mínimo</span><strong className="mt-1 block text-slate-800">{mxn(row.min)}</strong></div>
-              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-[10px] uppercase tracking-wide text-slate-400">Máximo</span><strong className="mt-1 block text-slate-800">{mxn(row.max)}</strong></div>
-            </div>
-          </article>
-        ))}
-      </section>
-
-      <section className="mt-4 grid gap-4 xl:grid-cols-[.8fr_1.2fr]">
-        <article className="overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-soft">
-          <div className="eyebrow !text-cyan-300">Salary architecture</div>
-          <h2 className="mt-4 text-2xl font-black">La progresión importa tanto como el salario de entrada.</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-300">La mediana pasa de {mxn(entry.median)} al ingreso a {mxn(maximum.median)} en la banda máxima. El salto más grande está entre intermedio alto y máximo: {compensationData.highToMaxPct}%.</p>
-          <div className="mt-6 space-y-2 text-xs text-slate-300">
-            <div className="flex justify-between rounded-xl bg-white/5 p-3"><span>Ingreso → intermedio bajo</span><strong>{compensationData.entryToLowPct}%</strong></div>
-            <div className="flex justify-between rounded-xl bg-white/5 p-3"><span>Intermedio bajo → alto</span><strong>{compensationData.lowToHighPct}%</strong></div>
-            <div className="flex justify-between rounded-xl bg-white/5 p-3"><span>Intermedio alto → máximo</span><strong>{compensationData.highToMaxPct}%</strong></div>
+          <div className="eyebrow">Arquitectura salarial</div>
+          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Bandas frente al mercado</h2>
+          <p className="mt-2 text-xs leading-5 text-slate-400">La longitud muestra el nivel salarial. Cuando eliges una empresa, el marcador cyan es la empresa y el violeta es la mediana del mercado.</p>
+          <div className="mt-8 space-y-7">
+            {bands.map(([label, own, benchmark]) => {
+              const ownWidth = ((own ?? 0) / maxScale) * 100;
+              const marketWidth = ((benchmark ?? 0) / maxScale) * 100;
+              const gap = !isMarket && own != null && benchmark != null && benchmark !== 0 ? ((own / benchmark) - 1) * 100 : null;
+              return (
+                <div key={label}>
+                  <div className="mb-2 flex items-end justify-between gap-4">
+                    <div><div className="text-sm font-extrabold text-slate-900">{label}</div><div className="text-xs text-slate-400">{isMarket ? "Mediana de mercado" : companyLabel}</div></div>
+                    <div className="text-right"><div className="text-xl font-black text-[#07182d]">{mxn(own)}</div>{gap != null && <div className={`text-xs font-black ${gap >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{pct(gap)} vs. mercado</div>}</div>
+                  </div>
+                  <div className="relative h-5 rounded-full bg-slate-100">
+                    {!isMarket && <div className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-violet-300" style={{ width: `${marketWidth}%` }} />}
+                    <div className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-full ${isMarket ? "h-3 bg-cyan-500" : "h-3 bg-cyan-600"}`} style={{ width: `${isMarket ? marketWidth : ownWidth}%` }} />
+                  </div>
+                  {!isMarket && <div className="mt-1 text-[10px] text-slate-400">Mercado: {mxn(benchmark)}</div>}
+                </div>
+              );
+            })}
           </div>
         </article>
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Siguiente capa privada</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Overlay de la empresa contra el mercado</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-500">Cuando el usuario autenticado seleccione su compañía, esta misma distribución mostrará su salario como marcador sobre Q1–mediana–Q3, calculará percentil aproximado y brecha contra mercado. Esa fila empresa-periodo no se publica en este repositorio.</p>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {["Percentil salarial", "Brecha vs. mediana", "Compresión interna"].map((item) => (
-              <div key={item} className="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs font-bold text-slate-400">{item}<br/><span className="mt-1 inline-block text-[10px] font-medium">requiere sesión empresa</span></div>
-            ))}
-          </div>
+
+        <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft md:p-7">
+          <div className="eyebrow !text-cyan-300">Lectura de compensación</div>
+          <h2 className="mt-4 text-3xl font-black leading-tight">{isMarket ? "La progresión salarial ayuda a entender la carrera interna." : marketGap == null ? "No hay suficiente información para comparar este salario." : marketGap >= 0 ? `${companyLabel} está arriba de la mediana de ingreso.` : `${companyLabel} está debajo de la mediana de ingreso.`}</h2>
+          <p className="mt-5 text-sm leading-7 text-slate-300">
+            {isMarket
+              ? `El salario de ingreso mediano es ${mxn(market.salaryDaily.entry)} y la banda máxima mediana llega a ${mxn(market.salaryDaily.max)}.`
+              : `El ingreso reportado es ${mxn(entry)} frente a ${mxn(market.salaryDaily.entry)} del mercado. La comparación usa el mismo bimestre.`}
+          </p>
+          {!isMarket && percentile != null && <div className="mt-7 rounded-2xl bg-white/[.06] p-5"><div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">Percentil aproximado</div><div className="mt-2 text-5xl font-black">P{percentile}</div><div className="mt-2 text-xs leading-5 text-slate-400">Porcentaje de salarios de ingreso de la muestra iguales o menores al valor de la empresa.</div></div>}
         </article>
+      </section>
+
+      <section className="mt-4 panel p-5 md:p-6">
+        <div className="eyebrow">Evolución del mercado</div>
+        <h2 className="mt-1 text-lg font-extrabold text-slate-950">Salario de ingreso a través de los siete bimestres</h2>
+        <p className="mt-2 text-xs leading-5 text-slate-400">Serie de referencia del mercado. El selector de periodo define el corte principal mostrado arriba.</p>
+        <SalaryEntryTrendChart />
       </section>
     </DashboardFrame>
   );
