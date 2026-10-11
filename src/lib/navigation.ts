@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   Radar,
   ShieldCheck,
+  Sparkles,
   Table2,
   UsersRound,
 } from "lucide-react";
@@ -36,7 +37,7 @@ export const navigation: NavigationGroup[] = [
     items: [
       { label: "Inicio", icon: LayoutDashboard, href: "/" },
       { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
-      { label: "Catch Signals", icon: Radar, href: "/signals" },
+      { label: "Señales clave", icon: Radar, href: "/signals" },
     ],
   },
   {
@@ -52,20 +53,21 @@ export const navigation: NavigationGroup[] = [
   {
     label: "People Intelligence",
     items: [
-      { label: "Talent Acquisition", icon: BriefcaseBusiness, href: "/talent-acquisition" },
+      { label: "Reclutamiento", icon: BriefcaseBusiness, href: "/talent-acquisition" },
       { label: "Rotación y retención", icon: UsersRound, href: "/retencion" },
-      { label: "Workforce Planning", icon: BarChart3, href: "/workforce-planning" },
+      { label: "Planeación de plantilla", icon: BarChart3, href: "/workforce-planning" },
       { label: "Relaciones laborales", icon: Handshake, href: "/relaciones-laborales" },
-      { label: "Labor Risk", icon: HeartPulse, href: "/labor-risk" },
-      { label: "Benchmark Intelligence", icon: Activity, href: "/benchmark" },
-      { label: "Scenario Lab", icon: ClipboardCheck, href: "/what-if" },
+      { label: "Ausentismo y riesgo", icon: HeartPulse, href: "/labor-risk" },
+      { label: "Benchmark", icon: Activity, href: "/benchmark" },
+      { label: "Simulador", icon: ClipboardCheck, href: "/what-if" },
+      { label: "Catch AI", icon: Sparkles, href: "/copilot" },
     ],
   },
   {
     label: "Datos y control",
     items: [
-      { label: "Data Atlas", icon: Database, href: "/data-atlas" },
-      { label: "Data Health", icon: ShieldCheck, href: "/data-quality" },
+      { label: "Cobertura del estudio", icon: Database, href: "/data-atlas" },
+      { label: "Calidad de información", icon: ShieldCheck, href: "/data-quality" },
     ],
   },
 ];
