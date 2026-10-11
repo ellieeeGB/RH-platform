@@ -42,8 +42,8 @@ export const navigation: NavigationGroup[] = [
   {
     label: "People Intelligence",
     items: [
-      { label: "Talent Acquisition", icon: BriefcaseBusiness },
-      { label: "Retención y Rotación", icon: UsersRound },
+      { label: "Talent Acquisition", icon: BriefcaseBusiness, href: "/talent-acquisition" },
+      { label: "Retención y Rotación", icon: UsersRound, href: "/retencion" },
       { label: "Workforce Planning", icon: BarChart3 },
       { label: "Labor Risk", icon: HeartPulse },
       { label: "Benchmark Studio", icon: Activity },
