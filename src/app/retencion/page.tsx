@@ -1,90 +1,74 @@
-import { CalendarClock, DoorOpen, ShieldAlert, UserRoundCheck } from "lucide-react";
+"use client";
+
+import { CalendarClock, DoorOpen, UserMinus, UsersRound } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { KpiCard } from "@/components/kpi-card";
-import {
-  ExitAgeChart,
-  ExitReasonsChart,
-  ExitTenureChart,
-  TurnoverTrendChart,
-} from "@/components/people-intelligence-charts";
-import { latestMarket } from "@/lib/benchmark-data";
+import { useFilters } from "@/components/filter-context";
+import { ExitAgeChart, ExitReasonsChart, ExitTenureChart, TurnoverTrendChart } from "@/components/people-intelligence-charts";
+import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 import { retentionData } from "@/lib/people-intelligence-data";
 
-const formatInt = (value: number) => new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
+const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
+const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value.toFixed(1)}%`;
 
 export default function RetentionPage() {
+  const { period, company, companyLabel, isMarket } = useFilters();
+  const scope = getScopeSnapshot(company, period);
+  const market = getMarketSnapshot(period);
+  const metrics = deriveScopeMetrics(scope);
+  const marketMetrics = deriveScopeMetrics(market);
+  const turnoverGap = !isMarket && metrics.turnoverPct != null && marketMetrics.turnoverPct != null ? metrics.turnoverPct - marketMetrics.turnoverPct : null;
+
   return (
     <DashboardFrame>
       <PageHeader
-        eyebrow="People Intelligence · Retention"
-        title="Retención y Rotación"
-        description="Convierte las bajas bimestrales en señales accionables: cuándo se va la gente, en qué edades se concentra la salida y qué motivos predominan."
+        eyebrow="Retención"
+        title="Rotación y Retención"
+        description={isMarket
+          ? "Bajas, movimiento de plantilla y patrones de permanencia para el periodo seleccionado."
+          : `${companyLabel}: rotación bimestral comparada con el mercado, con referencias de causas y antigüedad de salida.`}
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Rotación bimestral" value={`${latestMarket.turnoverBimonthlyPct.toFixed(1)}%`} change={0.13} changeLabel="pp vs. May–Jun" icon={DoorOpen} inverse />
-        <KpiCard label="Early attrition" value={`${retentionData.earlyAttritionUnder3MonthsPct}%`} change={0} changeLabel="bajas antes de 3 meses" icon={CalendarClock} inverse />
-        <KpiCard label="Bajas < 1 año" value={`${retentionData.firstYearExitSharePct}%`} change={0} changeLabel="sobre desglose válido" icon={ShieldAlert} inverse />
-        <KpiCard label="Bajas del bimestre" value={formatInt(latestMarket.exits)} change={1.3} changeLabel="vs. bimestre anterior" icon={UserRoundCheck} inverse />
+        {[
+          ["Rotación bimestral", pct(metrics.turnoverPct), isMarket ? "bajas / headcount del corte" : `mercado: ${pct(marketMetrics.turnoverPct)}`, DoorOpen],
+          ["Bajas", int(scope?.exits), "en el bimestre", UserMinus],
+          ["Balance altas-bajas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, "movimiento neto", UsersRound],
+          ["Movimiento de talento", pct(metrics.movementLoadPct), "altas + bajas / headcount", CalendarClock],
+        ].map(([label, value, note, Icon]) => (
+          <article key={String(label)} className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">{String(label)}</div><Icon size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{String(value)}</div><div className="mt-2 text-xs text-slate-500">{String(note)}</div></article>
+        ))}
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_.8fr]">
+      {!isMarket && turnoverGap != null && (
+        <section className={`mt-4 rounded-[26px] border p-5 ${turnoverGap <= 0 ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}>
+          <div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-500">Comparación con mercado</div>
+          <div className="mt-2 text-2xl font-black text-[#07182d]">{Math.abs(turnoverGap).toFixed(1)} puntos porcentuales {turnoverGap <= 0 ? "por debajo" : "por encima"} del mercado.</div>
+        </section>
+      )}
+
+      <section className="mt-4 grid gap-4 xl:grid-cols-[1.1fr_.9fr]">
         <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Tendencia</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Rotación bimestral estimada</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">Bajas divididas entre el headcount promedio de inicio y fin del periodo; utiliza headcount ajustado solo cuando existe una anomalía crítica marcada.</p>
+          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Evolución del mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Rotación a través de los siete bimestres</h2><p className="mt-2 text-xs leading-5 text-slate-400">Serie histórica de referencia del mercado completo.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado</span></div>
           <TurnoverTrendChart />
         </article>
 
-        <article className="overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-soft">
-          <div className="eyebrow !text-cyan-300">Retention signal</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">El problema principal aparece antes de que el empleado termine de integrarse.</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-300">En las {retentionData.tenureValidCompanies} empresas con desglose de antigüedad consistente, {retentionData.earlyAttritionUnder3MonthsPct}% de las bajas se concentra en los primeros tres meses y {retentionData.firstYearExitSharePct}% antes de cumplir un año.</p>
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-white/5 p-4"><div className="text-2xl font-black">{retentionData.tenureWeightedExits.toLocaleString("es-MX")}</div><div className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">bajas ponderadas con antigüedad válida</div></div>
-            <div className="rounded-2xl bg-white/5 p-4"><div className="text-2xl font-black">42.5%</div><div className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">bajas entre 23 y 30 años</div></div>
-          </div>
-          <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs leading-5 text-slate-300">Hipótesis a investigar: onboarding, expectativa salarial, calidad de selección, transporte/turnos y supervisión de primeras semanas. La plataforma debe probar asociaciones antes de atribuir causalidad.</div>
+        <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft">
+          <div className="eyebrow !text-cyan-300">Referencia de permanencia</div>
+          <h2 className="mt-4 text-2xl font-black leading-tight">La mayor concentración de salidas del mercado ocurre al inicio de la relación laboral.</h2>
+          <p className="mt-4 text-sm leading-6 text-slate-300">En el último corte con desglose consistente, {retentionData.earlyAttritionUnder3MonthsPct}% de las bajas se concentra en los primeros tres meses y {retentionData.firstYearExitSharePct}% antes del primer año.</p>
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.06] p-4 text-xs leading-5 text-slate-300">Conviene revisar este patrón junto con onboarding, salario de entrada, fuente de reclutamiento, transporte, turno y supervisión.</div>
+          <div className="mt-4 text-[10px] font-bold uppercase tracking-[.14em] text-slate-500">Referencia de mercado · Jul–Ago 25</div>
         </article>
       </section>
 
       <section className="mt-4 grid gap-4 xl:grid-cols-2">
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Early attrition</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Antigüedad al momento de la baja</h2>
-          <ExitTenureChart />
-        </article>
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Demografía de salida</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Edad de quienes causaron baja</h2>
-          <ExitAgeChart />
-        </article>
+        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Antigüedad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Cuándo ocurre la baja</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitTenureChart /></article>
+        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Edad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">En qué edades se concentran las bajas</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitAgeChart /></article>
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1fr_.75fr]">
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Motivos reportados</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Principales razones de salida</h2>
-          <p className="mt-2 text-xs leading-5 text-amber-700">La suma de causas reportadas excede las bajas totales en algunas compañías. La gráfica normaliza sobre eventos de causa reportados y no debe interpretarse como porcentaje exacto de las {formatInt(latestMarket.exits)} bajas.</p>
-          <ExitReasonsChart />
-        </article>
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Prioridades</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Qué investigaría RH</h2>
-          <div className="mt-5 space-y-3">
-            {[
-              ["0–90 días", "Separar salida por supervisor, turno, transporte y fuente de reclutamiento."],
-              ["Renuncia + abandono", "Cruzar salario, horas extra, distancia y tiempo de contratación para detectar presión competitiva."],
-              ["23–30 años", "Comparar expectativas de carrera, promociones y capacitación contra cohortes con mayor permanencia."],
-              ["Bajas controlables", "Construir alertas tempranas sin perfilar personas individualmente; trabajar a nivel de cohortes."],
-            ].map(([title, body]) => (
-              <div key={title} className="rounded-2xl border border-slate-100 p-4">
-                <div className="text-sm font-extrabold text-slate-900">{title}</div>
-                <p className="mb-0 mt-1 text-xs leading-5 text-slate-500">{body}</p>
-              </div>
-            ))}
-          </div>
-        </article>
+      <section className="mt-4 panel p-5 md:p-6">
+        <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Motivos reportados</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Principales razones de salida</h2><p className="mt-2 max-w-3xl text-xs leading-5 text-slate-500">Las causas se presentan como distribución de los eventos reportados. Algunas empresas registran más de una causa, por lo que no deben sumarse directamente contra el total de bajas.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div>
+        <ExitReasonsChart />
       </section>
     </DashboardFrame>
   );
