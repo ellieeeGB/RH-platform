@@ -1,16 +1,15 @@
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { WhatIfSimulator } from "@/components/what-if-simulator";
-import { latestMarket } from "@/lib/benchmark-data";
+import { WhatIfLab } from "@/components/what-if-lab";
 
 export default function WhatIfPage() {
   return (
     <DashboardFrame>
       <PageHeader
-        eyebrow="Decision Lab"
-        title="What-If · Workforce Digital Twin"
-        description="Simula cambios en rotación, vacantes y salario con fórmulas transparentes. El objetivo es comparar decisiones, no ocultar supuestos detrás de una predicción negra."
+        eyebrow="Decision Intelligence · What-If"
+        title="Workforce What-If Lab"
+        description="Explora escenarios con fórmulas visibles y supuestos editables. El simulador distingue cálculos determinísticos de futuras predicciones estadísticas."
       />
-      <WhatIfSimulator marketSalaryDaily={latestMarket.salaryBandsDaily.entryMedian} />
+      <WhatIfLab />
     </DashboardFrame>
   );
 }

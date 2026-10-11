@@ -48,7 +48,7 @@ export const navigation: NavigationGroup[] = [
       { label: "Labor Risk", icon: HeartPulse, href: "/labor-risk" },
       { label: "Benchmark Studio", icon: Activity, href: "/benchmark" },
       { label: "Data Quality", icon: ShieldCheck, href: "/data-quality" },
-      { label: "AI HR Copilot", icon: Bot },
+      { label: "AI HR Copilot", icon: Bot, href: "/copilot" },
       { label: "What-If Lab", icon: ClipboardCheck, href: "/what-if" },
     ],
   },
