@@ -11,6 +11,19 @@ type RawDataset = { period: string; columns: string[]; rows: RawValue[][] };
 
 const datasets = [julAgo24, sepOct24, novDic24, eneFeb25, marAbr25, mayJun25, julAgo25] as RawDataset[];
 
+// The original row extraction omitted the final three vacancy responses even though
+// they are present in the source workbook. These values were revalidated directly
+// against the vacancy columns (RB:RC) before enabling company-level filtering.
+const vacancyOverrides: Record<string, Record<string, [number, number]>> = {
+  "Jul-Ago 24": { "COMPAÑIA 38": [320, 60], "COMPAÑIA 39": [75, 15], "COMPAÑIA 40": [0, 2] },
+  "Sep-Oct 24": { "COMPAÑIA 38": [320, 60], "COMPAÑIA 39": [75, 15], "COMPAÑIA 40": [0, 2] },
+  "Nov-Dic 24": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [100, 10], "COMPAÑIA 40": [10, 2] },
+  "Ene-Feb 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [2, 1] },
+  "Mar-Abr 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [3, 4] },
+  "May-Jun 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [0, 1] },
+  "Jul-Ago 25": { "COMPAÑIA 38": [350, 60], "COMPAÑIA 39": [170, 5], "COMPAÑIA 40": [0, 1] },
+};
+
 export const PERIODS = datasets.map((item) => item.period);
 export const COMPANIES = Array.from({ length: 40 }, (_, index) => `COMPAÑIA ${index + 1}`);
 export const MARKET_SCOPE = "market";
@@ -34,20 +47,23 @@ function num(value: RawValue): number | null {
 function toSnapshot(dataset: RawDataset, row: RawValue[]): CompanySnapshot {
   const index = Object.fromEntries(dataset.columns.map((column, idx) => [column, idx]));
   const value = (column: string) => num(row[index[column]]);
+  const company = String(row[index.company]);
   const operational = value("hcOperational");
   const administrative = value("hcAdministrative");
   const other = value("hcOther");
   const total = [operational, administrative, other].some((item) => item !== null)
     ? (operational ?? 0) + (administrative ?? 0) + (other ?? 0)
     : null;
-  const vacanciesOperational = value("vacanciesOperational");
-  const vacanciesAdministrative = value("vacanciesAdministrative");
+
+  const override = vacancyOverrides[dataset.period]?.[company];
+  const vacanciesOperational = override?.[0] ?? value("vacanciesOperational");
+  const vacanciesAdministrative = override?.[1] ?? value("vacanciesAdministrative");
   const vacanciesTotal = vacanciesOperational !== null || vacanciesAdministrative !== null
     ? (vacanciesOperational ?? 0) + (vacanciesAdministrative ?? 0)
     : null;
 
   return {
-    company: String(row[index.company]),
+    company,
     period: dataset.period,
     headcount: { operational, administrative, other, total },
     salaryDaily: {
