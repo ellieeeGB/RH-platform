@@ -1,380 +1,255 @@
+"use client";
+
 import Link from "next/link";
 import {
-  ArrowDownRight,
   ArrowRight,
-  ArrowUpRight,
   BadgeDollarSign,
-  BarChart3,
   BriefcaseBusiness,
-  CheckCircle2,
-  Clock3,
-  Database,
-  MoveRight,
-  ShieldCheck,
-  Sparkles,
+  Building2,
+  CalendarDays,
   TrendingDown,
   TrendingUp,
+  UserMinus,
+  UserPlus,
   UsersRound,
 } from "lucide-react";
-import { HiringPressureChart, WorkforceTrendChart } from "@/components/charts";
 import { DashboardFrame } from "@/components/dashboard-frame";
+import { useFilters } from "@/components/filter-context";
 import {
-  benchmarkData,
-  latestMarket,
-  marketChange,
-  qualitySummary,
-} from "@/lib/benchmark-data";
-import peopleData from "../../data/processed/people-intelligence.json";
+  deriveScopeMetrics,
+  getMarketSalaryPercentile,
+  getMarketSnapshot,
+  getPreviousPeriod,
+  getScopeSnapshot,
+} from "@/lib/company-panel";
 
-const formatInt = (value: number) => new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
-const formatMoney = (value: number) => new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(value);
+const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
+const money = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(value);
+const pct = (value: number | null | undefined, digits = 1) => value == null || !Number.isFinite(value) ? "—" : `${value.toFixed(digits)}%`;
+const deltaPct = (current: number | null | undefined, previous: number | null | undefined) => current != null && previous != null && previous !== 0 ? ((current / previous) - 1) * 100 : null;
 
 export default function Home() {
-  const previous = benchmarkData.periods.at(-2)!;
-  const beforePrevious = benchmarkData.periods.at(-3)!;
-  const previousTurnover = previous.exits / ((beforePrevious.qualityAdjustedHeadcount + previous.qualityAdjustedHeadcount) / 2) * 100;
-  const turnoverDelta = latestMarket.turnoverBimonthlyPct - previousTurnover;
-  const earlyAttrition = peopleData.retention.earlyAttritionUnder3MonthsPct;
+  const { period, company, companyLabel, isMarket } = useFilters();
+  const scope = getScopeSnapshot(company, period);
+  const market = getMarketSnapshot(period);
+  const previousPeriod = getPreviousPeriod(period);
+  const previousScope = previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
+  const metrics = deriveScopeMetrics(scope);
+  const previousMetrics = deriveScopeMetrics(previousScope);
 
-  const stabilityScore = Math.max(0, 100 - latestMarket.turnoverBimonthlyPct * 4.5);
-  const capacityScore = Math.max(0, 100 - latestMarket.hiringPressurePct * 3);
-  const hiringSpeedScore = Math.max(0, 100 - Math.max(0, latestMarket.timeToFillDays.technical - 15) * 2.5);
-  const healthScore = Math.round(stabilityScore * 0.35 + capacityScore * 0.25 + hiringSpeedScore * 0.2 + qualitySummary.score * 0.2);
+  const hcChange = deltaPct(scope?.headcount.total, previousScope?.headcount.total);
+  const hiresChange = deltaPct(scope?.hires, previousScope?.hires);
+  const exitsChange = deltaPct(scope?.exits, previousScope?.exits);
+  const salaryGap = !isMarket && scope?.salaryDaily.entry != null && market.salaryDaily.entry != null
+    ? ((scope.salaryDaily.entry / market.salaryDaily.entry) - 1) * 100
+    : deltaPct(scope?.salaryDaily.entry, previousScope?.salaryDaily.entry);
+  const technicalGap = !isMarket && scope?.timeToFill.technical != null && market.timeToFill.technical != null
+    ? scope.timeToFill.technical - market.timeToFill.technical
+    : scope?.timeToFill.technical != null && previousScope?.timeToFill.technical != null
+      ? scope.timeToFill.technical - previousScope.timeToFill.technical
+      : null;
+  const salaryPercentile = !isMarket ? getMarketSalaryPercentile(scope?.salaryDaily.entry ?? null, period) : null;
 
-  const pulseMetrics = [
-    ["HEADCOUNT", formatInt(latestMarket.headcount), `${latestMarket.headcountChangePct >= 0 ? "+" : ""}${latestMarket.headcountChangePct}%`],
-    ["ROTACIÓN", `${latestMarket.turnoverBimonthlyPct.toFixed(1)}%`, `${turnoverDelta >= 0 ? "+" : ""}${turnoverDelta.toFixed(2)} pp`],
-    ["CONTRATACIONES", formatInt(latestMarket.hires), `${marketChange.hiresPct.toFixed(1)}%`],
-    ["SALARIO INGRESO", formatMoney(latestMarket.salaryBandsDaily.entryMedian), "MXN / día"],
-    ["TIME TO FILL TÉCNICO", `${latestMarket.timeToFillDays.technical} días`, `+${marketChange.technicalTimeToFillDays} días`],
-    ["DATA HEALTH", `${qualitySummary.score}/100`, `${qualitySummary.rulesPassed} reglas válidas`],
+  const primarySignal = metrics.netMovement == null
+    ? "No hay datos suficientes de altas y bajas para este corte."
+    : metrics.netMovement >= 0
+      ? `La plantilla tuvo un balance neto de +${int(metrics.netMovement)} personas.`
+      : `La plantilla cerró con un balance neto de ${int(metrics.netMovement)} personas.`;
+
+  const cards = [
+    {
+      label: "Headcount",
+      value: int(scope?.headcount.total),
+      note: hcChange == null ? "sin comparación anterior" : `${hcChange >= 0 ? "+" : ""}${hcChange.toFixed(1)}% vs. corte anterior`,
+      icon: UsersRound,
+    },
+    {
+      label: "Contrataciones",
+      value: int(scope?.hires),
+      note: hiresChange == null ? "dato del periodo" : `${hiresChange >= 0 ? "+" : ""}${hiresChange.toFixed(1)}% vs. corte anterior`,
+      icon: UserPlus,
+    },
+    {
+      label: "Bajas",
+      value: int(scope?.exits),
+      note: exitsChange == null ? "dato del periodo" : `${exitsChange >= 0 ? "+" : ""}${exitsChange.toFixed(1)}% vs. corte anterior`,
+      icon: UserMinus,
+    },
+    {
+      label: "Vacantes próximas",
+      value: int(scope?.vacancies.total),
+      note: metrics.hiringPressurePct == null ? "sin base suficiente" : `${pct(metrics.hiringPressurePct)} del headcount`,
+      icon: BriefcaseBusiness,
+    },
   ];
 
   return (
     <DashboardFrame>
-      <div className="visual-home -mx-5 -mt-5 md:-mx-8 md:-mt-8">
-        <section className="hero-stage relative min-h-[calc(100vh-80px)] overflow-hidden bg-[#07182d] text-white">
-          <div className="hero-grid absolute inset-0 opacity-40" />
-          <div className="hero-orb hero-orb-a" />
-          <div className="hero-orb hero-orb-b" />
-
-          <div className="relative mx-auto grid min-h-[calc(100vh-80px)] max-w-[1760px] items-center gap-10 px-6 py-12 md:px-10 xl:grid-cols-[.88fr_1.12fr] xl:px-14">
-            <div className="z-10 max-w-3xl animate-reveal">
-              <div className="mb-7 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.28em] text-cyan-300">
-                <span className="h-px w-10 bg-cyan-300/70" /> Catch Consulting Intelligence
+      <div className="-mx-5 -mt-5 overflow-hidden md:-mx-7 md:-mt-7 xl:-mx-8 xl:-mt-8">
+        <section className="relative min-h-[680px] overflow-hidden bg-[#061529] px-6 py-14 text-white md:px-10 xl:px-14 xl:py-20">
+          <div className="absolute inset-0 opacity-40 [background:radial-gradient(circle_at_78%_18%,rgba(34,211,238,.25),transparent_28%),radial-gradient(circle_at_22%_85%,rgba(112,93,248,.22),transparent_28%)]" />
+          <div className="relative mx-auto grid max-w-[1660px] gap-12 xl:grid-cols-[.88fr_1.12fr] xl:items-center">
+            <div className="z-10 max-w-3xl">
+              <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[.18em] text-cyan-300">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><CalendarDays size={12} /> {period}</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><Building2 size={12} /> {companyLabel}</span>
               </div>
-              <h1 className="display-title max-w-4xl text-[3.2rem] font-black leading-[.92] tracking-[-0.07em] sm:text-[4.2rem] xl:text-[5.6rem] 2xl:text-[6.5rem]">
-                Datos que se ven.
-                <span className="block text-gradient-catch">Decisiones que se sienten.</span>
+              <h1 className="mt-7 max-w-4xl text-[3.3rem] font-black leading-[.9] tracking-[-.07em] sm:text-[4.2rem] xl:text-[5.7rem]">
+                Panorama laboral
+                <span className="block text-cyan-300">del bimestre.</span>
               </h1>
               <p className="mt-7 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
-                Una lectura visual del mercado laboral para entender qué cambió, dónde está el riesgo y qué conviene hacer antes de abrir cualquier reporte.
+                {isMarket
+                  ? "Una lectura ejecutiva de plantilla, contratación, rotación, compensación y demanda futura en las 40 empresas participantes."
+                  : `${companyLabel} comparada con el mercado para identificar brechas, presión de talento y cambios relevantes del periodo.`}
               </p>
-
-              <div className="mt-9 flex flex-wrap gap-3">
-                <Link href="#story" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-black text-[#07182d] transition hover:-translate-y-0.5 hover:shadow-2xl">
-                  Explorar el panorama <ArrowDownRight size={15} />
-                </Link>
-                <Link href="/indicadores" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-xs font-black text-white backdrop-blur transition hover:border-cyan-300/50 hover:bg-white/[0.1]">
-                  Ir a KPIs <ArrowRight size={15} />
-                </Link>
-              </div>
-
-              <div className="mt-12 grid max-w-xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10">
-                <div className="bg-[#07182d]/70 p-4 backdrop-blur">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Muestra</div>
-                  <div className="mt-1 text-2xl font-black">40</div>
-                  <div className="text-[10px] text-slate-400">empresas</div>
-                </div>
-                <div className="bg-[#07182d]/70 p-4 backdrop-blur">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Historia</div>
-                  <div className="mt-1 text-2xl font-black">7</div>
-                  <div className="text-[10px] text-slate-400">bimestres</div>
-                </div>
-                <div className="bg-[#07182d]/70 p-4 backdrop-blur">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Calidad</div>
-                  <div className="mt-1 text-2xl font-black">{qualitySummary.score}</div>
-                  <div className="text-[10px] text-slate-400">/100</div>
+              <div className="mt-9 rounded-[28px] border border-white/10 bg-white/[.06] p-5 backdrop-blur-xl md:max-w-xl md:p-6">
+                <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-300">Señal principal</div>
+                <div className="mt-2 text-2xl font-black leading-tight">{primarySignal}</div>
+                <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-300">
+                  <span>Movimiento de talento: <strong className="text-white">{pct(metrics.movementLoadPct)}</strong></span>
+                  <span>·</span>
+                  <span>Presión de contratación: <strong className="text-white">{pct(metrics.hiringPressurePct)}</strong></span>
                 </div>
               </div>
             </div>
 
-            <div className="relative mx-auto h-[560px] w-full max-w-[780px] animate-reveal-delay-1 md:h-[650px] xl:h-[720px]">
-              <div className="absolute left-[4%] top-[7%] h-[71%] w-[62%] rotate-[-3deg] overflow-hidden rounded-[38px] shadow-[0_45px_120px_rgba(0,0,0,.45)] ring-1 ring-white/10">
-                <img
-                  src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=1400&q=88"
-                  alt="Entorno industrial"
-                  className="kenburns h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#061529]/90 via-[#061529]/10 to-cyan-500/10" />
-                <div className="absolute bottom-7 left-7 right-7">
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Market signal</div>
-                  <div className="mt-2 max-w-md text-2xl font-black leading-tight">El talento técnico tarda más en llegar.</div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-300">
-                    <span className="rounded-full bg-rose-400/15 px-2.5 py-1 font-bold text-rose-200">+{marketChange.technicalTimeToFillDays} días</span>
-                    vs. bimestre anterior
+            <div className="relative min-h-[520px] md:min-h-[590px]">
+              <div className="absolute left-[2%] top-[4%] h-[78%] w-[69%] overflow-hidden rounded-[42px] shadow-[0_45px_120px_rgba(0,0,0,.4)] ring-1 ring-white/10">
+                <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=1400&q=88" alt="Operación industrial" className="kenburns h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#061529]/95 via-[#061529]/15 to-transparent" />
+                <div className="absolute bottom-8 left-7 right-7">
+                  <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-300">Cobertura de talento técnico</div>
+                  <div className="mt-2 text-4xl font-black">{scope?.timeToFill.technical ?? "—"} <span className="text-lg text-slate-300">días</span></div>
+                  <div className="mt-2 text-xs text-slate-300">
+                    {technicalGap == null ? "Sin comparación disponible" : isMarket ? `${technicalGap >= 0 ? "+" : ""}${technicalGap.toFixed(0)} días vs. bimestre anterior` : `${technicalGap >= 0 ? "+" : ""}${technicalGap.toFixed(0)} días vs. mercado`}
                   </div>
                 </div>
               </div>
-
-              <div className="absolute right-[2%] top-[18%] h-[42%] w-[39%] rotate-[4deg] overflow-hidden rounded-[30px] border-[6px] border-[#07182d] shadow-[0_30px_90px_rgba(0,0,0,.45)]">
-                <img
-                  src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1000&q=88"
-                  alt="Equipo colaborando"
-                  className="h-full w-full object-cover transition duration-700 hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#07182d]/80" />
+              <div className="absolute right-[1%] top-[17%] h-[43%] w-[40%] rotate-[3deg] overflow-hidden rounded-[32px] border-[6px] border-[#061529] shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1000&q=88" alt="Equipo de trabajo" className="h-full w-full object-cover" />
               </div>
-
-              <div className="floating-card absolute bottom-[13%] right-[4%] w-[45%] rounded-[26px] border border-white/15 bg-white/[0.1] p-5 backdrop-blur-2xl">
-                <div className="flex items-center justify-between">
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-200">Market Health</div>
-                  <Sparkles size={15} className="text-cyan-300" />
-                </div>
-                <div className="mt-3 flex items-end gap-2">
-                  <span className="text-5xl font-black tracking-[-0.07em]">{healthScore}</span>
-                  <span className="pb-1 text-xs text-slate-400">/100</span>
-                </div>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-violet-400" style={{ width: `${healthScore}%` }} />
+              <div className="absolute bottom-[7%] right-[2%] w-[48%] rounded-[28px] border border-white/15 bg-[#16283f]/90 p-5 shadow-2xl backdrop-blur-2xl">
+                <div className="text-[9px] font-black uppercase tracking-[.2em] text-cyan-200">Salario diario de ingreso</div>
+                <div className="mt-2 text-4xl font-black">{money(scope?.salaryDaily.entry)}</div>
+                <div className="mt-2 text-xs text-slate-300">
+                  {isMarket
+                    ? salaryGap == null ? "Sin comparación anterior" : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% vs. corte anterior`
+                    : salaryGap == null ? "Sin benchmark disponible" : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% vs. mediana de mercado`}
                 </div>
               </div>
-
-              <div className="floating-dot absolute left-[2%] top-[6%] grid h-16 w-16 place-items-center rounded-full border border-white/15 bg-cyan-300 text-xl font-black text-[#07182d] shadow-2xl">C</div>
             </div>
           </div>
+        </section>
 
-          <div className="ticker-shell absolute bottom-0 left-0 right-0 border-y border-white/10 bg-white/[0.035] py-3 backdrop-blur-xl">
-            <div className="metric-marquee">
-              {[...pulseMetrics, ...pulseMetrics].map(([label, value, note], index) => (
-                <div key={`${label}-${index}`} className="flex shrink-0 items-center gap-3 pr-10 text-xs">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
-                  <span className="font-black tracking-[0.08em] text-white">{label}</span>
-                  <span className="text-cyan-200">{value}</span>
-                  <span className="text-slate-500">{note}</span>
-                </div>
+        <section className="bg-[#f4f6f9] px-6 py-12 md:px-10 xl:px-14 xl:py-16">
+          <div className="mx-auto max-w-[1660px]">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {cards.map(({ label, value, note, icon: Icon }) => (
+                <article key={label} className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_16px_42px_rgba(15,35,65,.05)] md:p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">{label}</div>
+                    <Icon size={18} className="text-cyan-700" />
+                  </div>
+                  <div className="mt-4 text-4xl font-black tracking-[-.05em] text-[#07182d]">{value}</div>
+                  <div className="mt-2 text-xs font-semibold text-slate-500">{note}</div>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="story" className="bg-[#f4f6f9] px-6 py-24 md:px-10 xl:px-14 xl:py-32">
+        <section className="bg-white px-6 py-20 md:px-10 xl:px-14 xl:py-24">
           <div className="mx-auto max-w-[1660px]">
-            <div className="grid items-end gap-8 lg:grid-cols-[.78fr_1.22fr]">
-              <div className="reveal-on-scroll">
-                <div className="eyebrow">Cómo leer Catch Intelligence</div>
-                <h2 className="mt-4 max-w-xl text-4xl font-black leading-[.98] tracking-[-0.05em] text-[#07182d] md:text-6xl">
-                  Primero la historia. Después el dashboard.
-                </h2>
-              </div>
-              <p className="max-w-3xl text-base leading-8 text-slate-500 lg:justify-self-end lg:text-lg">
-                La plataforma deja de pedirle al usuario que interprete veinte gráficas. Cada sección presenta una señal, la contextualiza y luego abre la evidencia detallada.
-              </p>
-            </div>
-
-            <div className="mt-16 grid gap-4 lg:grid-cols-3">
-              <article className="presentation-card group min-h-[430px] overflow-hidden bg-[#0a2141] text-white">
-                <div className="absolute inset-0 opacity-20 [background:radial-gradient(circle_at_70%_10%,#22d3ee,transparent_35%)]" />
-                <div className="relative flex h-full flex-col justify-between p-7 md:p-9">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black tracking-[0.22em] text-cyan-300">01 · MIDE</span>
-                    <BarChart3 size={20} className="text-cyan-300" />
-                  </div>
-                  <div>
-                    <div className="text-[6rem] font-black leading-none tracking-[-0.09em] text-white/10 md:text-[8rem]">40</div>
-                    <h3 className="-mt-5 text-3xl font-black tracking-tight">Ver el mercado completo.</h3>
-                    <p className="mt-4 max-w-sm text-sm leading-6 text-slate-300">Headcount, salarios, contratación, bajas, beneficios y calidad del dato en una sola lectura.</p>
-                    <Link href="/indicadores" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-cyan-200">Abrir indicadores <MoveRight size={14} /></Link>
-                  </div>
-                </div>
-              </article>
-
-              <article className="presentation-card group min-h-[430px] overflow-hidden bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=88"
-                  alt="Análisis estratégico"
-                  className="absolute inset-0 h-full w-full object-cover transition duration-1000 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07182d] via-[#07182d]/35 to-transparent" />
-                <div className="relative flex h-full flex-col justify-between p-7 text-white md:p-9">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black tracking-[0.22em] text-cyan-200">02 · ANALIZA</span>
-                    <TrendingUp size={20} className="text-cyan-200" />
-                  </div>
-                  <div>
-                    <div className="mb-3 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold backdrop-blur">{earlyAttrition}% de bajas antes de 3 meses</div>
-                    <h3 className="text-3xl font-black tracking-tight">Encontrar la señal dentro del ruido.</h3>
-                    <p className="mt-4 max-w-sm text-sm leading-6 text-slate-200">No basta con saber que existe rotación: importa saber cuándo aparece y dónde concentra riesgo.</p>
-                    <Link href="/retencion" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-cyan-200">Explorar rotación <MoveRight size={14} /></Link>
-                  </div>
-                </div>
-              </article>
-
-              <article className="presentation-card group min-h-[430px] overflow-hidden bg-[#6b5cf5] text-white">
-                <div className="absolute -right-16 top-10 h-64 w-64 rounded-full border-[40px] border-white/10 transition duration-700 group-hover:scale-110" />
-                <div className="absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-cyan-300/30 blur-2xl" />
-                <div className="relative flex h-full flex-col justify-between p-7 md:p-9">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black tracking-[0.22em] text-white/80">03 · DECIDE</span>
-                    <CheckCircle2 size={20} />
-                  </div>
-                  <div>
-                    <div className="text-[5.5rem] font-black leading-none tracking-[-0.08em] text-white/15">WHAT IF?</div>
-                    <h3 className="-mt-4 text-3xl font-black tracking-tight">Mover variables antes de mover presupuesto.</h3>
-                    <p className="mt-4 max-w-sm text-sm leading-6 text-violet-100">Simula rotación, vacantes y ajustes salariales con cálculos trazables antes de ejecutar una decisión.</p>
-                    <Link href="/what-if" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-white">Abrir Scenario Lab <MoveRight size={14} /></Link>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="overflow-hidden bg-white px-6 py-24 md:px-10 xl:px-14 xl:py-32">
-          <div className="mx-auto max-w-[1660px]">
-            <div className="grid gap-12 xl:grid-cols-[.72fr_1.28fr] xl:items-center">
+            <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <div className="eyebrow">The signal</div>
-                <div className="mt-5 text-[6rem] font-black leading-[.8] tracking-[-0.09em] text-[#07182d] md:text-[8rem]">+{marketChange.technicalTimeToFillDays}</div>
-                <div className="mt-4 text-2xl font-black text-[#07182d] md:text-4xl">días para cubrir talento técnico.</div>
-                <p className="mt-5 max-w-lg text-sm leading-7 text-slate-500 md:text-base">La señal cobra sentido al cruzarla con {formatInt(latestMarket.vacancies.total)} plazas próximas y una caída de {Math.abs(marketChange.hiresPct).toFixed(1)}% en contrataciones respecto al corte anterior.</p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link href="/talent-acquisition" className="rounded-full bg-[#07182d] px-5 py-3 text-xs font-black text-white">Ver evidencia</Link>
-                  <Link href="/copilot" className="rounded-full border border-slate-200 px-5 py-3 text-xs font-black text-slate-700">Preguntar a Catch AI</Link>
-                </div>
+                <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-700">Lo importante de este corte</div>
+                <h2 className="mt-3 max-w-4xl text-4xl font-black tracking-[-.055em] text-[#07182d] md:text-6xl">Tres lecturas para orientar la conversación de RH.</h2>
               </div>
-
-              <div className="relative min-h-[620px]">
-                <div className="absolute inset-x-0 top-0 overflow-hidden rounded-[42px] bg-[#f2f6fa] p-6 shadow-[0_35px_90px_rgba(9,30,60,.12)] md:p-8">
-                  <div className="mb-6 flex items-center justify-between gap-4">
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Talent pressure</div>
-                      <h3 className="mt-1 text-xl font-black text-[#07182d]">Demanda futura vs. velocidad de cobertura</h3>
-                    </div>
-                    <div className="rounded-full bg-amber-100 px-3 py-1.5 text-[10px] font-black text-amber-800">ATENCIÓN</div>
-                  </div>
-                  <HiringPressureChart />
-                </div>
-
-                <div className="absolute bottom-0 left-[7%] w-[44%] overflow-hidden rounded-[30px] bg-[#07182d] p-5 text-white shadow-2xl md:p-6">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-300">Vacantes próximas</div>
-                  <div className="mt-2 text-4xl font-black">{formatInt(latestMarket.vacancies.total)}</div>
-                  <div className="mt-2 text-xs leading-5 text-slate-400">{latestMarket.hiringPressurePct}% del headcount de la muestra</div>
-                </div>
-
-                <div className="absolute bottom-[4%] right-[3%] w-[43%] overflow-hidden rounded-[30px] border border-slate-200 bg-white p-5 shadow-xl md:p-6">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-violet-600">Candidatos adecuados</div>
-                  <div className="mt-2 text-4xl font-black text-[#07182d]">{latestMarket.candidateAcceptancePer10Median}/10</div>
-                  <div className="mt-2 text-xs leading-5 text-slate-500">Mediana de la muestra en el último corte.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="relative overflow-hidden bg-[#07182d] px-6 py-24 text-white md:px-10 xl:px-14 xl:py-32">
-          <div className="absolute inset-0 opacity-30 [background:radial-gradient(circle_at_20%_10%,rgba(34,211,238,.3),transparent_26%),radial-gradient(circle_at_80%_85%,rgba(109,93,252,.3),transparent_30%)]" />
-          <div className="relative mx-auto max-w-[1660px]">
-            <div className="grid gap-12 xl:grid-cols-[.8fr_1.2fr] xl:items-end">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-300">Workforce story</div>
-                <h2 className="mt-4 text-4xl font-black leading-none tracking-[-0.055em] md:text-6xl">La gráfica deja de ser el final.<br />Se vuelve evidencia.</h2>
-                <p className="mt-6 max-w-xl text-sm leading-7 text-slate-300 md:text-base">Cada visualización importante vive dentro de una historia: qué ocurrió, por qué importa, qué hipótesis revisar y qué acción tiene sentido probar.</p>
-              </div>
-              <div className="rounded-[36px] border border-white/10 bg-white/[0.055] p-5 backdrop-blur-xl md:p-7">
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">Headcount trend</div>
-                    <div className="mt-1 text-lg font-black">Reportado vs. ajuste analítico</div>
-                  </div>
-                  <Link href="/contexto" className="rounded-full border border-white/10 px-3 py-2 text-[10px] font-bold text-slate-300">Abrir contexto →</Link>
-                </div>
-                <div className="rounded-[26px] bg-white p-4 text-slate-900">
-                  <WorkforceTrendChart />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-[#f4f6f9] px-6 py-24 md:px-10 xl:px-14 xl:py-32">
-          <div className="mx-auto max-w-[1660px]">
-            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <div>
-                <div className="eyebrow">Intelligence Feed</div>
-                <h2 className="mt-3 text-4xl font-black tracking-[-0.05em] text-[#07182d] md:text-6xl">Tres cosas que mirar hoy.</h2>
-              </div>
-              <Link href="/copilot" className="inline-flex items-center gap-2 text-xs font-black text-cyan-800">Explícamelo con Catch AI <ArrowRight size={14} /></Link>
+              <Link href="/reportes" className="inline-flex items-center gap-2 text-xs font-black text-cyan-800">Abrir reporte bimestral <ArrowRight size={14} /></Link>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-3">
-              <article className="insight-poster insight-poster-risk">
-                <div className="poster-number">01</div>
-                <div className="relative z-10 flex h-full flex-col justify-between">
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-rose-200"><span>Riesgo</span><Clock3 size={17} /></div>
-                  <div>
-                    <h3 className="text-3xl font-black leading-tight">Contratación técnica más lenta.</h3>
-                    <p className="mt-4 text-sm leading-6 text-slate-300">De {previous.timeToFill.technical} a {latestMarket.timeToFillDays.technical} días en un bimestre.</p>
-                    <Link href="/talent-acquisition" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-white">Analizar <ArrowRight size={14} /></Link>
-                  </div>
-                </div>
+              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#07182d] p-7 text-white md:p-8">
+                <TrendingUp className="absolute right-7 top-7 text-cyan-300" />
+                <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-300">Movimiento de plantilla</div>
+                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{pct(metrics.movementLoadPct)}</div>
+                <p className="mt-5 max-w-sm text-sm leading-6 text-slate-300">Altas y bajas combinadas respecto al headcount. Ayuda a detectar mucha actividad interna aunque el tamaño de la plantilla cambie poco.</p>
+                <Link href="/retencion" className="mt-8 inline-flex items-center gap-2 text-xs font-black text-white">Ver rotación <ArrowRight size={14} /></Link>
               </article>
 
-              <article className="insight-poster insight-poster-warn">
-                <div className="poster-number">02</div>
-                <div className="relative z-10 flex h-full flex-col justify-between">
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-amber-900"><span>Atención</span><TrendingDown size={17} /></div>
-                  <div>
-                    <h3 className="text-3xl font-black leading-tight text-[#07182d]">Rotación temprana.</h3>
-                    <p className="mt-4 text-sm leading-6 text-slate-700">{earlyAttrition}% de las bajas conciliadas ocurre antes de cumplir tres meses.</p>
-                    <Link href="/retencion" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-[#07182d]">Abrir rotación <ArrowRight size={14} /></Link>
-                  </div>
-                </div>
+              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#ffdf6e] p-7 text-[#07182d] md:p-8">
+                <BriefcaseBusiness className="absolute right-7 top-7" />
+                <div className="text-[10px] font-black uppercase tracking-[.2em] opacity-60">Demanda futura</div>
+                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{pct(metrics.hiringPressurePct)}</div>
+                <p className="mt-5 max-w-sm text-sm leading-6 text-slate-700">Vacantes próximas como proporción de la plantilla. Entre más alto el indicador, mayor capacidad de reclutamiento será necesaria.</p>
+                <Link href="/talent-acquisition" className="mt-8 inline-flex items-center gap-2 text-xs font-black">Ver reclutamiento <ArrowRight size={14} /></Link>
               </article>
 
-              <article className="insight-poster insight-poster-opportunity">
-                <div className="poster-number">03</div>
-                <div className="relative z-10 flex h-full flex-col justify-between">
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-cyan-950"><span>Oportunidad</span><BadgeDollarSign size={17} /></div>
-                  <div>
-                    <h3 className="text-3xl font-black leading-tight text-[#07182d]">Salario de entrada estable.</h3>
-                    <p className="mt-4 text-sm leading-6 text-slate-700">La mediana permanece en {formatMoney(latestMarket.salaryBandsDaily.entryMedian)} diarios: una buena base para simular escenarios.</p>
-                    <Link href="/what-if" className="mt-7 inline-flex items-center gap-2 text-xs font-black text-[#07182d]">Simular <ArrowRight size={14} /></Link>
-                  </div>
-                </div>
+              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#705df8] p-7 text-white md:p-8">
+                <BadgeDollarSign className="absolute right-7 top-7" />
+                <div className="text-[10px] font-black uppercase tracking-[.2em] text-violet-100">Posición salarial</div>
+                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{isMarket ? money(scope?.salaryDaily.entry) : salaryPercentile == null ? "—" : `P${salaryPercentile}`}</div>
+                <p className="mt-5 max-w-sm text-sm leading-6 text-violet-100">
+                  {isMarket ? "Mediana diaria de ingreso del mercado para el periodo seleccionado." : salaryPercentile == null ? "No hay salario de ingreso suficiente para estimar la posición." : `El salario de ingreso de ${companyLabel} se ubica aproximadamente en el percentil ${salaryPercentile} de la muestra.`}
+                </p>
+                <Link href="/salarios" className="mt-8 inline-flex items-center gap-2 text-xs font-black text-white">Ver salarios <ArrowRight size={14} /></Link>
               </article>
             </div>
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-white px-6 py-24 md:px-10 xl:px-14 xl:py-32">
+        {!isMarket && (
+          <section className="bg-[#f4f6f9] px-6 py-20 md:px-10 xl:px-14 xl:py-24">
+            <div className="mx-auto max-w-[1660px]">
+              <div className="grid gap-10 xl:grid-cols-[.72fr_1.28fr] xl:items-center">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[.22em] text-violet-600">{companyLabel} vs. mercado</div>
+                  <h2 className="mt-3 text-4xl font-black tracking-[-.055em] text-[#07182d] md:text-6xl">Tu posición, sin perder el contexto.</h2>
+                  <p className="mt-5 max-w-xl text-sm leading-7 text-slate-500">El código de empresa mantiene la confidencialidad del estudio y permite comparar el resultado propio con las medianas del mercado.</p>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {[
+                    ["Salario de ingreso", money(scope?.salaryDaily.entry), money(market.salaryDaily.entry), salaryGap == null ? "—" : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}%`],
+                    ["TTF técnico", scope?.timeToFill.technical == null ? "—" : `${scope.timeToFill.technical} días`, market.timeToFill.technical == null ? "—" : `${market.timeToFill.technical} días`, technicalGap == null ? "—" : `${technicalGap >= 0 ? "+" : ""}${technicalGap.toFixed(0)} días`],
+                    ["Candidatos adecuados", scope?.acceptedPer10 == null ? "—" : `${scope.acceptedPer10}/10`, market.acceptedPer10 == null ? "—" : `${market.acceptedPer10}/10`, ""],
+                    ["Vacantes próximas", int(scope?.vacancies.total), int(market.vacancies.total), pct(metrics.hiringPressurePct)],
+                  ].map(([label, own, benchmark, difference]) => (
+                    <article key={label} className="rounded-[26px] border border-slate-200 bg-white p-5">
+                      <div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">{label}</div>
+                      <div className="mt-4 flex items-end justify-between gap-4">
+                        <div><div className="text-[10px] text-slate-400">{companyLabel}</div><div className="text-2xl font-black text-[#07182d]">{own}</div></div>
+                        <div className="text-right"><div className="text-[10px] text-slate-400">Mercado</div><div className="text-lg font-black text-slate-600">{benchmark}</div></div>
+                      </div>
+                      {difference && <div className="mt-3 text-xs font-black text-cyan-700">{difference}</div>}
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="bg-white px-6 py-20 md:px-10 xl:px-14 xl:py-24">
           <div className="mx-auto max-w-[1660px]">
-            <div className="grid overflow-hidden rounded-[44px] bg-[#07182d] text-white shadow-[0_45px_120px_rgba(7,24,45,.18)] lg:grid-cols-[1.1fr_.9fr]">
-              <div className="relative p-8 md:p-12 xl:p-16">
-                <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-cyan-400/15 blur-3xl" />
-                <div className="relative">
-                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300">From data to decision</div>
-                  <h2 className="mt-5 max-w-2xl text-4xl font-black leading-[.98] tracking-[-0.05em] md:text-6xl">No necesitas abrir 50 páginas para encontrar el problema.</h2>
-                  <p className="mt-6 max-w-xl text-sm leading-7 text-slate-300 md:text-base">Usa la experiencia visual para entender el panorama y baja a los dashboards cuando necesites evidencia, comparación o detalle operativo.</p>
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <Link href="/benchmark" className="rounded-full bg-cyan-300 px-5 py-3 text-xs font-black text-[#07182d]">Comparar benchmark</Link>
-                    <Link href="/data-quality" className="rounded-full border border-white/15 px-5 py-3 text-xs font-black text-white">Ver calidad del dato</Link>
-                  </div>
-                </div>
-              </div>
-              <div className="relative min-h-[420px] overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1400&q=88"
-                  alt="Consultoría moderna"
-                  className="h-full w-full object-cover transition duration-1000 hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#07182d] via-[#07182d]/20 to-transparent lg:bg-gradient-to-l lg:from-transparent lg:via-[#07182d]/15 lg:to-[#07182d]" />
-                <div className="absolute bottom-7 right-7 rounded-2xl border border-white/15 bg-[#07182d]/70 p-4 backdrop-blur-xl">
-                  <div className="flex items-center gap-2 text-xs font-black"><ShieldCheck size={15} className="text-emerald-300" /> Data quality controlado</div>
-                  <div className="mt-2 text-3xl font-black">{qualitySummary.score}/100</div>
-                  <div className="mt-1 text-[10px] text-slate-400">{qualitySummary.rulesPassed} reglas aprobadas</div>
-                </div>
-              </div>
+            <div className="mb-9">
+              <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Explorar</div>
+              <h2 className="mt-2 text-3xl font-black tracking-[-.045em] text-[#07182d] md:text-5xl">Profundiza donde necesitas decidir.</h2>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                ["Compensación", "Bandas, percentiles y posición contra mercado.", "/salarios", BadgeDollarSign],
+                ["Reclutamiento", "Tiempo de cobertura, candidatos y vacantes.", "/talent-acquisition", BriefcaseBusiness],
+                ["Rotación", "Bajas, antigüedad y causas de salida.", "/retencion", TrendingDown],
+                ["Plantilla", "Demanda futura y planeación de capacidad.", "/workforce-planning", UsersRound],
+              ].map(([title, text, href, Icon]) => (
+                <Link key={String(title)} href={String(href)} className="group rounded-[28px] border border-slate-200 bg-[#f8fafc] p-6 transition hover:-translate-y-1 hover:bg-white hover:shadow-xl">
+                  <Icon size={20} className="text-cyan-700" />
+                  <h3 className="mt-8 text-xl font-black text-[#07182d]">{String(title)}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">{String(text)}</p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-xs font-black text-cyan-800">Abrir <ArrowRight size={14} /></div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
