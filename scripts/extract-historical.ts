@@ -256,11 +256,13 @@ function mapWorksheet(worksheet: ExcelJS.Worksheet): CompanyPeriodRecord[] {
 
 function headcount(record: CompanyPeriodRecord): number | null {
   const values = [record.headcountOperational, record.headcountAdministrative, record.headcountOther];
-  return values.some((value) => value !== null) ? values.reduce((sum, value) => sum + (value ?? 0), 0) : null;
+  return values.some((value) => value !== null)
+    ? values.reduce<number>((sum, value) => sum + (value ?? 0), 0)
+    : null;
 }
 
 function sumNumbers(values: Array<number | null>): number {
-  return values.reduce((sum, value) => sum + (value ?? 0), 0);
+  return values.reduce<number>((sum, value) => sum + (value ?? 0), 0);
 }
 
 function evaluateRule(parts: Array<number | null>, expected: number | null): boolean | null {
