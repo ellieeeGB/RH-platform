@@ -7,8 +7,12 @@ import { navigation } from "@/lib/navigation";
 
 function CatchMark() {
   return (
-    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/10 shadow-inner shadow-white/5">
-      <span className="text-xl font-black tracking-[-0.12em] text-cyan-300">C</span>
+    <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-[0_12px_35px_rgba(0,0,0,.2)] ring-1 ring-white/20">
+      <img
+        src="https://www.catchconsulting.com.mx/assets/iconos/logo-cc-moneda.png"
+        alt="Catch Consulting"
+        className="h-[115%] w-[115%] object-cover"
+      />
     </div>
   );
 }
@@ -17,26 +21,33 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden h-screen w-[292px] shrink-0 overflow-hidden border-r border-white/10 bg-[#07182d] text-white lg:flex lg:flex-col">
+    <aside className="hidden h-screen w-[292px] shrink-0 overflow-hidden border-r border-white/10 bg-[#061529] text-white lg:flex lg:flex-col">
       <div className="relative border-b border-white/10 px-6 py-6">
         <div className="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="relative flex items-center gap-3">
           <CatchMark />
           <div>
             <div className="text-[15px] font-black tracking-tight">Catch Consulting</div>
-            <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300/80">Intelligence OS</div>
+            <div className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.22em] text-cyan-300/80">Intelligence Experience</div>
           </div>
         </div>
       </div>
 
-      <div className="mx-4 mt-4 rounded-2xl border border-white/10 bg-white/[0.055] p-4">
-        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Vista actual</div>
-        <div className="mt-2 flex items-center justify-between gap-3">
-          <div>
-            <div className="text-sm font-bold text-white">Benchmark RH</div>
-            <div className="mt-0.5 text-[11px] text-slate-400">40 empresas · 7 bimestres</div>
+      <div className="mx-4 mt-4 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055]">
+        <div className="relative h-24 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80"
+            alt="Espacio de consultoría"
+            className="h-full w-full object-cover opacity-50"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#061529] via-[#061529]/45 to-transparent" />
+          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
+            <div>
+              <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-200">Vista de mercado</div>
+              <div className="mt-1 text-sm font-black text-white">40 empresas · 7 bimestres</div>
+            </div>
+            <div className="mb-1 h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,.65)]" />
           </div>
-          <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,.65)]" />
         </div>
       </div>
 
