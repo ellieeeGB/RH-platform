@@ -46,10 +46,10 @@ export const navigation: NavigationGroup[] = [
       { label: "Retención y Rotación", icon: UsersRound, href: "/retencion" },
       { label: "Workforce Planning", icon: BarChart3 },
       { label: "Labor Risk", icon: HeartPulse },
-      { label: "Benchmark Studio", icon: Activity },
+      { label: "Benchmark Studio", icon: Activity, href: "/benchmark" },
       { label: "Data Quality", icon: ShieldCheck, href: "/data-quality" },
       { label: "AI HR Copilot", icon: Bot },
-      { label: "What-If Lab", icon: ClipboardCheck },
+      { label: "What-If Lab", icon: ClipboardCheck, href: "/what-if" },
     ],
   },
 ];
