@@ -1,6 +1,9 @@
-import { CalendarDays, Layers3 } from "lucide-react";
+"use client";
+
+import { Building2, CalendarDays } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
+import { useFilters } from "@/components/filter-context";
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +28,8 @@ export function PageHeader({
   title: string;
   description: string;
 }) {
+  const { period, companyLabel, isMarket } = useFilters();
+
   return (
     <section className="mb-8 animate-reveal">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
@@ -34,8 +39,8 @@ export function PageHeader({
           <p className="m-0 max-w-3xl text-sm leading-6 text-slate-500 md:text-[15px]">{description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <div className="filter-chip"><CalendarDays size={14} /> Jul–Ago 2025</div>
-          <div className="filter-chip"><Layers3 size={14} /> Benchmark · 40 empresas</div>
+          <div className="filter-chip"><CalendarDays size={14} /> {period}</div>
+          <div className="filter-chip"><Building2 size={14} /> {isMarket ? "Mercado · 40 empresas" : companyLabel}</div>
         </div>
       </div>
     </section>
