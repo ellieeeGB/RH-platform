@@ -7,7 +7,10 @@ import {
   Building2,
   CircleGauge,
   ClipboardCheck,
+  Database,
+  FileText,
   Gift,
+  Handshake,
   HeartPulse,
   LayoutDashboard,
   Radar,
@@ -29,36 +32,39 @@ type NavigationGroup = {
 
 export const navigation: NavigationGroup[] = [
   {
-    label: "Entender",
+    label: "Resumen",
     items: [
-      { label: "Resumen ejecutivo", icon: LayoutDashboard, href: "/" },
+      { label: "Inicio", icon: LayoutDashboard, href: "/" },
+      { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
       { label: "Catch Signals", icon: Radar, href: "/signals" },
+    ],
+  },
+  {
+    label: "Dashboard RH",
+    items: [
       { label: "Contexto y muestra", icon: Building2, href: "/contexto" },
-      { label: "KPIs y métricas", icon: CircleGauge, href: "/indicadores" },
-    ],
-  },
-  {
-    label: "Talento",
-    items: [
       { label: "Personal y salarios", icon: BadgeDollarSign, href: "/salarios" },
-      { label: "Reclutamiento", icon: BriefcaseBusiness, href: "/talent-acquisition" },
-      { label: "Rotación y retención", icon: UsersRound, href: "/retencion" },
       { label: "Beneficios", icon: Gift, href: "/beneficios" },
+      { label: "Indicadores", icon: CircleGauge, href: "/indicadores" },
+      { label: "Tabulador", icon: Table2, href: "/tabulador" },
     ],
   },
   {
-    label: "Decidir",
+    label: "People Intelligence",
     items: [
-      { label: "Benchmark Intelligence", icon: Activity, href: "/benchmark" },
+      { label: "Talent Acquisition", icon: BriefcaseBusiness, href: "/talent-acquisition" },
+      { label: "Rotación y retención", icon: UsersRound, href: "/retencion" },
       { label: "Workforce Planning", icon: BarChart3, href: "/workforce-planning" },
+      { label: "Relaciones laborales", icon: Handshake, href: "/relaciones-laborales" },
       { label: "Labor Risk", icon: HeartPulse, href: "/labor-risk" },
+      { label: "Benchmark Intelligence", icon: Activity, href: "/benchmark" },
       { label: "Scenario Lab", icon: ClipboardCheck, href: "/what-if" },
     ],
   },
   {
-    label: "Control",
+    label: "Datos y control",
     items: [
-      { label: "Tabulador", icon: Table2, href: "/tabulador" },
+      { label: "Data Atlas", icon: Database, href: "/data-atlas" },
       { label: "Data Health", icon: ShieldCheck, href: "/data-quality" },
     ],
   },
