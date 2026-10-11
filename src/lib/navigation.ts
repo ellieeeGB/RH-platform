@@ -10,6 +10,7 @@ import {
   Gift,
   HeartPulse,
   LayoutDashboard,
+  Radar,
   ShieldCheck,
   Table2,
   UsersRound,
@@ -31,6 +32,7 @@ export const navigation: NavigationGroup[] = [
     label: "Entender",
     items: [
       { label: "Resumen ejecutivo", icon: LayoutDashboard, href: "/" },
+      { label: "Catch Signals", icon: Radar, href: "/signals" },
       { label: "Contexto y muestra", icon: Building2, href: "/contexto" },
       { label: "KPIs y métricas", icon: CircleGauge, href: "/indicadores" },
     ],
