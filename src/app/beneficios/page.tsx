@@ -1,8 +1,11 @@
-import { Gift, HeartHandshake, ShieldCheck, Sparkles } from "lucide-react";
+import { Bus, Car, Gift, HeartHandshake, ShieldCheck, Soup, Sparkles, WalletCards } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
 import { KpiCard } from "@/components/kpi-card";
 import { BenefitPrevalenceChart, BenefitUsageChart } from "@/components/workforce-rewards-charts";
 import { totalRewardsData } from "@/lib/workforce-rewards-data";
+import { rewardsEconomics, vendorEcosystem } from "@/lib/extended-intelligence";
+
+const formatMoney = (value: number) => new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(value);
 
 export default function BenefitsPage() {
   const breadth = totalRewardsData.packageBreadth;
@@ -17,7 +20,7 @@ export default function BenefitsPage() {
       <PageHeader
         eyebrow="Total Rewards · benchmark real"
         title="Beneficios"
-        description="Compara amplitud del paquete, prevalencia de prestaciones, generosidad y uso efectivo para distinguir entre ofrecer un beneficio y que realmente genere valor."
+        description="Compara amplitud, prevalencia, generosidad, uso y economía de las prestaciones. La meta ya no es saber solo quién ofrece un beneficio, sino cuánto cuesta, cuánto se utiliza y qué tan competitivo resulta."
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -38,7 +41,7 @@ export default function BenefitsPage() {
         <article className="overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-soft">
           <div className="eyebrow !text-cyan-300">Rewards signal</div>
           <h2 className="mt-4 text-2xl font-black leading-tight">El paquete competitivo ya no se distingue solo por “tener” la prestación.</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-300">Vales, fondo de ahorro, SGMM y seguro de vida aparecen en más de 80% de la muestra. La diferenciación real empieza en generosidad, cobertura, facilidad de uso y experiencia del colaborador.</p>
+          <p className="mt-4 text-sm leading-6 text-slate-300">Vales, fondo de ahorro, SGMM y seguro de vida aparecen en gran parte de la muestra. La diferenciación real empieza en generosidad, cobertura, costo por persona, facilidad de uso y experiencia del colaborador.</p>
           <div className="mt-6 grid grid-cols-3 gap-2">
             <div className="rounded-2xl bg-white/5 p-3"><div className="text-xl font-black">92.5%</div><div className="mt-1 text-[10px] uppercase text-slate-400">Vales</div></div>
             <div className="rounded-2xl bg-white/5 p-3"><div className="text-xl font-black">90%</div><div className="mt-1 text-[10px] uppercase text-slate-400">Fondo ahorro</div></div>
@@ -98,6 +101,32 @@ export default function BenefitsPage() {
             </div>
           </div>
         </article>
+      </section>
+
+      <section className="mt-4">
+        <div className="mb-4"><div className="eyebrow">Benefit economics</div><h2 className="mt-1 text-xl font-black text-[#07182d]">Lo que cuesta operar la prestación</h2><p className="mt-1 text-xs leading-5 text-slate-400">Valores medianos solo entre empresas con dato numérico válido. Esto convierte beneficios en una conversación de costo, acceso y uso.</p></div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-[26px] bg-[#0a2141] p-5 text-white"><Bus size={18} className="text-cyan-300" /><div className="mt-5 text-3xl font-black">{formatMoney(rewardsEconomics.transport.monthlyCostPerPersonMedian)}</div><div className="mt-1 text-sm font-black">transporte / persona / mes</div><div className="mt-3 text-xs text-slate-400">{rewardsEconomics.transport.routesMedian} rutas medianas · {rewardsEconomics.transport.usageMedianPct}% de uso</div></article>
+          <article className="rounded-[26px] bg-[#ffdf6e] p-5 text-[#07182d]"><Soup size={18} /><div className="mt-5 text-3xl font-black">{formatMoney(rewardsEconomics.cafeteria.mealTotalMedian)}</div><div className="mt-1 text-sm font-black">costo mediano del platillo</div><div className="mt-3 text-xs text-slate-700">empresa paga {formatMoney(rewardsEconomics.cafeteria.companyShareMedian)} · empleado {formatMoney(rewardsEconomics.cafeteria.employeeShareMedian)}</div></article>
+          <article className="rounded-[26px] bg-[#705df8] p-5 text-white"><WalletCards size={18} /><div className="mt-5 text-3xl font-black">{formatMoney(rewardsEconomics.gasoline.monthlyBudgetMedian)}</div><div className="mt-1 text-sm font-black">presupuesto mensual de gasolina</div><div className="mt-3 text-xs text-violet-100">28 empresas lo ofrecen · {rewardsEconomics.gasoline.usageMedianPct}% uso mediano</div></article>
+          <article className="rounded-[26px] border border-slate-200 bg-white p-5"><Car size={18} className="text-cyan-700" /><div className="mt-5 text-3xl font-black text-[#07182d]">{rewardsEconomics.companyCar.companies}/40</div><div className="mt-1 text-sm font-black text-slate-900">asignan auto de compañía</div><div className="mt-3 text-xs text-slate-400">{rewardsEconomics.companyCar.usageMedianPct}% de uso mediano donde se reporta</div></article>
+        </div>
+      </section>
+
+      <section className="mt-4 panel p-5 md:p-6">
+        <div className="eyebrow">Vendor ecosystem</div>
+        <h2 className="mt-1 text-lg font-extrabold text-slate-950">Qué servicios se tercerizan y cómo se califican</h2>
+        <p className="mt-2 text-xs leading-5 text-slate-400">La encuesta contiene adopción y calificación 0–10. Esto permite agregar un módulo de gestión de proveedores sin pedir un dataset adicional.</p>
+        <div className="mt-5 grid gap-3 lg:grid-cols-5">
+          {vendorEcosystem.outsourcingAdoption.map((item) => (
+            <div key={item.service} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div className="text-xs font-black text-slate-900">{item.service}</div>
+              <div className="mt-3 text-2xl font-black text-[#07182d]">{item.pct}%</div>
+              <div className="mt-1 text-[10px] text-slate-400">{item.companies} empresas</div>
+              <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-3 text-[10px] font-bold text-slate-500"><span>rating mediano</span><span className="text-cyan-700">{item.medianRating}/10</span></div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-4 panel p-5 md:p-6">
