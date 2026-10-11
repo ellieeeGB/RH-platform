@@ -1,94 +1,84 @@
 import Link from "next/link";
-import { ArrowRight, Database, Layers3, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Building2, CalendarDays, Layers3, ShieldCheck } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { extendedIntelligence } from "@/lib/extended-intelligence";
 
 const domains = [
-  { title: "Empresa, geografía y muestra", blocks: "Ubicación, industria, capital, antigüedad, procesos, automotriz", route: "/contexto", status: "Activo" },
-  { title: "Relaciones laborales", blocks: "Sindicato, confederación, relación sindical, negociación colectiva, litigios", route: "/relaciones-laborales", status: "Nuevo" },
-  { title: "Workforce", blocks: "HC operativo/administrativo, género, edad, crecimiento histórico", route: "/contexto", status: "Activo" },
-  { title: "Compensación operativa", blocks: "4 bandas salariales, progresión, tiempo por categoría", route: "/salarios", status: "Activo" },
-  { title: "Mercado técnico", blocks: "13 posiciones, mínimo/promedio/máximo mensual y headcount", route: "/salarios", status: "Nuevo" },
-  { title: "Talent Acquisition", blocks: "Contrataciones, escolaridad, time-to-fill, candidate fit, rechazo", route: "/talent-acquisition", status: "Activo" },
-  { title: "Rotación y retención", blocks: "Bajas, causas, antigüedad, edad, rotación 6 meses", route: "/retencion", status: "Activo" },
-  { title: "Ausentismo y salud", blocks: "Faltas, incapacidad, causas, tipo de incapacidad", route: "/labor-risk", status: "Activo" },
-  { title: "Learning & Development", blocks: "Horas de capacitación y perfiles en desarrollo", route: "/indicadores", status: "Ampliar" },
-  { title: "Workforce Planning", blocks: "Vacantes futuras por nivel, rol y escolaridad; HC a un año", route: "/workforce-planning", status: "Activo" },
-  { title: "Fuentes de reclutamiento", blocks: "Mix por operativo, técnico, administrativo y gerencial", route: "/talent-acquisition", status: "Nuevo" },
-  { title: "Total Rewards", blocks: "Vales, ahorro, vacaciones, aguinaldo, bonos, seguros, auto, gasolina", route: "/beneficios", status: "Activo" },
-  { title: "Movilidad y transporte", blocks: "Origen de talento, rutas, uso, costo, comedor, relocalización", route: "/beneficios", status: "Nuevo" },
-  { title: "Vendor ecosystem", blocks: "Servicios tercerizados, proveedor y rating 0–10", route: "/beneficios", status: "Nuevo" },
-  { title: "Early Career", blocks: "Practicantes, apoyo mensual, áreas y beneficios", route: "/indicadores", status: "Nuevo" },
-  { title: "Work Design", blocks: "Turnos, rotación de turnos, jornadas 12 h y flexibilidad", route: "/indicadores", status: "Nuevo" },
-  { title: "Employee Experience", blocks: "Convenios, eventos, ideas, incentivos y bono de permanencia", route: "/signals", status: "Nuevo" },
-  { title: "Social / ESG practices", blocks: "Salud, reciclaje, energía, igualdad, anticorrupción y comunidad", route: "/signals", status: "Nuevo" },
-  { title: "Seguridad y continuidad", blocks: "Contingencias, incidentes, ubicación y denuncias", route: "/labor-risk", status: "Nuevo" },
-  { title: "Benchmark y tabulador", blocks: "Percentiles de mercado, benchmark y posición relativa", route: "/benchmark", status: "Activo" },
+  { title: "Empresa y ubicación", detail: "Ubicación, industria, capital, antigüedad, procesos y contexto automotriz.", route: "/contexto" },
+  { title: "Plantilla", detail: "Headcount operativo y administrativo, género, edad y evolución histórica.", route: "/contexto" },
+  { title: "Compensación", detail: "Bandas salariales, progresión y comparación frente al mercado.", route: "/salarios" },
+  { title: "Posiciones técnicas", detail: "Mercado salarial y headcount para posiciones técnicas relevantes.", route: "/salarios" },
+  { title: "Contratación", detail: "Altas, escolaridad, tiempos de cobertura, candidatos adecuados y rechazo.", route: "/talent-acquisition" },
+  { title: "Fuentes de reclutamiento", detail: "Canales utilizados para perfiles operativos, técnicos, administrativos y gerenciales.", route: "/talent-acquisition" },
+  { title: "Rotación y retención", detail: "Bajas, motivos, antigüedad, edad y rotación acumulada.", route: "/retencion" },
+  { title: "Ausentismo e incapacidades", detail: "Faltas, incapacidades, causas y exposición operativa.", route: "/labor-risk" },
+  { title: "Capacitación", detail: "Horas de formación y esfuerzo de desarrollo por población.", route: "/indicadores" },
+  { title: "Planeación de plantilla", detail: "Vacantes futuras por nivel, rol, escolaridad y dirección esperada del headcount.", route: "/workforce-planning" },
+  { title: "Relaciones laborales", detail: "Sindicato, relación laboral, revisiones e incrementos de negociación colectiva.", route: "/relaciones-laborales" },
+  { title: "Beneficios", detail: "Vales, ahorro, vacaciones, aguinaldo, seguros, auto y gasolina.", route: "/beneficios" },
+  { title: "Movilidad y transporte", detail: "Origen del talento, transporte, rutas, uso, costo y relocalización.", route: "/beneficios" },
+  { title: "Comedor y servicios", detail: "Uso, costos y proveedores de servicios para colaboradores.", route: "/beneficios" },
+  { title: "Practicantes", detail: "Participación, apoyo económico, áreas y beneficios para talento temprano.", route: "/indicadores" },
+  { title: "Turnos y flexibilidad", detail: "Esquemas de turnos, rotación, jornadas y flexibilidad administrativa.", route: "/indicadores" },
+  { title: "Experiencia del colaborador", detail: "Convenios, eventos, ideas, reconocimientos e incentivos de permanencia.", route: "/signals" },
+  { title: "Prácticas sociales", detail: "Salud, igualdad, medio ambiente, anticorrupción y participación comunitaria.", route: "/signals" },
+  { title: "Seguridad y continuidad", detail: "Contingencias, incidentes y medidas relacionadas con continuidad laboral.", route: "/labor-risk" },
+  { title: "Benchmark", detail: "Comparación de mercado, percentiles y posición relativa por indicador.", route: "/benchmark" },
 ];
 
 export default function DataAtlasPage() {
-  const meta = extendedIntelligence.metadata;
   return (
     <DashboardFrame>
       <PageHeader
-        eyebrow="Catch Consulting · Data Foundation"
-        title="Data Atlas"
-        description="Mapa de cobertura del estudio. Sirve para saber qué existe en el dataset, dónde se usa y qué información todavía puede convertirse en una decisión o benchmark."
+        eyebrow="Cobertura del estudio"
+        title="Todo lo que puedes consultar"
+        description="El estudio de Catch abarca mucho más que salarios. Desde aquí puedes identificar rápidamente qué tema necesitas analizar y abrir el módulo correspondiente."
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          [meta.logicalQuestionBlocks, "bloques lógicos", "preguntas agrupadas del estudio"],
-          [meta.effectiveColumns, "columnas útiles", "incluyendo matrices y subpreguntas"],
-          [meta.companyCount, "empresas", "muestra anonimizada por corte"],
-          [meta.periodCount, "bimestres", "serie histórica disponible"],
-        ].map(([value, label, note]) => (
+          ["40", "empresas", "panel participante", Building2],
+          ["7", "bimestres", "historia disponible", CalendarDays],
+          [String(domains.length), "temas de RH", "organizados por decisión", Layers3],
+          ["100%", "anonimizado", "códigos de empresa", ShieldCheck],
+        ].map(([value, label, note, Icon]) => (
           <article key={String(label)} className="panel p-5">
-            <div className="text-4xl font-black tracking-[-.055em] text-[#07182d]">{value}</div>
-            <div className="mt-2 text-sm font-extrabold text-slate-800">{label}</div>
-            <div className="mt-1 text-xs leading-5 text-slate-400">{note}</div>
+            <Icon size={18} className="text-cyan-700" />
+            <div className="mt-4 text-4xl font-black tracking-[-.055em] text-[#07182d]">{String(value)}</div>
+            <div className="mt-2 text-sm font-extrabold text-slate-800">{String(label)}</div>
+            <div className="mt-1 text-xs leading-5 text-slate-400">{String(note)}</div>
           </article>
         ))}
       </section>
 
-      <section className="mt-5 overflow-hidden rounded-[30px] bg-[#07182d] p-6 text-white md:p-8">
-        <div className="grid gap-6 lg:grid-cols-[1.3fr_.7fr] lg:items-center">
+      <section className="mt-5 overflow-hidden rounded-[32px] bg-[#07182d] p-7 text-white md:p-9">
+        <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.22em] text-cyan-300"><Sparkles size={14} /> Diseño del pipeline</div>
-            <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] md:text-5xl">El Excel deja de ser la aplicación. Se vuelve una fuente de datos versionada.</h2>
-            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300">Los extractores encuentran métricas por el texto semántico de pregunta y subpregunta, no solo por coordenadas fijas. Así, un nuevo archivo con el mismo cuestionario puede regenerar los JSON procesados, validarse y alimentar los módulos sin reconstruir la interfaz.</p>
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-300">Una sola fuente para decisiones de RH</div>
+            <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] md:text-5xl">Busca por tema, no por archivo o por número de gráfica.</h2>
+            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300">Selecciona el bimestre y la empresa en la parte superior; después entra al tema que necesitas. Las vistas comparan el resultado seleccionado con el mercado cuando existe información suficiente.</p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-2xl border border-white/10 bg-white/[.06] p-4"><Database className="text-cyan-300" size={18} /><div className="mt-3 text-sm font-black">Raw → Staging → Metrics</div><p className="mb-0 mt-1 text-xs leading-5 text-slate-400">Preserva origen, normaliza preguntas y deriva indicadores.</p></div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.06] p-4"><ShieldCheck className="text-emerald-300" size={18} /><div className="mt-3 text-sm font-black">Privacidad por diseño</div><p className="mb-0 mt-1 text-xs leading-5 text-slate-400">La capa pública contiene agregados; contactos y empresa individual quedan fuera.</p></div>
+          <div className="rounded-[26px] border border-white/10 bg-white/[.06] p-6">
+            <div className="text-sm font-black">Cómo usar esta sección</div>
+            <div className="mt-5 space-y-4 text-sm text-slate-300">
+              <div><strong className="text-white">1.</strong> Elige periodo y empresa.</div>
+              <div><strong className="text-white">2.</strong> Abre el tema que quieres revisar.</div>
+              <div><strong className="text-white">3.</strong> Usa el benchmark para interpretar la posición.</div>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="mt-5">
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <div><div className="eyebrow">Coverage map</div><h2 className="mt-1 text-xl font-black text-[#07182d]">Qué podemos responder con este estudio</h2></div>
-          <div className="hidden items-center gap-2 text-xs font-bold text-slate-400 md:flex"><Layers3 size={15} /> {domains.length} dominios de análisis</div>
-        </div>
+        <div className="mb-5"><div className="eyebrow">Áreas disponibles</div><h2 className="mt-1 text-2xl font-black text-[#07182d]">Cobertura del estudio</h2></div>
         <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {domains.map((domain) => (
             <Link key={domain.title} href={domain.route} className="group rounded-[24px] border border-slate-200/80 bg-white p-5 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_16px_40px_rgba(7,24,45,.07)]">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-sm font-black text-[#07182d]">{domain.title}</div>
-                  <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">{domain.blocks}</p>
-                </div>
-                <span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wide ${domain.status === "Activo" ? "bg-emerald-50 text-emerald-700" : domain.status === "Nuevo" ? "bg-cyan-50 text-cyan-700" : "bg-amber-50 text-amber-700"}`}>{domain.status}</span>
-              </div>
-              <div className="mt-5 flex items-center gap-1 text-[11px] font-black text-slate-400 transition group-hover:text-cyan-700">Abrir módulo <ArrowRight size={13} /></div>
+              <div className="text-sm font-black text-[#07182d]">{domain.title}</div>
+              <p className="mb-0 mt-2 text-xs leading-5 text-slate-500">{domain.detail}</p>
+              <div className="mt-5 flex items-center gap-1 text-[11px] font-black text-slate-400 transition group-hover:text-cyan-700">Abrir análisis <ArrowRight size={13} /></div>
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="mt-5 rounded-[26px] border border-amber-200 bg-amber-50/70 p-5">
-        <div className="text-xs font-black uppercase tracking-[.16em] text-amber-800">Quality guardrail</div>
-        <p className="mb-0 mt-2 text-sm leading-6 text-amber-950/75">No todo campo se publica automáticamente. Matrices con señales sospechosamente universales, baja muestra o inconsistencias de conciliación se mandan primero a Data Health. La cobertura amplia no debe sacrificar confiabilidad.</p>
       </section>
     </DashboardFrame>
   );
