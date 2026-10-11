@@ -4,19 +4,29 @@ import { CalendarClock, DoorOpen, UserMinus, UsersRound } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
 import { useFilters } from "@/components/filter-context";
 import { ExitAgeChart, ExitReasonsChart, ExitTenureChart, TurnoverTrendChart } from "@/components/people-intelligence-charts";
-import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
+import { deriveScopeMetrics, getMarketSnapshot, getPreviousPeriod, getScopeSnapshot } from "@/lib/company-panel";
 import { retentionData } from "@/lib/people-intelligence-data";
 
 const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
 const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value.toFixed(1)}%`;
 
+function turnover(exits: number | null | undefined, closingHc: number | null | undefined, openingHc: number | null | undefined) {
+  if (exits == null || closingHc == null || closingHc <= 0) return null;
+  const averageHc = openingHc != null && openingHc > 0 ? (openingHc + closingHc) / 2 : closingHc;
+  return (exits / averageHc) * 100;
+}
+
 export default function RetentionPage() {
   const { period, company, companyLabel, isMarket } = useFilters();
   const scope = getScopeSnapshot(company, period);
   const market = getMarketSnapshot(period);
+  const previousPeriod = getPreviousPeriod(period);
+  const previousScope = previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
+  const previousMarket = previousPeriod ? getMarketSnapshot(previousPeriod) : null;
   const metrics = deriveScopeMetrics(scope);
-  const marketMetrics = deriveScopeMetrics(market);
-  const turnoverGap = !isMarket && metrics.turnoverPct != null && marketMetrics.turnoverPct != null ? metrics.turnoverPct - marketMetrics.turnoverPct : null;
+  const turnoverPct = turnover(scope?.exits, scope?.headcount.total, previousScope?.headcount.total);
+  const marketTurnoverPct = turnover(market.exits, market.headcount.total, previousMarket?.headcount.total);
+  const turnoverGap = !isMarket && turnoverPct != null && marketTurnoverPct != null ? turnoverPct - marketTurnoverPct : null;
 
   return (
     <DashboardFrame>
@@ -30,7 +40,7 @@ export default function RetentionPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Rotación bimestral", pct(metrics.turnoverPct), isMarket ? "bajas / headcount del corte" : `mercado: ${pct(marketMetrics.turnoverPct)}`, DoorOpen],
+          ["Rotación bimestral", pct(turnoverPct), isMarket ? "bajas / headcount promedio" : `mercado: ${pct(marketTurnoverPct)}`, DoorOpen],
           ["Bajas", int(scope?.exits), "en el bimestre", UserMinus],
           ["Balance altas-bajas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, "movimiento neto", UsersRound],
           ["Movimiento de talento", pct(metrics.movementLoadPct), "altas + bajas / headcount", CalendarClock],
