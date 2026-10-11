@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   BadgeDollarSign,
@@ -15,7 +16,18 @@ import {
   UsersRound,
 } from "lucide-react";
 
-export const navigation = [
+type NavigationItem = {
+  label: string;
+  icon: LucideIcon;
+  href?: string;
+};
+
+type NavigationGroup = {
+  label: string;
+  items: NavigationItem[];
+};
+
+export const navigation: NavigationGroup[] = [
   {
     label: "Operación RH",
     items: [
