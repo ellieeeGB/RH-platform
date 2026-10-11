@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
     "data:extract": "tsx scripts/extract-historical.ts && tsx scripts/extract-people-intelligence.ts && tsx scripts/extract-workforce-rewards.ts"
   },
   "dependencies": {
