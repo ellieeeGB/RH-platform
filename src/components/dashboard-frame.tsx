@@ -1,13 +1,16 @@
+import { CalendarDays, Layers3 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="min-h-screen bg-[#f7f9fc] lg:flex">
       <Sidebar />
-      <div className="min-w-0 flex-1">
+      <div className="relative min-w-0 flex-1 overflow-hidden">
+        <div className="pointer-events-none absolute -right-24 top-20 h-96 w-96 rounded-full bg-cyan-300/10 blur-3xl" />
+        <div className="pointer-events-none absolute left-[35%] top-[38%] h-80 w-80 rounded-full bg-violet-300/10 blur-3xl" />
         <Topbar />
-        <main className="mx-auto max-w-[1600px] p-5 md:p-8">{children}</main>
+        <main className="relative mx-auto max-w-[1540px] p-5 md:p-7 xl:p-8">{children}</main>
       </div>
     </div>
   );
@@ -23,16 +26,17 @@ export function PageHeader({
   description: string;
 }) {
   return (
-    <section className="mb-7 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-      <div>
-        <div className="eyebrow">{eyebrow}</div>
-        <h1 className="mb-2 mt-2 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">{title}</h1>
-        <p className="m-0 max-w-3xl text-sm leading-6 text-slate-500">{description}</p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {["Periodo · Jul–Ago 2025", "Empresa · American Industries", "Benchmark · Cohort similar"].map((label) => (
-          <button key={label} className="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm">{label}</button>
-        ))}
+    <section className="mb-8 animate-reveal">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+        <div className="max-w-4xl">
+          <div className="eyebrow">{eyebrow}</div>
+          <h1 className="mb-3 mt-2 text-3xl font-black tracking-[-0.035em] text-[#0b2140] md:text-[2.65rem] md:leading-[1.05]">{title}</h1>
+          <p className="m-0 max-w-3xl text-sm leading-6 text-slate-500 md:text-[15px]">{description}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <div className="filter-chip"><CalendarDays size={14} /> Jul–Ago 2025</div>
+          <div className="filter-chip"><Layers3 size={14} /> Benchmark · 40 empresas</div>
+        </div>
       </div>
     </section>
   );

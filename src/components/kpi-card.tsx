@@ -20,22 +20,23 @@ export function KpiCard({
   const TrendIcon = change >= 0 ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <div className="panel p-5">
-      <div className="mb-6 flex items-start justify-between">
+    <article className="group relative overflow-hidden rounded-[22px] border border-slate-200/75 bg-white/90 p-5 shadow-[0_12px_34px_rgba(15,35,65,.045)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(15,35,65,.075)]">
+      <div className={`absolute inset-x-0 top-0 h-0.5 ${isPositive ? "bg-gradient-to-r from-emerald-400 to-cyan-400" : "bg-gradient-to-r from-amber-400 to-rose-400"}`} />
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="eyebrow">{label}</div>
-          <div className="mt-2 text-3xl font-black tracking-tight text-slate-950">{value}</div>
+          <div className="metric-label">{label}</div>
+          <div className="mt-2 text-[1.8rem] font-black tracking-[-0.045em] text-[#0b2140]">{value}</div>
         </div>
-        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-slate-50 text-slate-700">
-          <Icon size={21} strokeWidth={1.8} />
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-slate-50 text-slate-500 transition group-hover:bg-cyan-50 group-hover:text-cyan-700">
+          <Icon size={17} strokeWidth={1.8} />
         </div>
       </div>
-      <div className="flex items-center justify-between gap-3 text-xs">
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-bold ${isPositive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
-          <TrendIcon size={13} /> {change > 0 ? "+" : ""}{change}%
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-[11px]">
+        <span className={`inline-flex items-center gap-1 font-black ${isPositive ? "text-emerald-700" : "text-rose-700"}`}>
+          <TrendIcon size={12} /> {change > 0 ? "+" : ""}{change}%
         </span>
-        <span className="text-right text-slate-400">{changeLabel}</span>
+        <span className="text-right font-semibold text-slate-400">{changeLabel}</span>
       </div>
-    </div>
+    </article>
   );
 }
