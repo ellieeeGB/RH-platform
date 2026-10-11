@@ -19,12 +19,12 @@ export const navigation = [
   {
     label: "Operación RH",
     items: [
-      { label: "Executive Pulse", icon: LayoutDashboard, active: true },
-      { label: "Contexto y Muestra", icon: Building2 },
-      { label: "Personal y Salarios", icon: BadgeDollarSign },
-      { label: "Beneficios", icon: Gift },
-      { label: "Indicadores / KPI", icon: CircleGauge },
-      { label: "Tabulador", icon: Table2 },
+      { label: "Executive Pulse", icon: LayoutDashboard, href: "/" },
+      { label: "Contexto y Muestra", icon: Building2, href: "/contexto" },
+      { label: "Personal y Salarios", icon: BadgeDollarSign, href: "/salarios" },
+      { label: "Beneficios", icon: Gift, href: "/beneficios" },
+      { label: "Indicadores / KPI", icon: CircleGauge, href: "/indicadores" },
+      { label: "Tabulador", icon: Table2, href: "/tabulador" },
     ],
   },
   {

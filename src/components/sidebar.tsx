@@ -1,7 +1,13 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { navigation } from "@/lib/navigation";
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="hidden h-screen w-[274px] shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
       <div className="flex h-20 items-center gap-3 border-b border-slate-100 px-6">
@@ -19,18 +25,25 @@ export function Sidebar() {
             <div className="space-y-1">
               {group.items.map((item) => {
                 const Icon = item.icon;
-                return (
-                  <button
-                    key={item.label}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold transition ${
-                      item.active
-                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-                    }`}
-                  >
+                const active = item.href ? pathname === item.href : false;
+                const className = `flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold transition ${
+                  active
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                    : item.href
+                      ? "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                      : "cursor-default text-slate-400"
+                }`;
+
+                return item.href ? (
+                  <Link key={item.label} href={item.href} className={className}>
                     <Icon size={18} strokeWidth={1.9} />
                     <span>{item.label}</span>
-                  </button>
+                  </Link>
+                ) : (
+                  <div key={item.label} className={className} title="Módulo en construcción">
+                    <Icon size={18} strokeWidth={1.9} />
+                    <span>{item.label}</span>
+                  </div>
                 );
               })}
             </div>
