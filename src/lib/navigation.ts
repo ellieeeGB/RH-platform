@@ -44,7 +44,7 @@ export const navigation: NavigationGroup[] = [
     items: [
       { label: "Talent Acquisition", icon: BriefcaseBusiness, href: "/talent-acquisition" },
       { label: "Retención y Rotación", icon: UsersRound, href: "/retencion" },
-      { label: "Workforce Planning", icon: BarChart3 },
+      { label: "Workforce Planning", icon: BarChart3, href: "/workforce-planning" },
       { label: "Labor Risk", icon: HeartPulse },
       { label: "Benchmark Studio", icon: Activity },
       { label: "Data Quality", icon: ShieldCheck, href: "/data-quality" },

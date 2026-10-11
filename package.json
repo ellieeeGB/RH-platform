@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "data:extract": "tsx scripts/extract-historical.ts && tsx scripts/extract-people-intelligence.ts"
+    "data:extract": "tsx scripts/extract-historical.ts && tsx scripts/extract-people-intelligence.ts && tsx scripts/extract-workforce-rewards.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
