@@ -243,3 +243,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .metric-label,.eyebrow{color:#64748b}
 @media(max-width:640px){.panel{border-radius:20px}.panel table{font-size:12px}.filter-chip{max-width:100%;overflow-wrap:anywhere}}
 @media print{aside,header,.skip-link,.print-hidden{display:none!important}main{padding:0!important;max-width:none!important}.panel{box-shadow:none;break-inside:avoid}body{background:white}*{animation:none!important}}
+
+/* Keep comparisons aligned and filters legible in dense dashboard views. */
+main { font-variant-numeric: tabular-nums; }
+main h1, main h2 { text-wrap: balance; }
+main table th, main table td { vertical-align: top; }
+header select { min-height: 24px; }
+@media(max-width:640px) {
+  header > div { gap: 8px; padding: 10px 16px; }
+  header label { min-width: 0; max-width: 100%; }
+  header select { max-width: 155px; }
+}

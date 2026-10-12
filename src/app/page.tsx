@@ -58,7 +58,7 @@ export default function Home() {
 
   const cards = [
     {
-      label: "Headcount",
+      label: "Personas en plantilla",
       value: int(scope?.headcount.total),
       note: hcChange == null ? "sin comparación anterior" : `${hcChange >= 0 ? "+" : ""}${hcChange.toFixed(1)}% vs. corte anterior`,
       icon: UsersRound,
@@ -86,15 +86,15 @@ export default function Home() {
   return (
     <DashboardFrame>
       <div className="-mx-5 -mt-5 overflow-hidden md:-mx-7 md:-mt-7 xl:-mx-8 xl:-mt-8">
-        <section className="relative min-h-[680px] overflow-hidden bg-[#061529] px-6 py-14 text-white md:px-10 xl:px-14 xl:py-20">
+        <section className="relative min-h-[420px] overflow-hidden bg-[#061529] px-6 py-8 text-white md:px-10 xl:px-14 xl:py-10">
           <div className="absolute inset-0 opacity-40 [background:radial-gradient(circle_at_78%_18%,rgba(34,211,238,.25),transparent_28%),radial-gradient(circle_at_22%_85%,rgba(112,93,248,.22),transparent_28%)]" />
-          <div className="relative mx-auto grid max-w-[1660px] gap-12 xl:grid-cols-[.88fr_1.12fr] xl:items-center">
+          <div className="relative mx-auto grid max-w-[1660px] gap-8 xl:grid-cols-[.88fr_1.12fr] xl:items-center">
             <div className="z-10 max-w-3xl">
               <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[.18em] text-cyan-300">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><CalendarDays size={12} /> {period}</span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><Building2 size={12} /> {companyLabel}</span>
               </div>
-              <h1 className="mt-7 max-w-4xl text-[3.3rem] font-black leading-[.9] tracking-[-.07em] sm:text-[4.2rem] xl:text-[5.7rem]">
+              <h1 className="mt-7 max-w-4xl text-[2.5rem] font-black leading-[.9] tracking-[-.07em] sm:text-[3rem] xl:text-[3.6rem]">
                 Panorama laboral
                 <span className="block text-cyan-300">del bimestre.</span>
               </h1>
@@ -114,7 +114,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative min-h-[520px] md:min-h-[590px]">
+            <div className="relative min-h-[320px] md:min-h-[360px]">
               <div className="absolute left-[2%] top-[4%] h-[78%] w-[69%] overflow-hidden rounded-[42px] shadow-[0_45px_120px_rgba(0,0,0,.4)] ring-1 ring-white/10">
                 <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=1400&q=88" alt="Operación industrial" className="kenburns h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#061529]/95 via-[#061529]/15 to-transparent" />
@@ -142,7 +142,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-[#f4f6f9] px-6 py-12 md:px-10 xl:px-14 xl:py-16">
+        <section className="bg-[#f4f6f9] px-6 py-6 md:px-10 xl:px-14 xl:py-8">
           <div className="mx-auto max-w-[1660px]">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {cards.map(({ label, value, note, icon: Icon }) => (
@@ -159,37 +159,37 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-white px-6 py-20 md:px-10 xl:px-14 xl:py-24">
+        <section className="bg-white px-6 py-10 md:px-10 xl:px-14 xl:py-12">
           <div className="mx-auto max-w-[1660px]">
             <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-700">Lo importante de este corte</div>
-                <h2 className="mt-3 max-w-4xl text-4xl font-black tracking-[-.055em] text-[#07182d] md:text-6xl">Tres lecturas para orientar la conversación de RH.</h2>
+                <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-[-.04em] text-[#07182d] md:text-4xl">Dónde enfocar la atención.</h2>
               </div>
               <Link href="/reportes" className="inline-flex items-center gap-2 text-xs font-black text-cyan-800">Abrir reporte bimestral <ArrowRight size={14} /></Link>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-3">
-              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#07182d] p-7 text-white md:p-8">
+              <article className="relative min-h-[290px] overflow-hidden rounded-[34px] bg-[#07182d] p-7 text-white md:p-8">
                 <TrendingUp className="absolute right-7 top-7 text-cyan-300" />
                 <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-300">Movimiento de plantilla</div>
-                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{pct(metrics.movementLoadPct)}</div>
+                <div className="mt-8 text-[3.5rem] font-black leading-none tracking-[-.08em]">{pct(metrics.movementLoadPct)}</div>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-slate-300">Altas y bajas combinadas respecto al headcount. Ayuda a detectar mucha actividad interna aunque el tamaño de la plantilla cambie poco.</p>
                 <Link href="/retencion" className="mt-8 inline-flex items-center gap-2 text-xs font-black text-white">Ver rotación <ArrowRight size={14} /></Link>
               </article>
 
-              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#ffdf6e] p-7 text-[#07182d] md:p-8">
+              <article className="relative min-h-[290px] overflow-hidden rounded-[34px] bg-[#ffdf6e] p-7 text-[#07182d] md:p-8">
                 <BriefcaseBusiness className="absolute right-7 top-7" />
                 <div className="text-[10px] font-black uppercase tracking-[.2em] opacity-60">Demanda futura</div>
-                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{pct(metrics.hiringPressurePct)}</div>
+                <div className="mt-8 text-[3.5rem] font-black leading-none tracking-[-.08em]">{pct(metrics.hiringPressurePct)}</div>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-slate-700">Vacantes próximas como proporción de la plantilla. Entre más alto el indicador, mayor capacidad de reclutamiento será necesaria.</p>
                 <Link href="/talent-acquisition" className="mt-8 inline-flex items-center gap-2 text-xs font-black">Ver reclutamiento <ArrowRight size={14} /></Link>
               </article>
 
-              <article className="relative min-h-[370px] overflow-hidden rounded-[34px] bg-[#705df8] p-7 text-white md:p-8">
+              <article className="relative min-h-[290px] overflow-hidden rounded-[34px] bg-[#705df8] p-7 text-white md:p-8">
                 <BadgeDollarSign className="absolute right-7 top-7" />
                 <div className="text-[10px] font-black uppercase tracking-[.2em] text-violet-100">Posición salarial</div>
-                <div className="mt-16 text-[4.8rem] font-black leading-none tracking-[-.08em]">{isMarket ? money(scope?.salaryDaily.entry) : salaryPercentile == null ? "—" : `P${salaryPercentile}`}</div>
+                <div className="mt-8 text-[3.5rem] font-black leading-none tracking-[-.08em]">{isMarket ? money(scope?.salaryDaily.entry) : salaryPercentile == null ? "—" : `P${salaryPercentile}`}</div>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-violet-100">
                   {isMarket ? "Mediana diaria de ingreso del mercado para el periodo seleccionado." : salaryPercentile == null ? "No hay salario de ingreso suficiente para estimar la posición." : `El salario de ingreso de ${companyLabel} se ubica aproximadamente en el percentil ${salaryPercentile} de la muestra.`}
                 </p>
@@ -200,12 +200,12 @@ export default function Home() {
         </section>
 
         {!isMarket && (
-          <section className="bg-[#f4f6f9] px-6 py-20 md:px-10 xl:px-14 xl:py-24">
+          <section className="bg-[#f4f6f9] px-6 py-10 md:px-10 xl:px-14 xl:py-12">
             <div className="mx-auto max-w-[1660px]">
               <div className="grid gap-10 xl:grid-cols-[.72fr_1.28fr] xl:items-center">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[.22em] text-violet-600">{companyLabel} vs. mercado</div>
-                  <h2 className="mt-3 text-4xl font-black tracking-[-.055em] text-[#07182d] md:text-6xl">Tu posición, sin perder el contexto.</h2>
+                  <h2 className="mt-3 text-3xl font-black tracking-[-.04em] text-[#07182d] md:text-4xl">Tu posición, sin perder el contexto.</h2>
                   <p className="mt-5 max-w-xl text-sm leading-7 text-slate-500">El código de empresa mantiene la confidencialidad del estudio y permite comparar el resultado propio con las medianas del mercado.</p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
@@ -230,7 +230,7 @@ export default function Home() {
           </section>
         )}
 
-        <section className="bg-white px-6 py-20 md:px-10 xl:px-14 xl:py-24">
+        <section className="bg-white px-6 py-10 md:px-10 xl:px-14 xl:py-12">
           <div className="mx-auto max-w-[1660px]">
             <div className="mb-9">
               <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Explorar</div>

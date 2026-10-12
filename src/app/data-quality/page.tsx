@@ -39,7 +39,7 @@ export default function DataQualityPage() {
         </article>
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_.8fr]">
+      <section className="mt-4 grid items-start gap-4">
         <article className="panel overflow-hidden">
           <div className="border-b border-slate-100 p-5 md:p-6">
             <div className="eyebrow">Alertas de alto impacto</div>
@@ -47,7 +47,7 @@ export default function DataQualityPage() {
             <p className="mt-2 text-xs leading-5 text-slate-500">Se conserva siempre el valor reportado. Cuando una cifra rompe fuertemente su propia serie histórica, se muestra también una referencia ajustada para que el comparativo no se distorsione.</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[640px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400"><tr><th className="px-6 py-3">Periodo</th><th className="px-6 py-3">Reportado</th><th className="px-6 py-3">Referencia para análisis</th><th className="px-6 py-3">Diferencia</th><th className="px-6 py-3">Estado</th></tr></thead>
               <tbody>
                 {anomalyPeriods.map((period) => {
@@ -70,7 +70,7 @@ export default function DataQualityPage() {
         <article className="panel p-5 md:p-6">
           <div className="eyebrow">Qué se revisa</div>
           <h2 className="mt-1 text-lg font-extrabold text-slate-950">Controles que protegen el benchmark</h2>
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {[
               ["Altas", "El total coincide con nuevas posiciones y reemplazos."],
               ["Bajas", "El total se compara con sus principales desgloses y causas."],

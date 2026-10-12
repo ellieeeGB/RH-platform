@@ -1,113 +1,76 @@
-import { Building2, LockKeyhole, Scale, ShieldCheck } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Building2, Scale, Timer, UsersRound } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
 import { KpiCard } from "@/components/kpi-card";
-import { BenchmarkSalaryRangeChart } from "@/components/risk-benchmark-charts";
-import { benchmarkPrivacy, benchmarkReference, marketPulse } from "@/lib/risk-benchmark-data";
+import { useFilters } from "@/components/filter-context";
+import { getCompanySnapshot } from "@/lib/company-panel";
+import { comparisonPeers, distribution, validSalaryBands, type PeerSize, type PeerUnion } from "@/lib/benchmark-comparison";
 
-function formatValue(value: number, format: string) {
-  if (format === "currency") return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(value);
-  if (format === "percent") return `${value.toFixed(1)}%`;
-  if (format === "days") return `${value} días`;
-  if (format === "score6") return `${value.toFixed(2)} / 6`;
-  if (format === "hours") return `${value.toFixed(2)} h`;
-  return value.toLocaleString("es-MX");
-}
+const money = (n: number | null | undefined) => n == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(n);
+const number = (n: number | null | undefined, suffix = "") => n == null ? "—" : `${new Intl.NumberFormat("es-MX", { maximumFractionDigits: 1 }).format(n)}${suffix}`;
+const bands = [["entry", "Ingreso"], ["low", "Intermedio bajo"], ["high", "Intermedio alto"], ["max", "Máximo"]] as const;
 
 export default function BenchmarkStudioPage() {
-  return (
-    <DashboardFrame>
-      <PageHeader
-        eyebrow="People Intelligence · Benchmark Studio"
-        title="Benchmark Studio"
-        description="Compara métricas contra referencias agregadas del mercado sin revelar a las compañías participantes. Los filtros futuros respetarán un mínimo de cinco empresas por cohorte."
-      />
+  const { period, company, companyLabel, isMarket } = useFilters();
+  const [size, setSize] = useState<PeerSize>("all");
+  const [union, setUnion] = useState<PeerUnion>("all");
+  const peers = comparisonPeers(period, size, union, isMarket ? undefined : company);
+  const own = isMarket ? null : getCompanySnapshot(company, period);
+  const salaryPeers = peers.filter(validSalaryBands);
+  const salary = bands.map(([key, label]) => ({key, label, ...distribution(salaryPeers.map(row => row.salaryDaily[key])), own: own && validSalaryBands(own) ? own.salaryDaily[key] : null}));
+  const coverage = distribution(peers.map(row => row.timeToFill.technical));
+  const candidates = distribution(peers.map(row => row.acceptedPer10));
+  const maximum = Math.max(1, ...salary.flatMap(row => [row.q3 ?? 0, row.own ?? 0]));
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Empresas en muestra" value={String(marketPulse.companyCount)} change={0} changeLabel="cohorte completa" icon={Building2} />
-        <KpiCard label="Privacidad mínima" value={`k ≥ ${benchmarkPrivacy.minimumCohortSize}`} change={0} changeLabel="empresas por benchmark" icon={LockKeyhole} />
-        <KpiCard label="Salario ingreso mediano" value={formatValue(marketPulse.salaryEntryMedian, "currency")} change={0} changeLabel={`Q1 ${formatValue(marketPulse.salaryEntryQ1, "currency")}`} icon={Scale} />
-        <KpiCard label="Headcount mercado" value={marketPulse.headcount.toLocaleString("es-MX")} change={marketPulse.headcountChangePct} changeLabel="vs. bimestre anterior" icon={ShieldCheck} />
-      </section>
-
-      <section className="mt-4 grid gap-4 xl:grid-cols-[.8fr_1.2fr]">
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Cohort Builder</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Define contra quién comparar</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">La UI ya define la política que usará el backend privado: cualquier combinación que deje menos de cinco compañías se bloquea.</p>
-          <div className="mt-5 space-y-4">
-            {[
-              ["Tamaño", ["Todas", "Pequeña", "Mediana", "Grande"]],
-              ["Relación laboral", ["Todas", "Sindicalizada", "No sindicalizada"]],
-              ["Personal", ["Todos", "Operativo", "Administrativo"]],
-              ["Periodo", [marketPulse.currentPeriod, "Últimos 3", "Histórico"]],
-            ].map(([label, options]) => (
-              <div key={String(label)}>
-                <div className="mb-2 text-[11px] font-black uppercase tracking-wide text-slate-400">{String(label)}</div>
-                <div className="flex flex-wrap gap-2">
-                  {(options as string[]).map((option, index) => <button key={option} className={`rounded-xl border px-3 py-2 text-xs font-bold ${index === 0 ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-500"}`}>{option}</button>)}
-                </div>
-              </div>
-            ))}
+  return <DashboardFrame>
+    <PageHeader eyebrow="Comparación de mercado" title="Tu empresa, en contexto" scopeMode="active" description="Compara salarios y contratación con empresas del mismo bimestre. Elige una empresa en la barra superior para ver su posición frente al grupo." />
+    <section aria-label="Grupo de comparación" className="panel mb-5 p-5">
+      <div className="flex flex-wrap items-end gap-4">
+        <label className="flex min-w-0 flex-1 flex-col gap-2 text-sm font-semibold text-slate-700">Tamaño de plantilla
+          <select className="rounded-xl border border-slate-300 bg-white px-3 py-2.5" value={size} onChange={e=>setSize(e.target.value as PeerSize)}>
+            <option value="all">Todos los tamaños</option><option value="under250">Menos de 250 personas</option><option value="250to999">250 a 999 personas</option><option value="1000plus">1,000 personas o más</option>
+          </select>
+        </label>
+        <label className="flex min-w-0 flex-1 flex-col gap-2 text-sm font-semibold text-slate-700">Relación laboral
+          <select className="rounded-xl border border-slate-300 bg-white px-3 py-2.5" value={union} onChange={e=>setUnion(e.target.value as PeerUnion)}>
+            <option value="all">Todas las empresas</option><option value="yes">Sindicalizadas</option><option value="no">No sindicalizadas</option>
+          </select>
+        </label>
+        <button className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50" onClick={()=>{setSize("all");setUnion("all");}}>Restablecer grupo</button>
+      </div>
+      <p role="status" className="mb-0 mt-3 text-sm text-slate-600">{peers.length} empresas en el grupo{!isMarket && ` · ${companyLabel} se compara por separado`}. Cada referencia necesita al menos cinco respuestas válidas.</p>
+    </section>
+    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <KpiCard label="Empresas comparables" value={String(peers.length)} changeLabel={period} icon={Building2}/>
+      <KpiCard label="Ingreso diario · mediana" value={money(salary[0].median)} changeLabel={`${salary[0].n} respuestas válidas · MXN/día`} icon={Scale}/>
+      <KpiCard label="Cobertura técnica · mediana" value={number(coverage.median," días")} changeLabel={`${coverage.n} respuestas con plazo exacto`} icon={Timer}/>
+      <KpiCard label="Candidatos adecuados" value={number(candidates.median," de cada 10")} changeLabel={`${candidates.n} respuestas válidas · mediana`} icon={UsersRound}/>
+    </section>
+    <section className="panel mt-5 p-5 md:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div><div className="eyebrow">Salario diario · MXN</div><h2 className="mt-1 text-xl font-extrabold">¿Dónde queda tu salario frente al grupo?</h2><p className="mt-2 text-sm text-slate-600">La franja reúne al 50% central de las respuestas; la línea marca la mediana.</p></div>
+        <div className="flex flex-wrap gap-3 text-xs font-semibold text-slate-700"><span>━ Grupo (Q1–Q3)</span>{!isMarket && <span className="text-violet-700">● {companyLabel}</span>}</div>
+      </div>
+      {salary[0].median == null ? <div className="my-5 rounded-2xl bg-amber-50 p-6 text-amber-950"><h3 className="font-bold">Faltan respuestas para esta comparación</h3><p className="mb-0 mt-2 text-sm">Hay {salary[0].n} empresas con bandas salariales completas y ordenadas. Amplía el grupo o cambia de bimestre.</p></div> : <div className="mt-6 space-y-6">
+        {salary.map(row=><div key={row.key} className="grid gap-2 md:grid-cols-[150px_1fr_140px] md:items-center">
+          <div className="text-sm font-bold">{row.label}</div>
+          <div aria-hidden="true" className="relative mx-2 h-9">
+            <div className="absolute inset-x-0 top-4 h-px bg-slate-200"/>
+            <div className="absolute top-2.5 h-3 rounded-full bg-cyan-200" style={{left:`${row.q1!/maximum*100}%`,width:`${(row.q3!-row.q1!)/maximum*100}%`}}/>
+            <span className="absolute top-1.5 h-5 w-1 -translate-x-1/2 rounded bg-cyan-800" style={{left:`${row.median!/maximum*100}%`}}/>
+            {row.own != null && <span className="absolute top-2 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-white bg-violet-600 ring-1 ring-violet-600" style={{left:`${row.own/maximum*100}%`}}/>}
           </div>
-          <div className="mt-6 rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-xs leading-5 text-cyan-900"><strong>Privacy Guard activo.</strong> {benchmarkPrivacy.policy}</div>
-        </article>
-
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Compensation reference</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Q1 · Mediana · Q3 salarial</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">En una sesión autenticada, la posición de la empresa aparecerá como marcador sobre esta distribución agregada.</p>
-          <BenchmarkSalaryRangeChart />
-        </article>
-      </section>
-
-      <section className="mt-4 panel overflow-hidden">
-        <div className="border-b border-slate-100 p-5 md:p-6">
-          <div className="eyebrow">Market reference</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Métricas comparables de la cohorte completa</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px] text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
-              <tr><th className="px-6 py-3">Dominio</th><th className="px-6 py-3">Métrica</th><th className="px-6 py-3">Referencia</th><th className="px-6 py-3">Contexto</th><th className="px-6 py-3">Comparación privada</th></tr>
-            </thead>
-            <tbody>
-              {benchmarkReference.map((row) => (
-                <tr key={row.metric} className="border-t border-slate-100">
-                  <td className="px-6 py-3"><span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">{row.category}</span></td>
-                  <td className="px-6 py-3 font-semibold text-slate-800">{row.metric}</td>
-                  <td className="px-6 py-3 font-black text-slate-950">{formatValue(row.current, row.format)}</td>
-                  <td className="px-6 py-3 text-xs text-slate-500">{row.context}</td>
-                  <td className="px-6 py-3 text-xs font-bold text-cyan-700">Disponible con sesión empresa →</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1fr_.8fr]">
-        <article className="overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-soft">
-          <div className="eyebrow !text-cyan-300">Benchmark principle</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">Un benchmark útil compara pares; un benchmark seguro no revela quiénes son.</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-300">La siguiente capa del producto calculará percentiles y brechas por empresa usando datos privados, pero solo devolverá estadísticas agregadas cuando el grupo de comparación cumpla el umbral de confidencialidad.</p>
-          <div className="mt-6 grid grid-cols-3 gap-2">
-            <div className="rounded-2xl bg-white/5 p-3"><div className="text-xl font-black">{marketPulse.companyCount}</div><div className="mt-1 text-[10px] uppercase text-slate-400">mercado completo</div></div>
-            <div className="rounded-2xl bg-white/5 p-3"><div className="text-xl font-black">k≥{benchmarkPrivacy.minimumCohortSize}</div><div className="mt-1 text-[10px] uppercase text-slate-400">mínimo cohorte</div></div>
-            <div className="rounded-2xl bg-white/5 p-3"><div className="text-xl font-black">Q1–Q3</div><div className="mt-1 text-[10px] uppercase text-slate-400">contexto, no ranking crudo</div></div>
-          </div>
-        </article>
-        <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Market pulse</div>
-          <h2 className="mt-1 text-lg font-extrabold text-slate-950">Lectura rápida del corte</h2>
-          <div className="mt-5 space-y-3">
-            <div className="flex justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-500">Rotación</span><strong>{marketPulse.turnover.toFixed(1)}%</strong></div>
-            <div className="flex justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-500">TTF técnico</span><strong>{marketPulse.technicalTimeToFill} días</strong></div>
-            <div className="flex justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-500">Hiring pressure</span><strong>{marketPulse.hiringPressure.toFixed(2)}%</strong></div>
-            <div className="flex justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-500">Amplitud rewards</span><strong>{marketPulse.benefitBreadth.toFixed(2)} / 6</strong></div>
-            <div className="flex justify-between rounded-2xl bg-slate-50 p-4 text-sm"><span className="text-slate-500">Contrataciones vs. previo</span><strong className={marketPulse.hiresChangePct < 0 ? "text-amber-700" : "text-emerald-700"}>{marketPulse.hiresChangePct}%</strong></div>
-          </div>
-        </article>
-      </section>
-    </DashboardFrame>
-  );
+          <div className="text-sm font-bold md:text-right">{money(row.median)}<span className="ml-1 text-xs font-normal text-slate-500">mediana</span></div>
+        </div>)}
+      </div>}
+      <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
+        <table className="w-full min-w-[620px] text-left text-sm"><caption className="sr-only">Bandas salariales del grupo y empresa seleccionada, en pesos diarios</caption><thead className="bg-slate-50 text-slate-600"><tr>{["Banda","Q1","Mediana","Q3", "Tu empresa", "Brecha vs. mediana"].map(label=><th key={label} className="px-4 py-3 font-semibold">{label}</th>)}</tr></thead>
+          <tbody>{salary.map(row=><tr key={row.key} className="border-t border-slate-100"><th className="px-4 py-3 font-semibold">{row.label}</th><td className="px-4 py-3">{money(row.q1)}</td><td className="px-4 py-3 font-bold">{money(row.median)}</td><td className="px-4 py-3">{money(row.q3)}</td><td className="px-4 py-3 text-violet-700">{money(row.own)}</td><td className="px-4 py-3">{row.own != null && row.median != null ? number((row.own/row.median-1)*100,"%") : "—"}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <p className="mb-0 mt-4 text-xs leading-5 text-slate-600">Q1: 25% de las respuestas queda por debajo. Q3: 75% queda por debajo. La brecha indica una diferencia salarial, no si el salario es adecuado para un puesto específico. Los tiempos mayores de 60 días no entran en la mediana de plazos exactos.</p>
+    </section>
+  </DashboardFrame>;
 }
