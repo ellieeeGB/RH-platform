@@ -16,11 +16,11 @@ function CatchMark() {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden h-screen w-[278px] shrink-0 border-r border-white/10 bg-[#061529] text-white lg:sticky lg:top-0 lg:flex lg:flex-col">
+    <aside aria-label="Navegación principal" className={mobile ? "flex h-full w-full flex-col bg-[#061529] text-white" : "hidden h-screen w-[278px] shrink-0 border-r border-white/10 bg-[#061529] text-white lg:sticky lg:top-0 lg:flex lg:flex-col"}>
       <div className="relative border-b border-white/10 px-5 py-5">
         <div className="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="relative flex items-center gap-3">
@@ -57,7 +57,7 @@ export function Sidebar() {
                 }`;
 
                 return (
-                  <Link key={item.label} href={item.href ?? "#"} className={className}>
+                  <Link key={item.label} href={item.href ?? "#"} onClick={onNavigate} aria-current={active ? "page" : undefined} className={className}>
                     {active && <span className="absolute left-0 h-5 w-0.5 rounded-full bg-cyan-300" />}
                     <Icon size={16} strokeWidth={1.8} className={active ? "text-cyan-300" : "text-slate-500 group-hover:text-cyan-300"} />
                     <span className="flex-1">{item.label}</span>

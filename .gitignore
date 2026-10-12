@@ -38,3 +38,6 @@ data/processed/*.tmp.json
 __pycache__/
 *.py[cod]
 .venv/
+
+# TypeScript incremental cache
+*.tsbuildinfo

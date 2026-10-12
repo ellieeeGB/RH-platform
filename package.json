@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
-    "data:extract": "tsx scripts/extract-company-periods.ts && tsx scripts/extract-historical.ts && tsx scripts/extract-people-intelligence.ts && tsx scripts/extract-workforce-rewards.ts && tsx scripts/extract-extended-intelligence.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "data:extract": "tsx scripts/extract-company-periods.ts && tsx scripts/extract-historical.ts && tsx scripts/extract-people-intelligence.ts && tsx scripts/extract-workforce-rewards.ts && tsx scripts/extract-extended-intelligence.ts",
+    "data:extract:detail": "node --import tsx scripts/extract-company-detail.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

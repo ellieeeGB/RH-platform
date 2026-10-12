@@ -1,54 +1,12 @@
-import { Download, Search } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { tabulatorRows } from "@/lib/classic-data";
-
-const money = (value: number | null) => value === null ? "—" : `$${value.toLocaleString("es-MX")}`;
-
-export default function TabulatorPage() {
-  return (
-    <DashboardFrame>
-      <PageHeader
-        eyebrow="Compensation market"
-        title="Tabulador"
-        description="Consulta puestos homologados, percentiles y sueldo interno sin perder la estructura tabular que ya utilizan los equipos de compensaciones."
-      />
-
-      <section className="panel overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-slate-100 p-5 md:flex-row md:items-center md:justify-between md:p-6">
-          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl bg-slate-50 px-4 py-3 md:max-w-xl">
-            <Search size={17} className="text-slate-400" />
-            <span className="text-sm text-slate-400">Buscar código, área o puesto…</span>
-          </div>
-          <div className="flex gap-2">
-            <button className="rounded-2xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-700">Guardar vista</button>
-            <button className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white"><Download size={14} /> Descargar informe</button>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1180px] text-left text-xs">
-            <thead className="bg-slate-50 uppercase tracking-wide text-slate-400">
-              <tr>{["Código", "Puesto tipo (mercado)", "Mínimo", "Q1", "Mediana", "Promedio mercado", "Q3", "Máximo", "Sueldo empresa"].map((head) => <th key={head} className="px-5 py-3 font-bold">{head}</th>)}</tr>
-            </thead>
-            <tbody>
-              {tabulatorRows.map((row) => (
-                <tr key={row.code} className="border-t border-slate-100 hover:bg-cyan-50/40">
-                  <td className="px-5 py-4 font-black text-slate-700">{row.code}</td>
-                  <td className="px-5 py-4 font-semibold text-slate-900">{row.role}</td>
-                  <td className="px-5 py-4">{money(row.minimum)}</td>
-                  <td className="bg-blue-50/70 px-5 py-4 font-semibold text-blue-900">{money(row.q1)}</td>
-                  <td className="px-5 py-4">{money(row.median)}</td>
-                  <td className="px-5 py-4">{money(row.market)}</td>
-                  <td className="px-5 py-4">{money(row.q3)}</td>
-                  <td className="px-5 py-4">{money(row.maximum)}</td>
-                  <td className="px-5 py-4 font-black text-cyan-800">{money(row.company)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 text-xs text-slate-400"><span>5 posiciones de demostración</span><span>Los datos reales se cargarán desde la capa normalizada.</span></div>
-      </section>
-    </DashboardFrame>
-  );
+"use client";
+import { useMemo, useState } from 'react';
+import { Download, Search } from 'lucide-react';
+import { DashboardFrame, PageHeader } from '@/components/dashboard-frame';
+import { useFilters } from '@/components/filter-context';
+import { technicalTable, downloadCsv } from '@/lib/company-detail';
+const money=(v:number|null)=>v===null?'—':new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(v);
+export default function TabulatorPage(){
+ const {company,period,isMarket}=useFilters();const [query,setQuery]=useState(''),[sort,setSort]=useState('name');
+ const rows=useMemo(()=>technicalTable(company,period).filter(r=>r.name.toLocaleLowerCase('es').includes(query.toLocaleLowerCase('es'))).sort((a,b)=>sort==='salary'?(b.median??0)-(a.median??0):a.name.localeCompare(b.name,'es')),[company,period,query,sort]);
+ return <DashboardFrame><PageHeader eyebrow="Compensación" title="Tabulador técnico" description="Salarios mensuales por puesto del Excel. Compara la banda central del mercado en el mismo bimestre."/><section className="panel overflow-hidden"><div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-5"><label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl bg-slate-50 px-4 py-3"><Search size={17}/><input type="search" aria-label="Buscar puesto" placeholder="Buscar un puesto técnico…" value={query} onChange={e=>setQuery(e.target.value)} className="min-w-0 w-full bg-transparent text-sm outline-none"/></label><select aria-label="Ordenar puestos" value={sort} onChange={e=>setSort(e.target.value)} className="rounded-xl border p-3 text-xs"><option value="name">Puesto A–Z</option><option value="salary">Mayor salario mediano</option></select><button className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-xs font-bold text-white" onClick={()=>downloadCsv([['Puesto','Bimestre','Q1 MXN mensual','Mediana MXN mensual','Q3 MXN mensual','Empresas comparables','Sueldo empresa MXN mensual'],...rows.map(r=>[r.name,period,r.q1,r.median,r.q3,r.n,isMarket?null:r.own])],`catch-tabulador-${period}.csv`)}><Download size={15}/>Descargar CSV</button></div><div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left text-sm"><thead className="bg-slate-50 text-xs text-slate-600"><tr>{['Puesto técnico','Q1','Mediana mercado','Q3',...(!isMarket?['Sueldo empresa']:[]),'n mercado'].map(h=><th scope="col" className="px-5 py-4" key={h}>{h}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r.name} className="border-t border-slate-100"><th scope="row" className="px-5 py-4 font-semibold">{r.name}</th><td className="px-5 py-4">{money(r.q1)}</td><td className="bg-cyan-50/60 px-5 py-4 font-bold">{money(r.median)}</td><td className="px-5 py-4">{money(r.q3)}</td>{!isMarket&&<td className="px-5 py-4 font-bold text-cyan-800">{money(r.own)}</td>}<td className="px-5 py-4">{r.n}</td></tr>)}</tbody></table>{!rows.length&&<p role="status" className="p-8 text-center text-sm text-slate-600">No hay puestos que coincidan con la búsqueda.</p>}</div><p className="border-t p-5 text-xs leading-5 text-slate-500">MXN mensuales. Q1–Q3 representa el 50% central de los salarios promedio reportados por puesto. Las bandas contradictorias se excluyen de la referencia; el sueldo de empresa conserva el valor reportado.</p></section></DashboardFrame>;
 }

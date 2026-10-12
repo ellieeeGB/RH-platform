@@ -5,27 +5,23 @@ import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
 import { useFilters } from "@/components/filter-context";
 import { ExitAgeChart, ExitReasonsChart, ExitTenureChart, TurnoverTrendChart } from "@/components/people-intelligence-charts";
 import { deriveScopeMetrics, getMarketSnapshot, getPreviousPeriod, getScopeSnapshot } from "@/lib/company-panel";
+import { monthlyExitSummary } from "@/lib/company-detail";
 import { retentionData } from "@/lib/people-intelligence-data";
 
 const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
 const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value.toFixed(1)}%`;
 
-function turnover(exits: number | null | undefined, closingHc: number | null | undefined, openingHc: number | null | undefined) {
-  if (exits == null || closingHc == null || closingHc <= 0) return null;
-  const averageHc = openingHc != null && openingHc > 0 ? (openingHc + closingHc) / 2 : closingHc;
-  return (exits / averageHc) * 100;
-}
-
 export default function RetentionPage() {
-  const { period, company, companyLabel, isMarket } = useFilters();
+  const { period, company, companyLabel, isMarket, month, monthLabel } = useFilters();
   const scope = getScopeSnapshot(company, period);
   const market = getMarketSnapshot(period);
   const previousPeriod = getPreviousPeriod(period);
   const previousScope = previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
   const previousMarket = previousPeriod ? getMarketSnapshot(previousPeriod) : null;
   const metrics = deriveScopeMetrics(scope);
-  const turnoverPct = turnover(scope?.exits, scope?.headcount.total, previousScope?.headcount.total);
-  const marketTurnoverPct = turnover(market.exits, market.headcount.total, previousMarket?.headcount.total);
+  const monthly = monthlyExitSummary(company, period, month);
+  const turnoverPct = month === "all" ? metrics.turnoverPct : monthly.rate;
+  const marketTurnoverPct = month === "all" ? deriveScopeMetrics(market).turnoverPct : monthlyExitSummary("market", period, month).rate;
   const turnoverGap = !isMarket && turnoverPct != null && marketTurnoverPct != null ? turnoverPct - marketTurnoverPct : null;
 
   return (
@@ -40,9 +36,9 @@ export default function RetentionPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Rotación bimestral", pct(turnoverPct), isMarket ? "bajas / headcount promedio" : `mercado: ${pct(marketTurnoverPct)}`, DoorOpen],
-          ["Bajas", int(scope?.exits), "en el bimestre", UserMinus],
-          ["Balance altas-bajas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, "movimiento neto", UsersRound],
+          ["Bajas / plantilla del corte", pct(turnoverPct), `${month === "all" ? metrics.coverage.exits : monthly.n} empresas con ambos datos`, DoorOpen],
+          [month === "all" ? "Bajas del bimestre" : "Bajas del mes", int(month === "all" ? scope?.exits : monthly.count), month === "all" ? period : monthLabel, UserMinus],
+          ["Balance altas-bajas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, `${metrics.coverage.net} empresas con altas y bajas · bimestre`, UsersRound],
           ["Movimiento de talento", pct(metrics.movementLoadPct), "altas + bajas / headcount", CalendarClock],
         ].map(([label, value, note, Icon]) => (
           <article key={String(label)} className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">{String(label)}</div><Icon size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{String(value)}</div><div className="mt-2 text-xs text-slate-500">{String(note)}</div></article>
