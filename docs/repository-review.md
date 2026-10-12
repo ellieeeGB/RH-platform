@@ -28,6 +28,6 @@ La fuente Excel permanece fuera del repositorio. company-detail.json contiene lo
 
 ## Estado de la comprobación visual
 
-Se abrió la URL privada con el navegador disponible. La página pide iniciar sesión con ChatGPT y el navegador de revisión no tiene esa sesión. No se ha comprobado visualmente el dashboard después de ese muro de acceso. Las verificaciones de TypeScript y del motor de datos no sustituyen esa comprobación.
+Se abrió la URL privada con el navegador disponible. El 12 de octubre de 2026 se inició el flujo seguro de acceso y el usuario eligió Google. El proveedor de acceso devolvió «502 Bad Gateway / Connection refused» antes de completar la sesión. Se detuvo ese intento; no se ha comprobado visualmente el dashboard después del muro de acceso. Las verificaciones de TypeScript y del motor de datos no sustituyen esa comprobación.
 
 Las modificaciones de esta rama no cambian por sí solas el Site desplegado. La integración completa entre la fuente Next.js y la fuente alojada requiere conservar sus funciones y revisar la versión resultante antes de sustituir el despliegue. No se declara equivalencia entre ambas aplicaciones.
