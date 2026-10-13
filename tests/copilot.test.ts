@@ -6,7 +6,7 @@ test("retention questions route to retention evidence", () => {
   const answer = answerCopilot("¿Qué está pasando con la rotación?");
   assert.equal(answer.intent, "retention");
   assert.ok(answer.evidence.some((item) => item.href === "/retencion"));
-  assert.ok(answer.answer.includes("59.9%"));
+  assert.ok(answer.answer.includes("54.5%"));
 });
 
 test("salary questions route to compensation evidence", () => {
@@ -19,7 +19,8 @@ test("salary questions route to compensation evidence", () => {
 test("quality questions expose quality caveats and source route", () => {
   const answer = answerCopilot("¿Hay errores o problemas de calidad de datos?");
   assert.equal(answer.intent, "quality");
-  assert.ok(answer.answer.includes("90/100"));
+  assert.ok(answer.answer.includes("sin datos para evaluar"));
+  assert.ok(answer.answer.includes("no equivale a confianza estadística"));
   assert.equal(answer.actionHref, "/data-quality");
 });
 

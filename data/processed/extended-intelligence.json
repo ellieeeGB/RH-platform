@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "source": "BASE HISTORICA(1)(1).xlsx",
+    "source": "BASE HISTORICA.xlsx",
     "period": "Jul-Ago 25",
     "companyCount": 40,
     "periodCount": 7,
@@ -10,170 +10,753 @@
     "parserStrategy": "semantic question + subquestion matching"
   },
   "laborRelations": {
-    "unionization": { "yes": 32, "no": 8, "pct": 80.0 },
+    "unionization": {
+      "yes": 32,
+      "no": 8,
+      "pct": 80
+    },
     "relationship": [
-      { "rating": "Excelente", "companies": 20 },
-      { "rating": "Buena", "companies": 15 }
+      {
+        "rating": "Excelente",
+        "companies": 20
+      },
+      {
+        "rating": "Buena",
+        "companies": 15
+      }
     ],
     "collectiveBargaining": {
       "status": [
-        { "status": "Pendiente de realizarlo, aun no llega la fecha", "companies": 23 },
-        { "status": "Ya tuvimos la revisión de incrementos salariales del 2026", "companies": 9 },
-        { "status": "No Aplica", "companies": 8 }
+        {
+          "status": "Pendiente de realizarlo, aun no llega la fecha",
+          "companies": 23
+        },
+        {
+          "status": "Ya tuvimos la revisión de incrementos salariales del 2026",
+          "companies": 9
+        },
+        {
+          "status": "No Aplica",
+          "companies": 8
+        }
       ],
       "granted": {
-        "salaryOperationalPct": { "median": 7.0, "mean": 7.51, "n": 39 },
-        "salaryAdministrativePct": { "median": 6.0, "mean": 6.64, "n": 35 },
-        "benefitsOperationalPct": { "median": 1.5, "mean": 2.69, "n": 17 },
-        "benefitsAdministrativePct": { "median": 2.2, "mean": 3.41, "n": 10 }
+        "salaryOperationalPct": {
+          "median": 7,
+          "mean": 7.51,
+          "n": 39
+        },
+        "salaryAdministrativePct": {
+          "median": 6,
+          "mean": 6.64,
+          "n": 35
+        },
+        "benefitsOperationalPct": {
+          "median": 1.5,
+          "mean": 2.69,
+          "n": 17
+        },
+        "benefitsAdministrativePct": {
+          "median": 2.2,
+          "mean": 3.41,
+          "n": 10
+        }
       },
       "planned": {
-        "salaryOperationalPct": { "median": 6.5, "mean": 6.82, "n": 33 },
-        "benefitsOperationalPct": { "median": 2.0, "mean": 1.86, "n": 13 }
+        "salaryOperationalPct": {
+          "median": 6.5,
+          "mean": 6.82,
+          "n": 33
+        },
+        "benefitsOperationalPct": {
+          "median": 2,
+          "mean": 1.86,
+          "n": 13
+        }
       },
       "reviewMonths": [
-        { "month": "Abril", "companies": 17 },
-        { "month": "Febrero", "companies": 12 },
-        { "month": "Marzo", "companies": 12 },
-        { "month": "Enero", "companies": 9 },
-        { "month": "Julio", "companies": 4 }
+        {
+          "month": "Abril",
+          "companies": 17
+        },
+        {
+          "month": "Febrero",
+          "companies": 12
+        },
+        {
+          "month": "Marzo",
+          "companies": 12
+        },
+        {
+          "month": "Enero",
+          "companies": 9
+        },
+        {
+          "month": "Julio",
+          "companies": 4
+        }
       ],
       "benefitsAdjusted": [
-        { "benefit": "Vales de despensa", "companies": 18 },
-        { "benefit": "Fondo de ahorro", "companies": 16 },
-        { "benefit": "Prima vacacional", "companies": 13 },
-        { "benefit": "Aguinaldo", "companies": 11 },
-        { "benefit": "Bono por asistencia", "companies": 9 },
-        { "benefit": "Bono por puntualidad", "companies": 8 }
+        {
+          "benefit": "vales despensa",
+          "companies": 18
+        },
+        {
+          "benefit": "fondo ahorro",
+          "companies": 16
+        },
+        {
+          "benefit": "prima vacacional",
+          "companies": 13
+        },
+        {
+          "benefit": "aguinaldo",
+          "companies": 11
+        },
+        {
+          "benefit": "Otro (especifique)",
+          "companies": 10
+        },
+        {
+          "benefit": "Bono por asistencia",
+          "companies": 9
+        },
+        {
+          "benefit": "Bono por puntualidad",
+          "companies": 8
+        },
+        {
+          "benefit": "Ayuda por defunción",
+          "companies": 8
+        }
       ]
     },
     "legalExposure": [
-      { "channel": "Centro de Conciliación / PROFEDET", "cases": 18, "reportingCompanies": 10 },
-      { "channel": "Tribunal Local", "cases": 8, "reportingCompanies": 6 },
-      { "channel": "Tribunal Federal", "cases": 14, "reportingCompanies": 5 }
+      {
+        "channel": "Centro de Conciliación ó PROFEDET",
+        "cases": 18,
+        "reportingCompanies": 10
+      },
+      {
+        "channel": "Tribunal Local",
+        "cases": 8,
+        "reportingCompanies": 6
+      },
+      {
+        "channel": "Tribunal Federal",
+        "cases": 14,
+        "reportingCompanies": 5
+      }
     ],
     "contingencyPlans": [
-      { "plan": "Incendio", "companies": 34, "pct": 85.0 },
-      { "plan": "Emergencia químico / biológica", "companies": 25, "pct": 62.5 },
-      { "plan": "Inundación", "companies": 20, "pct": 50.0 },
-      { "plan": "Huelga", "companies": 18, "pct": 45.0 },
-      { "plan": "Asalto a mano armada", "companies": 11, "pct": 27.5 },
-      { "plan": "Sin plan de contingencia", "companies": 2, "pct": 5.0 }
+      {
+        "plan": "Incendio",
+        "companies": 34,
+        "pct": 85
+      },
+      {
+        "plan": "Emergencia químico / biológica",
+        "companies": 25,
+        "pct": 62.5
+      },
+      {
+        "plan": "Inundación",
+        "companies": 20,
+        "pct": 50
+      },
+      {
+        "plan": "Huelga",
+        "companies": 18,
+        "pct": 45
+      },
+      {
+        "plan": "Asalto a mano armada dentro de la planta",
+        "companies": 11,
+        "pct": 27.5
+      },
+      {
+        "plan": "Terrorismo",
+        "companies": 11,
+        "pct": 27.5
+      },
+      {
+        "plan": "Otro (especifique)",
+        "companies": 8,
+        "pct": 20
+      },
+      {
+        "plan": "No tengo planes de contingencia",
+        "companies": 2,
+        "pct": 5
+      }
     ]
   },
   "talentMarket": {
     "crossStateMobility": [
-      { "population": "Operativo", "medianPct": 10.0, "meanPct": 25.8, "n": 33 },
-      { "population": "Administrativo", "medianPct": 10.0, "meanPct": 27.8, "n": 32 }
+      {
+        "population": "Operativo",
+        "medianPct": 10,
+        "meanPct": 25.76,
+        "n": 33
+      },
+      {
+        "population": "Administrativo",
+        "medianPct": 10,
+        "meanPct": 27.81,
+        "n": 32
+      }
     ],
     "oneYearHeadcountPlan": [
-      { "population": "Operativo", "medianGrowthPct": 1.78, "meanGrowthPct": 2.67, "n": 31 },
-      { "population": "Administrativo", "medianGrowthPct": 0.0, "meanGrowthPct": 3.51, "n": 40 }
+      {
+        "population": "Operativo",
+        "medianGrowthPct": 1.78,
+        "meanGrowthPct": 2.67,
+        "n": 31
+      },
+      {
+        "population": "Administrativo",
+        "medianGrowthPct": 0,
+        "meanGrowthPct": 3.51,
+        "n": 40
+      }
     ],
     "technicalRoles": [
-      { "role": "Técnico de Mantenimiento", "companies": 35, "prevalencePct": 87.5, "salaryMinMedian": 16900, "salaryMarketMedian": 22356, "salaryMaxMedian": 26000, "reportedHeadcount": 1017 },
-      { "role": "Técnico de Calidad", "companies": 31, "prevalencePct": 77.5, "salaryMinMedian": 14388, "salaryMarketMedian": 16000, "salaryMaxMedian": 19425, "reportedHeadcount": 831 },
-      { "role": "Montacarguista", "companies": 30, "prevalencePct": 75.0, "salaryMinMedian": 11629, "salaryMarketMedian": 13500, "salaryMaxMedian": 14300, "reportedHeadcount": 637 },
-      { "role": "Líder de línea o Producción", "companies": 28, "prevalencePct": 70.0, "salaryMinMedian": 15839, "salaryMarketMedian": 16980, "salaryMaxMedian": 19868, "reportedHeadcount": 665 },
-      { "role": "Almacenista", "companies": 27, "prevalencePct": 67.5, "salaryMinMedian": 12000, "salaryMarketMedian": 14144.5, "salaryMaxMedian": 16756, "reportedHeadcount": 818 },
-      { "role": "Supervisor de Producción", "companies": 23, "prevalencePct": 57.5, "salaryMinMedian": 24000, "salaryMarketMedian": 27000, "salaryMaxMedian": 34000, "reportedHeadcount": 323 }
+      {
+        "role": "Técnico de Mantenimiento",
+        "companies": 35,
+        "prevalencePct": 87.5,
+        "salaryMinMedian": 16900,
+        "salaryMarketMedian": 22356,
+        "salaryMaxMedian": 26000,
+        "reportedHeadcount": 1017
+      },
+      {
+        "role": "Técnico de Calidad",
+        "companies": 31,
+        "prevalencePct": 77.5,
+        "salaryMinMedian": 14388,
+        "salaryMarketMedian": 16000,
+        "salaryMaxMedian": 19425,
+        "reportedHeadcount": 831
+      },
+      {
+        "role": "Montacarguista",
+        "companies": 30,
+        "prevalencePct": 75,
+        "salaryMinMedian": 11629,
+        "salaryMarketMedian": 13500,
+        "salaryMaxMedian": 14300,
+        "reportedHeadcount": 637
+      },
+      {
+        "role": "Líder de línea o Producción",
+        "companies": 28,
+        "prevalencePct": 70,
+        "salaryMinMedian": 15839,
+        "salaryMarketMedian": 16980,
+        "salaryMaxMedian": 19868,
+        "reportedHeadcount": 665
+      },
+      {
+        "role": "Almacenista",
+        "companies": 27,
+        "prevalencePct": 67.5,
+        "salaryMinMedian": 12000,
+        "salaryMarketMedian": 14144.5,
+        "salaryMaxMedian": 16756,
+        "reportedHeadcount": 818
+      },
+      {
+        "role": "Supervisor de Producción",
+        "companies": 23,
+        "prevalencePct": 57.5,
+        "salaryMinMedian": 24000,
+        "salaryMarketMedian": 27000,
+        "salaryMaxMedian": 34000,
+        "reportedHeadcount": 323
+      },
+      {
+        "role": "Herramentista",
+        "companies": 18,
+        "prevalencePct": 45,
+        "salaryMinMedian": 15000,
+        "salaryMarketMedian": 16487,
+        "salaryMaxMedian": 23291,
+        "reportedHeadcount": 242
+      },
+      {
+        "role": "Electromecánico",
+        "companies": 18,
+        "prevalencePct": 45,
+        "salaryMinMedian": 15050,
+        "salaryMarketMedian": 20382,
+        "salaryMaxMedian": 24936,
+        "reportedHeadcount": 395
+      },
+      {
+        "role": "Matricero",
+        "companies": 8,
+        "prevalencePct": 20,
+        "salaryMinMedian": 15000,
+        "salaryMarketMedian": 18768.5,
+        "salaryMaxMedian": 25402,
+        "reportedHeadcount": 52
+      },
+      {
+        "role": "Electricista General",
+        "companies": 7,
+        "prevalencePct": 17.5,
+        "salaryMinMedian": 16100,
+        "salaryMarketMedian": 19936,
+        "salaryMaxMedian": 23291,
+        "reportedHeadcount": 33
+      }
     ],
     "recruitingSourceMix": {
       "Operativo": [
-        { "source": "Facebook", "medianUsePct": 9.0, "n": 33 },
-        { "source": "Portal OCC", "medianUsePct": 8.0, "n": 13 },
-        { "source": "Portal CompuTrabajo", "medianUsePct": 7.5, "n": 14 },
-        { "source": "Referencias internas", "medianUsePct": 7.0, "n": 35 },
-        { "source": "Promociones internas", "medianUsePct": 7.0, "n": 34 }
+        {
+          "source": "Facebook",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 33
+        },
+        {
+          "source": "Portal OCC",
+          "scale": "0–10",
+          "medianUsageScore": 8,
+          "n": 13
+        },
+        {
+          "source": "Referencias de Empleados Internos",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 35
+        },
+        {
+          "source": "LinkedIn",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 15
+        },
+        {
+          "source": "Promociones Internas",
+          "scale": "0–10",
+          "medianUsageScore": 6,
+          "n": 34
+        },
+        {
+          "source": "Reclutamiento de Campo",
+          "scale": "0–10",
+          "medianUsageScore": 6,
+          "n": 28
+        }
       ],
       "Técnico": [
-        { "source": "Facebook", "medianUsePct": 9.0, "n": 29 },
-        { "source": "Headhunter / Outsourcing", "medianUsePct": 9.0, "n": 11 },
-        { "source": "Portal CompuTrabajo", "medianUsePct": 8.0, "n": 21 },
-        { "source": "Promociones internas", "medianUsePct": 7.0, "n": 35 }
+        {
+          "source": "Otro Portal Internet",
+          "scale": "0–10",
+          "medianUsageScore": 8.5,
+          "n": 12
+        },
+        {
+          "source": "Facebook",
+          "scale": "0–10",
+          "medianUsageScore": 8,
+          "n": 29
+        },
+        {
+          "source": "Promociones Internas",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 35
+        },
+        {
+          "source": "Referencias de Empleados Internos",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 35
+        },
+        {
+          "source": "Portal OCC",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 19
+        },
+        {
+          "source": "LinkedIn",
+          "scale": "0–10",
+          "medianUsageScore": 7,
+          "n": 21
+        }
       ],
       "Administrativo": [
-        { "source": "LinkedIn", "medianUsePct": 9.0, "n": 30 },
-        { "source": "Portal OCC", "medianUsePct": 9.0, "n": 24 },
-        { "source": "Portal CompuTrabajo", "medianUsePct": 8.0, "n": 18 },
-        { "source": "Promociones internas", "medianUsePct": 7.0, "n": 32 }
+        {
+          "source": "Portal OCC",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 24
+        },
+        {
+          "source": "LinkedIn",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 30
+        },
+        {
+          "source": "Facebook",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 17
+        },
+        {
+          "source": "Portal CompuTrabajo",
+          "scale": "0–10",
+          "medianUsageScore": 7.5,
+          "n": 18
+        },
+        {
+          "source": "Promociones Internas",
+          "scale": "0–10",
+          "medianUsageScore": 6.5,
+          "n": 32
+        },
+        {
+          "source": "Referencias de Empleados Internos",
+          "scale": "0–10",
+          "medianUsageScore": 5,
+          "n": 27
+        }
       ],
       "Gerencial": [
-        { "source": "LinkedIn", "medianUsePct": 9.0, "n": 25 },
-        { "source": "Portal OCC", "medianUsePct": 9.0, "n": 17 },
-        { "source": "Headhunter / Outsourcing", "medianUsePct": 8.0, "n": 18 },
-        { "source": "Promociones internas", "medianUsePct": 8.0, "n": 22 }
+        {
+          "source": "Portal OCC",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 17
+        },
+        {
+          "source": "LinkedIn",
+          "scale": "0–10",
+          "medianUsageScore": 9,
+          "n": 25
+        },
+        {
+          "source": "Headhunter / Outsourcing",
+          "scale": "0–10",
+          "medianUsageScore": 8,
+          "n": 18
+        },
+        {
+          "source": "Promociones Internas",
+          "scale": "0–10",
+          "medianUsageScore": 6.5,
+          "n": 22
+        },
+        {
+          "source": "Referencias de Empleados Internos",
+          "scale": "0–10",
+          "medianUsageScore": 4,
+          "n": 12
+        }
       ]
     }
   },
   "rewardsEconomics": {
-    "lifeInsurance": { "companies": 33, "usageMedianPct": 30.0 },
-    "companyCar": { "companies": 23, "usageMedianPct": 17.0 },
-    "gasoline": { "companies": 28, "usageMedianPct": 59.0, "monthlyBudgetMedian": 3000 },
-    "transport": { "companies": 32, "usageMedianPct": 85.0, "routesMedian": 12, "monthlyCostPerPersonMedian": 1500 },
-    "cafeteria": { "companies": 25, "usageMedianPct": 80.0, "mealTotalMedian": 57, "employeeShareMedian": 22.5, "companyShareMedian": 41.5 },
-    "relocation": { "companies": 8 }
+    "lifeInsurance": {
+      "companies": 33,
+      "usageMedianPct": 30
+    },
+    "companyCar": {
+      "companies": 23,
+      "usageMedianPct": 17
+    },
+    "gasoline": {
+      "companies": 28,
+      "usageMedianPct": 59,
+      "monthlyBudgetMedian": 3000
+    },
+    "transport": {
+      "companies": 32,
+      "usageMedianPct": 85,
+      "routesMedian": 12,
+      "monthlyCostPerPersonMedian": 1500
+    },
+    "cafeteria": {
+      "companies": 25,
+      "usageMedianPct": 80,
+      "mealTotalMedian": 57,
+      "employeeShareMedian": 22.5,
+      "companyShareMedian": 41.5
+    },
+    "relocation": {
+      "companies": 8
+    }
   },
   "vendorEcosystem": {
     "outsourcingAdoption": [
-      { "service": "Vigilancia", "companies": 30, "pct": 75.0, "medianRating": 8.0 },
-      { "service": "Transporte", "companies": 30, "pct": 75.0, "medianRating": 8.0 },
-      { "service": "Comedor", "companies": 27, "pct": 67.5, "medianRating": 8.0 },
-      { "service": "Limpieza", "companies": 26, "pct": 65.0, "medianRating": 8.0 },
-      { "service": "Servicio médico", "companies": 25, "pct": 62.5, "medianRating": 8.0 }
+      {
+        "service": "Vigilancia",
+        "companies": 30,
+        "pct": 75,
+        "medianRating": 8
+      },
+      {
+        "service": "Transporte",
+        "companies": 30,
+        "pct": 75,
+        "medianRating": 8
+      },
+      {
+        "service": "Comedor",
+        "companies": 27,
+        "pct": 67.5,
+        "medianRating": 8
+      },
+      {
+        "service": "Limpieza",
+        "companies": 26,
+        "pct": 65,
+        "medianRating": 8
+      },
+      {
+        "service": "Servicio médico",
+        "companies": 25,
+        "pct": 62.5,
+        "medianRating": 8
+      },
+      {
+        "service": "Sorteadores",
+        "companies": 8,
+        "pct": 20,
+        "medianRating": 8
+      },
+      {
+        "service": "Otro (especifique)",
+        "companies": 3,
+        "pct": 7.5,
+        "medianRating": null
+      }
     ]
   },
   "earlyCareer": {
     "companiesHiringInterns": 32,
     "studentSupportMonthlyMedian": 7000,
     "topAreas": [
-      { "area": "Ingeniería", "companies": 30, "pct": 75.0 },
-      { "area": "Logística", "companies": 28, "pct": 70.0 },
-      { "area": "Calidad", "companies": 28, "pct": 70.0 },
-      { "area": "Recursos Humanos", "companies": 27, "pct": 67.5 },
-      { "area": "Producción", "companies": 26, "pct": 65.0 },
-      { "area": "Mantenimiento", "companies": 26, "pct": 65.0 }
+      {
+        "area": "Ingeniería",
+        "companies": 30,
+        "pct": 75
+      },
+      {
+        "area": "Logística",
+        "companies": 28,
+        "pct": 70
+      },
+      {
+        "area": "Calidad",
+        "companies": 28,
+        "pct": 70
+      },
+      {
+        "area": "Recursos Humanos",
+        "companies": 27,
+        "pct": 67.5
+      },
+      {
+        "area": "Producción",
+        "companies": 26,
+        "pct": 65
+      },
+      {
+        "area": "Mantenimiento",
+        "companies": 26,
+        "pct": 65
+      },
+      {
+        "area": "Contabilidad y Finanzas",
+        "companies": 25,
+        "pct": 62.5
+      },
+      {
+        "area": "Otro (especifique)",
+        "companies": 8,
+        "pct": 20
+      }
     ],
     "benefits": [
-      { "benefit": "Comedor gratuito", "companies": 24, "pct": 60.0 },
-      { "benefit": "Transportación gratuita", "companies": 20, "pct": 50.0 },
-      { "benefit": "Aguinaldo / bono anual", "companies": 4, "pct": 10.0 }
+      {
+        "benefit": "Comedor gratuito",
+        "companies": 24,
+        "pct": 60
+      },
+      {
+        "benefit": "Transportación gratuita",
+        "companies": 20,
+        "pct": 50
+      },
+      {
+        "benefit": "Otro (especifique)",
+        "companies": 10,
+        "pct": 25
+      },
+      {
+        "benefit": "Aguinaldo ó bono anual",
+        "companies": 4,
+        "pct": 10
+      },
+      {
+        "benefit": "Vales de Despensa",
+        "companies": 1,
+        "pct": 2.5
+      }
     ]
   },
   "workDesign": {
-    "twelveHourShift": { "yes": 13, "no": 27 },
+    "twelveHourShift": {
+      "yes": 13,
+      "no": 27
+    },
     "shiftRotation": [
-      { "pattern": "Semanal", "companies": 17 },
-      { "pattern": "Catorcenal", "companies": 13 },
-      { "pattern": "Mensual", "companies": 2 },
-      { "pattern": "Turno fijo", "companies": 3 }
+      {
+        "pattern": "Sí, cada semana",
+        "companies": 17
+      },
+      {
+        "pattern": "Sí, cada catorcena",
+        "companies": 13
+      },
+      {
+        "pattern": "No aplica",
+        "companies": 4
+      },
+      {
+        "pattern": "Sí, cada mes",
+        "companies": 2
+      },
+      {
+        "pattern": "El personal mantiene un solo turno desde su contratación",
+        "companies": 2
+      },
+      {
+        "pattern": "El personal no cambia de turno (solo tengo 1 turno)",
+        "companies": 1
+      },
+      {
+        "pattern": "Otro (especifique)",
+        "companies": 1
+      }
     ],
     "officeFlexibility": [
-      { "practice": "Recorrer horario de entrada/salida", "companies": 20, "pct": 50.0 },
-      { "practice": "Día corto", "companies": 16, "pct": 40.0 },
-      { "practice": "Entrar más tarde un día", "companies": 5, "pct": 12.5 }
+      {
+        "practice": "Recorrer su horario para entrar o salir más temprano.",
+        "companies": 20,
+        "pct": 50
+      },
+      {
+        "practice": "Un día de la semana pueden salir más temprano. Por ejemplo \"Viernes corto\"",
+        "companies": 16,
+        "pct": 40
+      },
+      {
+        "practice": "Otro (especifique)",
+        "companies": 11,
+        "pct": 27.5
+      },
+      {
+        "practice": "Entrar más tarde un día de la semana",
+        "companies": 5,
+        "pct": 12.5
+      }
     ]
   },
   "employeeExperience": {
     "continuousImprovement": [
-      { "practice": "Buzón de ideas de mejora", "companies": 25, "pct": 62.5 },
-      { "practice": "Kaizen", "companies": 23, "pct": 57.5 },
-      { "practice": "Buzón de sugerencias", "companies": 22, "pct": 55.0 }
+      {
+        "practice": "Buzón de ideas de mejora",
+        "companies": 25,
+        "pct": 62.5
+      },
+      {
+        "practice": "Kaizen",
+        "companies": 23,
+        "pct": 57.5
+      },
+      {
+        "practice": "Buzón de sugerencias",
+        "companies": 22,
+        "pct": 55
+      },
+      {
+        "practice": "Otro (especifique)",
+        "companies": 8,
+        "pct": 20
+      },
+      {
+        "practice": "Punta Estrella",
+        "companies": 1,
+        "pct": 2.5
+      }
     ],
-    "retentionBonus": { "yes": 17, "no": 23 },
+    "retentionBonus": {
+      "yes": 17,
+      "no": 23
+    },
     "socialPractices": [
-      { "practice": "Campañas de salud", "companies": 35, "pct": 87.5 },
-      { "practice": "Reciclaje", "companies": 31, "pct": 77.5 },
-      { "practice": "Ahorro de energía", "companies": 28, "pct": 70.0 },
-      { "practice": "Seguridad para el personal", "companies": 27, "pct": 67.5 },
-      { "practice": "Prevención de violencia", "companies": 26, "pct": 65.0 },
-      { "practice": "Igualdad de género", "companies": 25, "pct": 62.5 },
-      { "practice": "Anticorrupción", "companies": 23, "pct": 57.5 }
+      {
+        "practice": "Campañas de salud",
+        "companies": 35,
+        "pct": 87.5
+      },
+      {
+        "practice": "Campañas / Políticas de reciclaje",
+        "companies": 31,
+        "pct": 77.5
+      },
+      {
+        "practice": "Campañas / Políticas de ahorro de energía",
+        "companies": 28,
+        "pct": 70
+      },
+      {
+        "practice": "Campañas / Políticas de seguridad para el personal",
+        "companies": 27,
+        "pct": 67.5
+      },
+      {
+        "practice": "Campañas / Políticas de prevención de violencia",
+        "companies": 26,
+        "pct": 65
+      },
+      {
+        "practice": "Campañas / Políticas de igualdad de género",
+        "companies": 25,
+        "pct": 62.5
+      },
+      {
+        "practice": "Campañas / Políticas anticorrupción",
+        "companies": 23,
+        "pct": 57.5
+      },
+      {
+        "practice": "Campañas / Políticas de reforestación",
+        "companies": 18,
+        "pct": 45
+      },
+      {
+        "practice": "Donaciones a escuelas",
+        "companies": 17,
+        "pct": 42.5
+      },
+      {
+        "practice": "Horarios de entrada flexibles para padres de familia",
+        "companies": 16,
+        "pct": 40
+      }
     ]
   },
   "qualityFlags": [
-    "Some survey matrices may contain export artifacts that look like universal selection; do not surface them as insight until validated.",
-    "Use response counts alongside medians for sparse measures.",
-    "Company-level and contact data remain outside the public processed layer."
+    "Review survey matrices with suspiciously universal selection before publishing them as insight.",
+    "Always show response count for sparse medians.",
+    "Keep company-level and contact data outside the public processed layer."
   ]
 }

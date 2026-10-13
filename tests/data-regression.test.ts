@@ -19,8 +19,12 @@ test("latest benchmark regression anchors remain stable", () => {
 });
 
 test("people intelligence aggregates preserve key validated signals", () => {
-  assert.equal(peopleIntelligence.retention.earlyAttritionUnder3MonthsPct, 59.9);
-  assert.equal(peopleIntelligence.retention.firstYearExitSharePct, 77.2);
+  // Excel LQ:LU: companies 2,13,25,31,36,38; company 15 sums to 90% and is excluded.
+  // Complete reconciled sample = 19+61+33+21+103+498 = 735 exits.
+  assert.equal(peopleIntelligence.retention.tenureValidCompanies, 6);
+  assert.equal(peopleIntelligence.retention.tenureWeightedExits, 735);
+  assert.equal(peopleIntelligence.retention.earlyAttritionUnder3MonthsPct, 54.5);
+  assert.equal(peopleIntelligence.retention.firstYearExitSharePct, 76.7);
   assert.equal(peopleIntelligence.compensation.bands[0].median, 339.63);
 });
 

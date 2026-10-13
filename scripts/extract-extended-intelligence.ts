@@ -1,3 +1,4 @@
+import { percentagePoints } from "./lib/data-contract";
 import ExcelJS from "exceljs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -43,11 +44,7 @@ function numberValue(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function percentValue(value: unknown): number | null {
-  const numeric = numberValue(value);
-  if (numeric === null || numeric < 0) return null;
-  return numeric <= 1.01 ? numeric * 100 : numeric;
-}
+function percentValue(value: unknown): number | null { return percentagePoints(value, "fraction"); }
 
 function round(value: number, digits = 2): number {
   const factor = 10 ** digits;
@@ -72,6 +69,7 @@ function buildHeaders(worksheet: ExcelJS.Worksheet): Header[] {
     const raw = cellText(worksheet.getCell(1, column).value).trim();
     if (raw && !/^Unnamed:/i.test(raw)) activeQuestion = raw;
     const sub = cellText(worksheet.getCell(2, column).value).trim();
+    if (!raw && !sub) continue; // Trailing unnamed cells are not survey fields.
     headers.push({ column, question: activeQuestion, sub, nq: normalize(activeQuestion), ns: normalize(sub) });
   }
   return headers;
@@ -122,7 +120,7 @@ function numericStats(worksheet: ExcelJS.Worksheet, rows: number[], column: numb
 }
 
 function selectionStats(worksheet: ExcelJS.Worksheet, rows: number[], group: Header[]) {
-  return group.map((header) => {
+  return group.filter(header => !["no aplica", "ninguno", "ninguna", "open ended"].some(label => header.ns.includes(label))).map((header) => {
     const companies = rows.filter((row) => present(worksheet.getCell(row, header.column).value)).length;
     return { label: header.sub, companies, pct: round((companies / rows.length) * 100, 1) };
   }).filter((item) => item.companies > 0).sort((a, b) => b.companies - a.companies);
@@ -131,15 +129,15 @@ function selectionStats(worksheet: ExcelJS.Worksheet, rows: number[], group: Hea
 function sourceMix(worksheet: ExcelJS.Worksheet, rows: number[], headers: Header[], questionNeedle: string) {
   return findGroup(headers, questionNeedle).map((header) => {
     const values = rows
-      .map((row) => percentValue(worksheet.getCell(row, header.column).value))
-      .filter((value): value is number => value !== null && value >= 0 && value <= 100);
-    return { source: header.sub, medianUsePct: round(median(values), 1), n: values.length };
-  }).filter((item) => item.n >= 10).sort((a, b) => b.medianUsePct - a.medianUsePct).slice(0, 6);
+      .map((row) => numberValue(worksheet.getCell(row, header.column).value))
+      .filter((value): value is number => value !== null && value >= 0 && value <= 10);
+    return { source: header.sub, scale: "0–10", medianUsageScore: round(median(values), 1), n: values.length };
+  }).filter((item) => item.n >= 10).sort((a, b) => b.medianUsageScore - a.medianUsageScore).slice(0, 6);
 }
 
 async function main() {
   const source = process.argv[2] ?? "data/raw/BASE HISTORICA(1).xlsx";
-  const output = path.resolve("data/processed/extended-intelligence.json");
+  const output = path.resolve(process.env.CATCH_DATA_OUTPUT ?? "data/processed", "extended-intelligence.json");
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(source);
   const periodSheets = workbook.worksheets.filter((worksheet) => PERIOD_LABELS[worksheet.name]);

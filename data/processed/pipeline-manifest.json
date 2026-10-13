@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "sourceSha256": "52fcf05bbfd2e230f0ca8b16317df86499fea3d335dac8119738a6a9a6ad934d",
+  "implementationSha256": "e9c5b5be11e98d3fa19bc1fd67467d5838592cc79d787d995ade5b956cef5767",
+  "periods": 7,
+  "companies": 40,
+  "records": 280,
+  "outputs": {
+    "company-periods/jul-ago-24.json": "60a26c69b5ee5cc9a45db75cd3e20d8271fbe34237ac95ab03d59c2624059a75",
+    "company-periods/sep-oct-24.json": "57d5c1d16a59829013cf0222aa3da40fbe1b9b6e7b6a6b8ef524b2556a7ebd65",
+    "company-periods/nov-dic-24.json": "736667fab410aa48edfb61000d4b9c0beb3282496c15577d2b2cf6f1d7b2143e",
+    "company-periods/ene-feb-25.json": "e7819cdafb8b079d07d63b351103c623ebf90d2bd02cf4843cd9b19a3968a43b",
+    "company-periods/mar-abr-25.json": "02704906764481ce24fa31e5cdb31321c5bc3ad159fdc7e2d7ab2278785b19b6",
+    "company-periods/may-jun-25.json": "5ebc7633086cd9f300aff0ec7d23d082972bc3ee2f3991a61285b8fb2f5cdc7a",
+    "company-periods/jul-ago-25.json": "1d1d500618fc3afda46b347ab54818fb5a697d70f933017c0a105930af4ed82d",
+    "benchmark.json": "70676e3157e96eb9e00b5a13aa1f20044c3394b5241a41b888dde539add73304",
+    "people-intelligence.json": "f7940ae06ca3c8c703086a5efbac0becd78231169c592ade5a06f45c9c4d7f7e",
+    "workforce-rewards.json": "1b2fdfba70aad580a4a5e0088faa0222f4b9c71dd9c5904fc92ca5f6799f3eac",
+    "extended-intelligence.json": "649849d04d8ca10696b86340e97e2e9121c04fec80aea635a92663eb96ee9ab5",
+    "company-detail.json": "015b6e909897fb9cf7eabbb62cd7f05c4cd8e9e17d5d9fde7896e5511aedc551"
+  }
+}

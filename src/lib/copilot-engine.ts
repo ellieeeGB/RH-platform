@@ -1,3 +1,4 @@
+import { qualityReport } from "./data-quality";
 import benchmark from "../../data/processed/benchmark.json";
 import peopleIntelligence from "../../data/processed/people-intelligence.json";
 import workforceRewards from "../../data/processed/workforce-rewards.json";
@@ -42,10 +43,10 @@ function containsAny(text: string, terms: string[]) {
 function answerRetention(): CopilotAnswer {
   return {
     intent: "retention",
-    title: "La señal más fuerte está en la rotación temprana.",
-    answer: `La rotación bimestral del mercado está en ${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}%. En el subconjunto con desglose de antigüedad consistente, ${retention.earlyAttritionUnder3MonthsPct}% de las bajas ocurre antes de 3 meses y ${retention.firstYearExitSharePct}% antes del año. Eso sugiere priorizar onboarding, calidad de selección y experiencia de primeras semanas antes de asumir que el problema es exclusivamente salarial.`,
+    title: "La permanencia inicial merece una revisión con más cobertura.",
+    answer: `Las bajas por plantilla al cierre del subconjunto comparable están en ${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}%. En ${retention.tenureValidCompanies} empresas con desglose completo de antigüedad, ${retention.earlyAttritionUnder3MonthsPct}% de las bajas ocurre antes de 3 meses y ${retention.firstYearExitSharePct}% antes del año. Eso sugiere priorizar onboarding, calidad de selección y experiencia de primeras semanas antes de asumir que el problema es exclusivamente salarial.`,
     evidence: [
-      { label: "Rotación bimestral", value: `${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}%`, href: "/retencion", source: "benchmark.json" },
+      { label: "Bajas / plantilla al cierre", value: `${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}%`, href: "/retencion", source: "benchmark.json" },
       { label: "Bajas < 3 meses", value: `${retention.earlyAttritionUnder3MonthsPct}%`, href: "/retencion", source: "people-intelligence.json" },
       { label: "Bajas < 1 año", value: `${retention.firstYearExitSharePct}%`, href: "/retencion", source: "people-intelligence.json" },
     ],
@@ -119,10 +120,10 @@ function answerRewards(): CopilotAnswer {
 }
 
 function answerRisk(): CopilotAnswer {
-  const absenceNow = (current.absences / current.qualityAdjustedHeadcount) * 100;
-  const absencePrev = (previous.absences / previous.qualityAdjustedHeadcount) * 100;
-  const incapacityNow = (current.incapacityCases / current.qualityAdjustedHeadcount) * 100;
-  const incapacityPrev = (previous.incapacityCases / previous.qualityAdjustedHeadcount) * 100;
+  const absenceNow = current.matchedRates.absences.value;
+  const absencePrev = previous.matchedRates.absences.value;
+  const incapacityNow = current.matchedRates.incapacity.value;
+  const incapacityPrev = previous.matchedRates.incapacity.value;
   return {
     intent: "risk",
     title: "Ausentismo mejora, incapacidades permanecen cerca del máximo reciente.",
@@ -139,16 +140,17 @@ function answerRisk(): CopilotAnswer {
 }
 
 function answerQuality(): CopilotAnswer {
+  const report = qualityReport(benchmark.latest.period);
   return {
     intent: "quality",
-    title: "La calidad es suficientemente buena para análisis, pero no para ignorar excepciones.",
-    answer: `El corte tiene un Data Quality Score de ${benchmark.quality.score}/100: ${benchmark.quality.rulesPassed} de ${benchmark.quality.rulesEvaluated} reglas pasaron. Existe ${benchmark.quality.criticalAnomalies} anomalía longitudinal crítica y el histórico conserva separado el valor reportado del ajustado analítico.`,
+    title: "Distingue las diferencias de los datos que faltan.",
+    answer: `En ${report.companies} empresas se revisan ocho reglas principales: ${report.pass} comprobaciones consistentes, ${report.review} por confirmar y ${report.missing} sin datos para evaluar. El histórico contiene ${benchmark.quality.criticalAnomalies} salto de plantilla pendiente de confirmación. Consistencia no equivale a confianza estadística.`,
     evidence: [
-      { label: "Quality Score", value: `${benchmark.quality.score}/100`, href: "/data-quality", source: "benchmark.json" },
-      { label: "Reglas aprobadas", value: `${benchmark.quality.rulesPassed}/${benchmark.quality.rulesEvaluated}`, href: "/data-quality", source: "benchmark.json" },
-      { label: "Anomalías críticas", value: String(benchmark.quality.criticalAnomalies), href: "/data-quality", source: "benchmark.json" },
+      { label: "Consistentes", value: String(report.pass), href: "/data-quality", source: "company-periods" },
+      { label: "Por confirmar", value: String(report.review), href: "/data-quality", source: "company-periods" },
+      { label: "Sin evaluar", value: String(report.missing), href: "/data-quality", source: "company-periods" },
     ],
-    action: "Abrir Data Quality Center",
+    action: "Revisar calidad del dato",
     actionHref: "/data-quality",
   };
 }
@@ -158,7 +160,7 @@ function answerSummary(): CopilotAnswer {
   return {
     intent: "summary",
     title: "Tres cambios merecen atención en el último bimestre.",
-    answer: `1) El headcount agregado se mantiene prácticamente estable (${benchmark.latest.headcountChangePct.toFixed(2)}%). 2) Las contrataciones bajaron ${Math.abs(hiresChange).toFixed(1)}%, mientras el time-to-fill técnico subió a ${current.timeToFill.technical} días. 3) La rotación se mantiene alrededor de ${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}% y la mayor oportunidad estructural está en early attrition: ${retention.earlyAttritionUnder3MonthsPct}% de bajas antes de 3 meses en el subconjunto válido.`,
+    answer: `1) El headcount agregado se mantiene prácticamente estable (${benchmark.latest.headcountChangePct.toFixed(2)}%). 2) Las contrataciones bajaron ${Math.abs(hiresChange).toFixed(1)}%, mientras el time-to-fill técnico subió a ${current.timeToFill.technical} días. 3) Las bajas / plantilla al cierre están en ${benchmark.latest.turnoverBimonthlyPct.toFixed(1)}% y la mayor oportunidad estructural está en early attrition: ${retention.earlyAttritionUnder3MonthsPct}% de bajas antes de 3 meses en ${retention.tenureValidCompanies} empresas con desglose completo.`,
     evidence: [
       { label: "Headcount", value: fmt(benchmark.latest.headcount), href: "/", source: "benchmark.json" },
       { label: "Contrataciones", value: fmt(current.hires), href: "/talent-acquisition", source: "benchmark.json" },

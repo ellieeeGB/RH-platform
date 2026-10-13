@@ -54,26 +54,26 @@ export default function RetentionPage() {
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.1fr_.9fr]">
         <article className="panel p-5 md:p-6">
-          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Evolución del mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Rotación a través de los siete bimestres</h2><p className="mt-2 text-xs leading-5 text-slate-400">Serie histórica de referencia del mercado completo.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado</span></div>
+          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Evolución del mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Bajas por plantilla al cierre</h2><p className="mt-2 text-xs leading-5 text-slate-400">Mismas empresas en numerador y denominador de cada corte. La cobertura puede variar entre cortes.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado</span></div>
           <TurnoverTrendChart />
         </article>
 
         <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft">
           <div className="eyebrow !text-cyan-300">Referencia de permanencia</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">La mayor concentración de salidas del mercado ocurre al inicio de la relación laboral.</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-300">En el último corte con desglose consistente, {retentionData.earlyAttritionUnder3MonthsPct}% de las bajas se concentra en los primeros tres meses y {retentionData.firstYearExitSharePct}% antes del primer año.</p>
+          <h2 className="mt-4 text-2xl font-black leading-tight">En el subconjunto completo, las salidas se concentran al inicio.</h2>
+          <p className="mt-4 text-sm leading-6 text-slate-300">En {retentionData.tenureValidCompanies} empresas del último corte con todas las categorías reportadas, {retentionData.earlyAttritionUnder3MonthsPct}% de las bajas se concentra en los primeros tres meses y {retentionData.firstYearExitSharePct}% antes del primer año.</p>
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.06] p-4 text-xs leading-5 text-slate-300">Conviene revisar este patrón junto con onboarding, salario de entrada, fuente de reclutamiento, transporte, turno y supervisión.</div>
           <div className="mt-4 text-[10px] font-bold uppercase tracking-[.14em] text-slate-500">Referencia de mercado · Jul–Ago 25</div>
         </article>
       </section>
 
       <section className="mt-4 grid gap-4 xl:grid-cols-2">
-        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Antigüedad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Cuándo ocurre la baja</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitTenureChart /></article>
-        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Edad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">En qué edades se concentran las bajas</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitAgeChart /></article>
+        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Antigüedad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Cuándo ocurre la baja</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitTenureChart /><p className="mt-2 text-xs leading-5 text-slate-500">{retentionData.tenureValidCompanies} empresas · {retentionData.tenureWeightedExits} bajas con desglose completo. No representa a las 40 empresas.</p></article>
+        <article className="panel p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="eyebrow">Edad de salida</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">En qué edades se concentran las bajas</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div><ExitAgeChart /><p className="mt-2 text-xs leading-5 text-slate-500">{retentionData.ageValidCompanies} empresas · {retentionData.ageWeightedExits} bajas con desglose completo.</p></article>
       </section>
 
       <section className="mt-4 panel p-5 md:p-6">
-        <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Motivos reportados</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Principales razones de salida</h2><p className="mt-2 max-w-3xl text-xs leading-5 text-slate-500">Las causas se presentan como distribución de los eventos reportados. Algunas empresas registran más de una causa, por lo que no deben sumarse directamente contra el total de bajas.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div>
+        <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Motivos reportados</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Principales razones de salida</h2><p className="mt-2 max-w-3xl text-xs leading-5 text-slate-500">Las causas se presentan como distribución de los eventos reportados. El desglose no concilia con todas las bajas; no se interpreta como una distribución de personas únicas.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado · Jul–Ago 25</span></div>
         <ExitReasonsChart />
       </section>
     </DashboardFrame>

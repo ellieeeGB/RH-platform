@@ -47,3 +47,30 @@ La base histórica original **no debe subirse a este repositorio público**. Los
 ## Estado
 
 Proyecto en construcción para la competencia de dashboard dinámico de RH.
+
+## Ejecutar la revisión auditada
+
+Rama `codex/audit-and-responsive-review`, PR #15. Si aparece el tabulador de cinco puestos de demostración, se está ejecutando una versión anterior.
+
+```sh
+git clone --branch codex/audit-and-responsive-review https://github.com/ellieeeGB/RH-platform.git RH-platform-audit
+cd RH-platform-audit
+npm ci
+npm run dev
+```
+
+Abre la dirección local que imprime Next.js, normalmente `http://localhost:3000`. Para detenerla, `Ctrl+C`. Los datos procesados ya están incluidos: no necesitas el Excel para explorar. `predev` verifica que todos los archivos correspondan a la misma edición.
+
+## Actualizar datos y verificar
+
+```sh
+npm run data:extract -- "/ruta/BASE HISTORICA.xlsx"
+npm run data:verify
+npm test
+npm run typecheck
+npm run build
+```
+
+No ejecutes extractores individuales sobre `data/processed`: producirían archivos sin renovar el manifiesto. La extracción completa incluye el tabulador y espera las siete hojas y 40 compañías del estudio. Una nueva estructura requiere actualizar el contrato. Si se interrumpe una extracción, confirma que ya no siga ejecutándose antes de retirar su bloqueo `data/.data-pipeline.lock`.
+
+Consulta [la auditoría](docs/repository-review.md) para ver correcciones, funciones y límites. Esta rama no actualiza automáticamente el Site privado. El copiloto actual responde mediante reglas y datos calculados.

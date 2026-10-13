@@ -1,3 +1,4 @@
+import { composition } from "./lib/data-contract";
 import ExcelJS from "exceljs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -23,6 +24,7 @@ type BenchmarkPeriod = {
   period: string;
   qualityAdjustedHeadcount: number;
   exits: number;
+  matchedRates: { exits: { value: number; n: number } };
   salaryEntryMedian: number;
 };
 
@@ -116,10 +118,7 @@ function quantile(values: number[], q: number): number {
   return sorted[lower] * (upper - position) + sorted[upper] * (position - lower);
 }
 
-function normalizePct(value: number | null): number | null {
-  if (value === null || value < 0) return null;
-  return value <= 1.01 ? value : value / 100;
-}
+
 
 function validCompanyRows(worksheet: ExcelJS.Worksheet, companyColumn: number): number[] {
   const rows: number[] = [];
@@ -143,10 +142,8 @@ function weightedDistribution(
   for (const row of rows) {
     const exits = numberValue(worksheet.getCell(row, exitsColumn).value);
     if (!exits || exits <= 0) continue;
-    const values = columns.map((item) => normalizePct(numberValue(worksheet.getCell(row, item.column).value)));
-    if (values.every((value) => value === null)) continue;
-    const total = values.reduce<number>((sum, value) => sum + (value ?? 0), 0);
-    if (total < 0.95 || total > 1.05) continue;
+    const values = composition(columns.map(item => numberValue(worksheet.getCell(row, item.column).value)));
+    if (!values) continue;
 
     validCompanies += 1;
     weightedExits += exits;
@@ -160,12 +157,14 @@ function weightedDistribution(
     value: weightedExits ? round(((weighted.get(item.bucket) ?? 0) / weightedExits) * 100, 1) : 0,
   }));
 
-  return { distribution, validCompanies, weightedExits: Math.round(weightedExits) };
+  if (validCompanies < 5) throw new Error("Insufficient complete responses for retention distribution");
+  const shares = columns.map(item => (weighted.get(item.bucket) ?? 0) / weightedExits * 100);
+  return { distribution, shares, validCompanies, weightedExits: Math.round(weightedExits) };
 }
 
 async function main() {
   const source = process.argv[2] ?? "data/raw/BASE HISTORICA(1).xlsx";
-  const outputDir = path.resolve("data/processed");
+  const outputDir = path.resolve(process.env.CATCH_DATA_OUTPUT ?? "data/processed");
   const benchmarkPath = path.join(outputDir, "benchmark.json");
   const benchmark = JSON.parse(await fs.readFile(benchmarkPath, "utf8")) as BenchmarkFile;
 
@@ -243,13 +242,7 @@ async function main() {
   const high = bands[2].median;
   const maximum = bands[3].median;
 
-  const turnoverTrendPct = benchmark.periods.map((period, index) => {
-    const previous = benchmark.periods[index - 1];
-    const denominator = previous
-      ? (previous.qualityAdjustedHeadcount + period.qualityAdjustedHeadcount) / 2
-      : period.qualityAdjustedHeadcount;
-    return { period: period.period, value: round((period.exits / denominator) * 100, 2) };
-  });
+  const turnoverTrendPct = benchmark.periods.map(period => ({ period: period.period, value: round(period.matchedRates.exits.value, 2), n: period.matchedRates.exits.n }));
 
   const output = {
     metadata: {
@@ -257,7 +250,7 @@ async function main() {
       period: benchmark.latest.period,
       privacy: "aggregated-only",
       notes: [
-        "Tenure and age distributions are exit-weighted across companies whose percentages reconcile approximately to 100%.",
+        "Tenure and age distributions are exit-weighted across companies with all categories present; normalized to 100% after a 5-point reconciliation tolerance. Missing categories are not zero.",
         "Exit-reason counts may not reconcile to total exits; reason share is normalized over reported reason events.",
         "Salary distribution contains no company identifiers and represents the market sample.",
       ],
@@ -267,8 +260,8 @@ async function main() {
       tenureDistributionPct: tenure.distribution,
       tenureValidCompanies: tenure.validCompanies,
       tenureWeightedExits: tenure.weightedExits,
-      earlyAttritionUnder3MonthsPct: round(tenure.distribution.slice(0, 2).reduce<number>((sum, item) => sum + item.value, 0), 1),
-      firstYearExitSharePct: round(tenure.distribution.slice(0, 3).reduce<number>((sum, item) => sum + item.value, 0), 1),
+      earlyAttritionUnder3MonthsPct: round(tenure.shares.slice(0, 2).reduce((sum, value) => sum + value, 0), 1),
+      firstYearExitSharePct: round(tenure.shares.slice(0, 3).reduce((sum, value) => sum + value, 0), 1),
       ageDistributionPct: age.distribution,
       ageValidCompanies: age.validCompanies,
       ageWeightedExits: age.weightedExits,

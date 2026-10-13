@@ -17,14 +17,14 @@ Cambios incorporados en esta revisión:
 ## Reproducir los datos modificados
 
 ```sh
-node --import tsx scripts/extract-company-periods.ts /ruta/BASE.xlsx
-node --import tsx scripts/extract-company-detail.ts /ruta/BASE.xlsx
+npm run data:extract -- /ruta/BASE.xlsx
+npm run data:verify
 npm test
 npm run typecheck
 npm run build
 ```
 
-La fuente Excel permanece fuera del repositorio. company-detail.json contiene los datos complementarios de los puestos técnicos, intervalos y bajas mensuales para los siete cortes conocidos. Los dos extractores validan encabezados antes de escribir.
+La fuente Excel permanece fuera del repositorio. company-detail.json contiene los datos complementarios de los puestos técnicos, intervalos y bajas mensuales para los siete cortes conocidos. El orquestador valida las seis extracciones antes de sustituir la edición.
 
 ## Estado de la comprobación visual
 
@@ -56,3 +56,45 @@ Empresa y bimestre se mantienen en las vistas que los utilizan. Las vistas de re
 Cada estadística requiere al menos cinco respuestas válidas. Las bandas salariales usan empresas con cuatro valores positivos y ordenados, para mantener la misma muestra en las cuatro bandas. Los cuartiles se interpolan linealmente. Los tiempos técnicos usan plazos exactos; intervalos mayores de 60 días no se convierten en una cifra. Estos criterios de presentación no constituyen control de acceso a los datos del cliente.
 
 Validación: 35 pruebas aprobadas, incluidos filtros de pares, exclusión de la propia empresa, tamaño mínimo e interpolación de cuartiles; TypeScript sin errores y compilación de producción completada. No se declara comprobación visual posterior al cambio ni actualización del Site desplegado. Esta revisión corresponde a RH-platform y al PR #15.
+
+## Auditoría del 13 de octubre: pipeline, evidencia y diseño
+
+Se inspeccionaron el Excel y los fotogramas de `Screencast From 2026-10-13 09-00-17.webm` (3 min 29 s). La grabación todavía muestra el tabulador de demostración y el benchmark anteriores al PR #15: no valida el nuevo renderizado. El trabajo continúa en `codex/audit-and-responsive-review`, sin sustituir el Site privado.
+
+### Correcciones
+
+| Problema | Cambio |
+| --- | --- |
+| La extracción omitía el detalle y no propagaba la ruta a todos los comandos. | Un orquestador ejecuta los seis extractores con una sola fuente, en aislamiento. Valida 280 claves empresa-periodo antes de sustituir los archivos. |
+| Posibles ediciones mezcladas. | Manifiesto SHA-256 del Excel, implementación y 12 salidas. `predev` y `prebuild` verifican integridad. Un fallo de extracción conserva la edición previa. Se intenta restaurarla si falla la sustitución; no se promete resistencia a un apagado entre los dos renombrados. |
+| Porcentajes inferidos por magnitud. | Rechazos y uso de beneficios: puntos porcentuales. Incrementos y aportaciones: fracciones. Uso de fuentes de reclutamiento: escala 0–10; un 1 ya no se transforma en 100%. |
+| Antigüedad y edad aceptaban categorías ausentes como cero. | Composiciones completas, no negativas, con tolerancia de cinco puntos y normalización del grupo. Antigüedad: seis empresas, 735 bajas; 54.5% antes de tres meses y 76.7% antes del año. Edad: cinco empresas, 928 bajas. Cobertura visible junto a las gráficas. |
+| Denominadores distintos entre pantallas. | Tasas con las mismas empresas en numerador y denominador. Panel, serie, riesgo, copiloto y simulador comparten la definición. Último corte: 2,791 / 26,977 × 100 = 10.34585%, n=29. Es bajas por plantilla al cierre, no rotación sobre plantilla promedio. |
+| Simulación aplicada a una población distinta. | Usa las mismas 26,977 personas y la tasa sin redondear. Es aritmética de escenarios, no un modelo causal. |
+| Conciliación con partes ausentes. | «Sin evaluar» se separa de consistente y de discrepante. La página nueva revisa ocho reglas por empresa y muestra columnas fuente. |
+| Celdas finales sin encabezado contadas como preguntas. | No se hereda la última pregunta a esas celdas; permanecen 1,142 columnas efectivas. |
+| Medianas antiguas incorporaban ceros de tiempo de cobertura. | Regeneración con plazos positivos: Nov–Dic 24 operativo 11.5 días y gerencial 45; Mar–Abr 25 técnico 20. «Más de 60» no se convierte en un plazo exacto. |
+
+### Funciones entregadas
+
+- Laboratorio de señales con cinco indicadores, empresa y bimestre activos. Separa el cambio de las mismas empresas de la aportación de respuestas que aparecen o faltan. Es una identidad aritmética, no una explicación causal.
+- Sensibilidad al retirar cada empresa una vez: rango y estabilidad de dirección. Se necesitan seis empresas para que queden al menos cinco. No es un intervalo de confianza.
+- Tabla de aportaciones y cobertura histórica: distingue desempeño de composición de respuestas; un cero explícito sí cuenta.
+- Descarga de evidencia en JSON: selección, método, resultados, comprobaciones, columnas y huella del Excel.
+- Radar de inicio: sustituye fotografías externas por cuatro comparaciones útiles y acceso al laboratorio. Conserva azul marino, turquesa e índigo.
+- Calidad por empresa y periodo, con filtros de resultado y saltos históricos sin imputación automática. Ocho reglas no certifican todo el cuestionario.
+
+Se eliminaron `signature-metric-strip`, `signature-signal-field`, `signature-metrics` y `metrics`, sin consumidores de producción después de la sustitución. Sus pruebas de anclajes obsoletos se reemplazan por pruebas del cálculo usado. Se retiraron exports sin consumidores del benchmark anterior y el comando obsoleto `next lint`; `typecheck` sigue disponible.
+
+### Validación y límites
+
+40 pruebas aprobadas, TypeScript sin errores y compilación de producción con 23 rutas. Se prueban unidades, composiciones, ausentes versus cero, identidades, igualdad de cohortes entre vistas, descomposición, sensibilidad, fallo de extracción e integridad. Una segunda extracción independiente produjo los mismos 12 hashes y las mismas firmas de fuente e implementación. La prueba de fallo imprime intencionalmente un error de hoja ausente y comprueba que la edición anterior permanezca intacta.
+
+Pendiente comprobar visualmente el renderizado final en escritorio y móvil. La compilación no sustituye esa comprobación. También sigue pendiente confirmar el dato atípico de COMPAÑIA 28 y aclarar campos ambiguos de la fuente. No se afirma que seis empresas representen a las 40. El Site privado no se ha actualizado.
+
+### Próximas funciones propuestas
+
+1. Bitácora de hipótesis con evidencia de un corte, responsable, acción y resultado posterior. Requiere definir persistencia y acceso.
+2. Priorizar datos faltantes según cuánto reducirían la incertidumbre de una comparación. Requiere límites plausibles acordados; no inventar salarios ni bajas.
+3. Alertas de cambios sostenidos en varios cortes, con estabilidad de composición. Siete bimestres no sustentan pronósticos individuales fiables.
+4. Extender el copiloto a la selección activa y a las exclusiones de cada cálculo. El asistente actual es de reglas; este PR no presume una conexión a un modelo generativo.

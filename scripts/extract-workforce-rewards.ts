@@ -1,3 +1,4 @@
+import { percentagePoints } from "./lib/data-contract";
 import ExcelJS from "exceljs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -133,9 +134,7 @@ function sumColumn(worksheet: ExcelJS.Worksheet, rows: number[], column: number)
 }
 
 function percentValue(value: unknown): number | null {
-  const numeric = numberValue(value);
-  if (numeric === null || numeric < 0) return null;
-  return numeric <= 1.01 ? numeric * 100 : numeric;
+  return percentagePoints(value, "fraction");
 }
 
 function yes(value: unknown): boolean {
@@ -184,7 +183,7 @@ function demandFromGroup(
 
 async function main() {
   const source = process.argv[2] ?? "data/raw/BASE HISTORICA(1).xlsx";
-  const outputDir = path.resolve("data/processed");
+  const outputDir = path.resolve(process.env.CATCH_DATA_OUTPUT ?? "data/processed");
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(source);
 
@@ -391,7 +390,7 @@ async function main() {
       },
       usageMedianPct: usageStats.map(([benefit, column]) => {
         const values = rows
-          .map((row) => percentValue(latestSheet.getCell(row, column).value))
+          .map((row) => percentagePoints(latestSheet.getCell(row, column).value, "points"))
           .filter((value): value is number => value !== null && value >= 0);
         return { benefit, ...stats(values) };
       }),

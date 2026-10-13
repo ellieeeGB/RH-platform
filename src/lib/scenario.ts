@@ -12,8 +12,8 @@ export type ScenarioInputs = {
 const entryBand = peopleIntelligence.compensation.bands.find((band) => band.band === "Ingreso")!;
 
 export const scenarioBaseline = {
-  headcount: benchmark.latest.headcount,
-  currentTurnoverPct: benchmark.latest.turnoverBimonthlyPct,
+  headcount: benchmark.latest.matchedCoverage.exits.denominator,
+  currentTurnoverPct: benchmark.latest.matchedCoverage.exits.value,
   currentSalaryEntryDaily: entryBand.median,
   salaryEntryQ3Daily: entryBand.q3,
   currentTechnicalTimeToFillDays: benchmark.latest.timeToFillDays.technical,

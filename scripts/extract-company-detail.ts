@@ -19,6 +19,6 @@ async function main(){
    records.push({company,period:label,monthlyExits1:monthlyAvailable?num(sheet.getCell(`LC${row}`).value):null,monthlyExits2:monthlyAvailable?num(sheet.getCell(`LD${row}`).value):null,...statuses,technicalRoles});
   }
  }
- await fs.writeFile('data/processed/company-detail.json',JSON.stringify({periods,records})+'\n');console.log(`Extracted ${records.length} company-period records.`);
+ await fs.writeFile(`${process.env.CATCH_DATA_OUTPUT ?? 'data/processed'}/company-detail.json`,JSON.stringify({periods,records})+'\n');console.log(`Extracted ${records.length} company-period records.`);
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

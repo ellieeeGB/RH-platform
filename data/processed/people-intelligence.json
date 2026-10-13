@@ -1,76 +1,223 @@
 {
   "metadata": {
-    "source": "BASE HISTORICA(1).xlsx",
+    "source": "BASE HISTORICA.xlsx",
     "period": "Jul-Ago 25",
     "privacy": "aggregated-only",
     "notes": [
-      "Tenure and age distributions are exit-weighted across companies whose percentages reconcile approximately to 100%.",
-      "Exit-reason counts do not fully reconcile to total exits in the source; reason share is therefore normalized over reported reason events, not total exits.",
-      "Salary distribution contains no company identifiers and represents the 40-company market sample."
+      "Tenure and age distributions are exit-weighted across companies with all categories present; normalized to 100% after a 5-point reconciliation tolerance. Missing categories are not zero.",
+      "Exit-reason counts may not reconcile to total exits; reason share is normalized over reported reason events.",
+      "Salary distribution contains no company identifiers and represents the market sample."
     ]
   },
   "retention": {
     "turnoverTrendPct": [
-      {"period":"Jul-Ago 24","value":8.71},
-      {"period":"Sep-Oct 24","value":7.60},
-      {"period":"Nov-Dic 24","value":5.26},
-      {"period":"Ene-Feb 25","value":7.33},
-      {"period":"Mar-Abr 25","value":6.42},
-      {"period":"May-Jun 25","value":7.87},
-      {"period":"Jul-Ago 25","value":8.00}
+      {
+        "period": "Jul-Ago 24",
+        "value": 12.4,
+        "n": 27
+      },
+      {
+        "period": "Sep-Oct 24",
+        "value": 9.17,
+        "n": 30
+      },
+      {
+        "period": "Nov-Dic 24",
+        "value": 6.49,
+        "n": 31
+      },
+      {
+        "period": "Ene-Feb 25",
+        "value": 8.98,
+        "n": 32
+      },
+      {
+        "period": "Mar-Abr 25",
+        "value": 5.14,
+        "n": 31
+      },
+      {
+        "period": "May-Jun 25",
+        "value": 9.17,
+        "n": 29
+      },
+      {
+        "period": "Jul-Ago 25",
+        "value": 10.35,
+        "n": 29
+      }
     ],
     "tenureDistributionPct": [
-      {"bucket":"0–1 mes","value":30.5},
-      {"bucket":"1–3 meses","value":29.4},
-      {"bucket":"3–12 meses","value":17.3},
-      {"bucket":"1–3 años","value":16.2},
-      {"bucket":"Más de 3 años","value":6.7}
+      {
+        "bucket": "0–1 mes",
+        "value": 26.1
+      },
+      {
+        "bucket": "1–3 meses",
+        "value": 28.4
+      },
+      {
+        "bucket": "3–12 meses",
+        "value": 22.2
+      },
+      {
+        "bucket": "1–3 años",
+        "value": 12.7
+      },
+      {
+        "bucket": "Más de 3 años",
+        "value": 10.5
+      }
     ],
-    "tenureValidCompanies": 25,
-    "tenureWeightedExits": 2168,
-    "earlyAttritionUnder3MonthsPct": 59.9,
-    "firstYearExitSharePct": 77.2,
+    "tenureValidCompanies": 6,
+    "tenureWeightedExits": 735,
+    "earlyAttritionUnder3MonthsPct": 54.5,
+    "firstYearExitSharePct": 76.7,
     "ageDistributionPct": [
-      {"bucket":"Más de 50","value":3.4},
-      {"bucket":"38–50","value":11.6},
-      {"bucket":"31–37","value":21.2},
-      {"bucket":"23–30","value":42.5},
-      {"bucket":"22 o menos","value":21.3}
+      {
+        "bucket": "Más de 50",
+        "value": 10
+      },
+      {
+        "bucket": "38–50",
+        "value": 19.7
+      },
+      {
+        "bucket": "31–37",
+        "value": 19.5
+      },
+      {
+        "bucket": "23–30",
+        "value": 29.8
+      },
+      {
+        "bucket": "22 o menos",
+        "value": 20.9
+      }
     ],
-    "ageValidCompanies": 25,
-    "ageWeightedExits": 2772,
+    "ageValidCompanies": 5,
+    "ageWeightedExits": 928,
     "reportedReasonEvents": 3302,
     "reasonDistribution": [
-      {"reason":"Renuncia voluntaria","count":1289,"sharePct":39.0},
-      {"reason":"Abandono de trabajo","count":896,"sharePct":27.1},
-      {"reason":"Rescisión de contrato","count":520,"sharePct":15.7},
-      {"reason":"Acumulación de faltas","count":423,"sharePct":12.8},
-      {"reason":"Otro","count":77,"sharePct":2.3},
-      {"reason":"Disminución de plazas","count":58,"sharePct":1.8},
-      {"reason":"Jubilación","count":35,"sharePct":1.1},
-      {"reason":"Fallecimiento","count":3,"sharePct":0.1},
-      {"reason":"Incapacidad permanente","count":1,"sharePct":0.0}
+      {
+        "reason": "Renuncia Voluntaria",
+        "count": 1289,
+        "sharePct": 39
+      },
+      {
+        "reason": "Abandono de Trabajo",
+        "count": 896,
+        "sharePct": 27.1
+      },
+      {
+        "reason": "Rescisión de Contrato",
+        "count": 520,
+        "sharePct": 15.7
+      },
+      {
+        "reason": "Acumulación de Faltas",
+        "count": 423,
+        "sharePct": 12.8
+      },
+      {
+        "reason": "Otro",
+        "count": 77,
+        "sharePct": 2.3
+      },
+      {
+        "reason": "Disminución de plazas",
+        "count": 58,
+        "sharePct": 1.8
+      },
+      {
+        "reason": "Jubilación",
+        "count": 35,
+        "sharePct": 1.1
+      },
+      {
+        "reason": "Fallecimiento",
+        "count": 3,
+        "sharePct": 0.1
+      },
+      {
+        "reason": "Incapacidad permanente",
+        "count": 1,
+        "sharePct": 0
+      }
     ]
   },
   "compensation": {
     "bands": [
-      {"band":"Ingreso","min":226.00,"q1":299.75,"median":339.63,"q3":370.02,"max":633.33,"n":40},
-      {"band":"Intermedio bajo","min":248.50,"q1":346.75,"median":382.94,"q3":438.72,"max":766.66,"n":40},
-      {"band":"Intermedio alto","min":282.00,"q1":384.75,"median":444.20,"q3":522.44,"max":850.00,"n":40},
-      {"band":"Máximo","min":329.73,"q1":441.70,"median":560.64,"q3":741.71,"max":900.00,"n":40}
+      {
+        "band": "Ingreso",
+        "min": 226,
+        "q1": 299.75,
+        "median": 339.63,
+        "q3": 370.03,
+        "max": 633.33,
+        "n": 40
+      },
+      {
+        "band": "Intermedio bajo",
+        "min": 248.5,
+        "q1": 346.75,
+        "median": 382.94,
+        "q3": 438.72,
+        "max": 766.66,
+        "n": 40
+      },
+      {
+        "band": "Intermedio alto",
+        "min": 282,
+        "q1": 384.75,
+        "median": 444.2,
+        "q3": 522.44,
+        "max": 850,
+        "n": 40
+      },
+      {
+        "band": "Máximo",
+        "min": 329.73,
+        "q1": 441.7,
+        "median": 560.64,
+        "q3": 741.71,
+        "max": 900,
+        "n": 40
+      }
     ],
     "salaryProgressionRatio": 1.65,
     "entryToLowPct": 12.75,
-    "lowToHighPct": 15.99,
+    "lowToHighPct": 16,
     "highToMaxPct": 26.21,
     "entryMedianTrend": [
-      {"period":"Jul-Ago 24","value":301.02},
-      {"period":"Sep-Oct 24","value":301.02},
-      {"period":"Nov-Dic 24","value":314.29},
-      {"period":"Ene-Feb 25","value":321.26},
-      {"period":"Mar-Abr 25","value":321.46},
-      {"period":"May-Jun 25","value":339.63},
-      {"period":"Jul-Ago 25","value":339.63}
+      {
+        "period": "Jul-Ago 24",
+        "value": 301.02
+      },
+      {
+        "period": "Sep-Oct 24",
+        "value": 301.02
+      },
+      {
+        "period": "Nov-Dic 24",
+        "value": 314.29
+      },
+      {
+        "period": "Ene-Feb 25",
+        "value": 321.27
+      },
+      {
+        "period": "Mar-Abr 25",
+        "value": 321.46
+      },
+      {
+        "period": "May-Jun 25",
+        "value": 339.63
+      },
+      {
+        "period": "Jul-Ago 25",
+        "value": 339.63
+      }
     ]
   }
 }

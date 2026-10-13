@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "source": "BASE HISTORICA(1).xlsx",
+    "source": "BASE HISTORICA.xlsx",
     "period": "Jul-Ago 25",
     "privacy": "aggregated-only",
     "notes": [
@@ -11,108 +11,366 @@
   },
   "workforcePlanning": {
     "vacancyTrend": [
-      {"period":"Jul-Ago 24","operational":1618,"administrative":338,"total":1956},
-      {"period":"Sep-Oct 24","operational":1208,"administrative":253,"total":1461},
-      {"period":"Nov-Dic 24","operational":1353,"administrative":457,"total":1810},
-      {"period":"Ene-Feb 25","operational":1442,"administrative":408,"total":1850},
-      {"period":"Mar-Abr 25","operational":1418,"administrative":354,"total":1772},
-      {"period":"May-Jun 25","operational":2022,"administrative":472,"total":2494},
-      {"period":"Jul-Ago 25","operational":1853,"administrative":471,"total":2324}
+      {
+        "period": "Jul-Ago 24",
+        "operational": 1618,
+        "administrative": 338,
+        "total": 1956
+      },
+      {
+        "period": "Sep-Oct 24",
+        "operational": 1208,
+        "administrative": 253,
+        "total": 1461
+      },
+      {
+        "period": "Nov-Dic 24",
+        "operational": 1353,
+        "administrative": 457,
+        "total": 1810
+      },
+      {
+        "period": "Ene-Feb 25",
+        "operational": 1442,
+        "administrative": 408,
+        "total": 1850
+      },
+      {
+        "period": "Mar-Abr 25",
+        "operational": 1418,
+        "administrative": 354,
+        "total": 1772
+      },
+      {
+        "period": "May-Jun 25",
+        "operational": 2022,
+        "administrative": 472,
+        "total": 2494
+      },
+      {
+        "period": "Jul-Ago 25",
+        "operational": 1853,
+        "administrative": 471,
+        "total": 2324
+      }
     ],
     "latest": {
-      "operational":1853,
-      "administrative":471,
-      "total":2324,
-      "changeVsPreviousPct":-6.82,
-      "operationalSharePct":79.73,
-      "administrativeSharePct":20.27
+      "operational": 1853,
+      "administrative": 471,
+      "total": 2324,
+      "changeVsPreviousPct": -6.82,
+      "operationalSharePct": 79.73,
+      "administrativeSharePct": 20.27
     },
     "structuredDemand": {
-      "operationalTotal":1959,
-      "technicalTotal":93,
-      "professionalTotal":393,
-      "combinedTotal":2445,
-      "headlineTotal":2324,
-      "difference":121,
-      "reconciles":false
+      "operationalTotal": 1959,
+      "technicalTotal": 93,
+      "professionalTotal": 393,
+      "combinedTotal": 2445,
+      "headlineTotal": 2324,
+      "difference": 121,
+      "reconciles": false
     },
     "hotspots": [
-      {"family":"Operativo","role":"Operador de producción","education":"Secundaria","demand":1450},
-      {"family":"Profesional","role":"Ingenieros","education":"Universidad / Ingeniería","demand":216},
-      {"family":"Operativo","role":"Operador de producción","education":"Primaria","demand":187},
-      {"family":"Profesional","role":"Administrativos en general","education":"Licenciatura","demand":141},
-      {"family":"Operativo","role":"Operador de producción","education":"Bachillerato","demand":83},
-      {"family":"Operativo","role":"Operador de producción","education":"Técnico / TSU","demand":76},
-      {"family":"Operativo","role":"Almacén","education":"Secundaria","demand":59},
-      {"family":"Operativo","role":"Montacarguista","education":"Secundaria","demand":35},
-      {"family":"Técnico","role":"Técnico de mantenimiento","education":"Técnico / TSU","demand":32},
-      {"family":"Operativo","role":"Almacén","education":"Bachillerato","demand":25}
+      {
+        "family": "Operativo",
+        "role": "Operador de producción",
+        "education": "Secundaria",
+        "demand": 1450
+      },
+      {
+        "family": "Profesional",
+        "role": "Ingenieros",
+        "education": "Universidad / Ingeniería",
+        "demand": 216
+      },
+      {
+        "family": "Operativo",
+        "role": "Operador de producción",
+        "education": "Primaria",
+        "demand": 187
+      },
+      {
+        "family": "Profesional",
+        "role": "Administrativos en general",
+        "education": "Licenciatura",
+        "demand": 141
+      },
+      {
+        "family": "Operativo",
+        "role": "Operador de producción",
+        "education": "Bachillerato",
+        "demand": 83
+      },
+      {
+        "family": "Operativo",
+        "role": "Operador de producción",
+        "education": "Técnico / TSU",
+        "demand": 76
+      },
+      {
+        "family": "Operativo",
+        "role": "Almacén",
+        "education": "Secundaria",
+        "demand": 59
+      },
+      {
+        "family": "Operativo",
+        "role": "Montacarguista",
+        "education": "Secundaria",
+        "demand": 35
+      },
+      {
+        "family": "Técnico",
+        "role": "Técnico de Mantenimiento",
+        "education": "Técnico / TSU",
+        "demand": 32
+      },
+      {
+        "family": "Operativo",
+        "role": "Almacén",
+        "education": "Bachillerato",
+        "demand": 25
+      }
     ],
     "technicalHotspots": [
-      {"role":"Técnico de mantenimiento","education":"Técnico / TSU","demand":32},
-      {"role":"Técnico de mantenimiento","education":"Licenciatura","demand":16},
-      {"role":"Técnico de mantenimiento","education":"Bachillerato","demand":15},
-      {"role":"Supervisor de producción","education":"Licenciatura","demand":14},
-      {"role":"Supervisor de producción","education":"Técnico / TSU","demand":8}
+      {
+        "role": "Técnico de Mantenimiento",
+        "education": "Técnico / TSU",
+        "demand": 32
+      },
+      {
+        "role": "Técnico de Mantenimiento",
+        "education": "Licenciatura",
+        "demand": 16
+      },
+      {
+        "role": "Técnico de Mantenimiento",
+        "education": "Bachillerato",
+        "demand": 15
+      },
+      {
+        "role": "Supervisor de Producción",
+        "education": "Licenciatura",
+        "demand": 14
+      },
+      {
+        "role": "Supervisor de Producción",
+        "education": "Técnico / TSU",
+        "demand": 8
+      }
     ],
     "professionalHotspots": [
-      {"role":"Ingenieros","education":"Universidad / Ingeniería","demand":216},
-      {"role":"Administrativos en general","education":"Licenciatura","demand":141},
-      {"role":"Administrativos","education":"Ingeniería","demand":15},
-      {"role":"Ingenieros","education":"Licenciatura","demand":12},
-      {"role":"Gerentes","education":"Ingeniería","demand":4}
+      {
+        "role": "Ingenieros",
+        "education": "Universidad / Ingeniería",
+        "demand": 216
+      },
+      {
+        "role": "Administrativos en general",
+        "education": "Licenciatura",
+        "demand": 141
+      },
+      {
+        "role": "Administrativos en general",
+        "education": "Universidad / Ingeniería",
+        "demand": 15
+      },
+      {
+        "role": "Ingenieros",
+        "education": "Licenciatura",
+        "demand": 12
+      },
+      {
+        "role": "Gerentes",
+        "education": "Universidad / Ingeniería",
+        "demand": 4
+      }
     ]
   },
   "totalRewards": {
     "benefitPrevalence": [
-      {"benefit":"Vales","companies":37,"pct":92.5},
-      {"benefit":"Fondo de ahorro","companies":36,"pct":90.0},
-      {"benefit":"SGMM","companies":35,"pct":87.5,"inferred":true},
-      {"benefit":"Seguro de vida","companies":33,"pct":82.5},
-      {"benefit":"Transporte","companies":32,"pct":80.0},
-      {"benefit":"Comedor","companies":25,"pct":62.5}
+      {
+        "benefit": "Vales",
+        "companies": 37,
+        "pct": 92.5
+      },
+      {
+        "benefit": "Fondo de ahorro",
+        "companies": 36,
+        "pct": 90
+      },
+      {
+        "benefit": "SGMM",
+        "companies": 35,
+        "pct": 87.5,
+        "inferred": true
+      },
+      {
+        "benefit": "Seguro de vida",
+        "companies": 33,
+        "pct": 82.5
+      },
+      {
+        "benefit": "Transporte",
+        "companies": 32,
+        "pct": 80
+      },
+      {
+        "benefit": "Comedor",
+        "companies": 25,
+        "pct": 62.5
+      }
     ],
     "packageBreadth": {
-      "benefitTypes":6,
-      "average":4.95,
-      "median":5.5,
-      "allSixCompanies":20,
-      "allSixPct":50.0,
-      "distribution":[
-        {"count":1,"companies":1},
-        {"count":2,"companies":2},
-        {"count":3,"companies":4},
-        {"count":4,"companies":4},
-        {"count":5,"companies":9},
-        {"count":6,"companies":20}
+      "benefitTypes": 6,
+      "average": 4.95,
+      "median": 5.5,
+      "allSixCompanies": 20,
+      "allSixPct": 50,
+      "distribution": [
+        {
+          "count": 1,
+          "companies": 1
+        },
+        {
+          "count": 2,
+          "companies": 2
+        },
+        {
+          "count": 3,
+          "companies": 4
+        },
+        {
+          "count": 4,
+          "companies": 4
+        },
+        {
+          "count": 5,
+          "companies": 9
+        },
+        {
+          "count": 6,
+          "companies": 20
+        }
       ]
     },
     "generosity": {
       "vouchersPct": [
-        {"population":"Operativo","median":10.0,"q1":9.4,"q3":11.2,"n":36},
-        {"population":"Administrativo","median":10.0,"q1":8.0,"q3":10.5,"n":37},
-        {"population":"Gerencial","median":10.0,"q1":8.0,"q3":10.5,"n":37}
+        {
+          "population": "Operativo",
+          "median": 10,
+          "q1": 9.38,
+          "q3": 11.25,
+          "n": 36
+        },
+        {
+          "population": "Administrativo",
+          "median": 10,
+          "q1": 8,
+          "q3": 10.5,
+          "n": 37
+        },
+        {
+          "population": "Gerencial",
+          "median": 10,
+          "q1": 8,
+          "q3": 10.5,
+          "n": 37
+        }
       ],
       "savingsFundPct": [
-        {"population":"Operativo","median":8.2,"q1":7.0,"q3":10.0,"n":34},
-        {"population":"Administrativo","median":9.2,"q1":7.0,"q3":13.0,"n":36},
-        {"population":"Gerencial","median":9.5,"q1":8.0,"q3":13.0,"n":36}
+        {
+          "population": "Operativo",
+          "median": 8.25,
+          "q1": 7,
+          "q3": 10,
+          "n": 34
+        },
+        {
+          "population": "Administrativo",
+          "median": 9.25,
+          "q1": 7,
+          "q3": 13,
+          "n": 36
+        },
+        {
+          "population": "Gerencial",
+          "median": 9.5,
+          "q1": 8,
+          "q3": 13,
+          "n": 36
+        }
       ],
       "firstYearVacationDays": [
-        {"population":"Operativo","median":12.0,"q1":12.0,"q3":12.0,"n":37},
-        {"population":"Administrativo","median":12.0,"q1":12.0,"q3":12.0,"n":39},
-        {"population":"Gerencial","median":12.0,"q1":12.0,"q3":14.8,"n":38}
+        {
+          "population": "Operativo",
+          "median": 12,
+          "q1": 12,
+          "q3": 12,
+          "n": 37
+        },
+        {
+          "population": "Administrativo",
+          "median": 12,
+          "q1": 12,
+          "q3": 12,
+          "n": 39
+        },
+        {
+          "population": "Gerencial",
+          "median": 12,
+          "q1": 12,
+          "q3": 14.75,
+          "n": 38
+        }
       ],
       "bonusDays": [
-        {"population":"Operativo","median":20.0,"q1":16.0,"q3":26.0,"n":39},
-        {"population":"Administrativo","median":30.0,"q1":20.0,"q3":30.0,"n":40},
-        {"population":"Gerencial","median":30.0,"q1":21.5,"q3":30.0,"n":40}
+        {
+          "population": "Operativo",
+          "median": 20,
+          "q1": 16,
+          "q3": 26,
+          "n": 39
+        },
+        {
+          "population": "Administrativo",
+          "median": 30,
+          "q1": 20,
+          "q3": 30,
+          "n": 40
+        },
+        {
+          "population": "Gerencial",
+          "median": 30,
+          "q1": 21.5,
+          "q3": 30,
+          "n": 40
+        }
       ]
     },
     "usageMedianPct": [
-      {"benefit":"SGMM","median":45.0,"q1":33.5,"q3":70.0,"n":35},
-      {"benefit":"Transporte","median":85.0,"q1":80.0,"q3":91.25,"n":32},
-      {"benefit":"Comedor","median":80.0,"q1":70.0,"q3":90.0,"n":26}
+      {
+        "benefit": "SGMM",
+        "median": 44,
+        "q1": 31,
+        "q3": 65,
+        "n": 35
+      },
+      {
+        "benefit": "Transporte",
+        "median": 85,
+        "q1": 80,
+        "q3": 91.25,
+        "n": 32
+      },
+      {
+        "benefit": "Comedor",
+        "median": 80,
+        "q1": 70,
+        "q3": 90,
+        "n": 26
+      }
     ]
   }
 }

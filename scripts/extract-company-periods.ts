@@ -1,3 +1,5 @@
+import { SOURCE_SHEETS, assertCompanyIds } from "./lib/data-contract";
+import { percentagePoints } from "./lib/data-contract";
 import ExcelJS from "exceljs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -113,9 +115,7 @@ function numberValue(value: unknown): number | null {
 }
 
 function percentValue(value: unknown): number | null {
-  const numeric = numberValue(value);
-  if (numeric === null || numeric < 0) return null;
-  return Math.round((numeric <= 1.01 ? numeric * 100 : numeric) * 10000) / 10000;
+  return percentagePoints(value, "fraction");
 }
 
 function yesNo(value: unknown): boolean | null {
@@ -160,10 +160,11 @@ function slug(period: string) {
 
 async function main() {
   const source = process.argv[2] ?? "data/raw/BASE HISTORICA(1).xlsx";
-  const outputDir = path.resolve("data/processed/company-periods");
+  const outputDir = path.resolve(process.env.CATCH_DATA_OUTPUT ?? "data/processed", "company-periods");
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(source);
   await fs.mkdir(outputDir, { recursive: true });
+  for (const name of SOURCE_SHEETS) if (!workbook.getWorksheet(name)) throw new Error(`Missing source sheet: ${name}`);
 
   for (const worksheet of workbook.worksheets.filter((item) => PERIOD_LABELS[item.name])) {
     assertSchema(worksheet);
@@ -181,6 +182,7 @@ async function main() {
     }
 
     if (rows.length !== 40) throw new Error(`${worksheet.name}: expected 40 companies, found ${rows.length}.`);
+    assertCompanyIds(rows.map(row => row[0]), worksheet.name);
     const payload = { period, columns: COLUMNS, rows };
     await fs.writeFile(path.join(outputDir, `${slug(period)}.json`), JSON.stringify(payload));
     console.log(`Company-period extract written: ${period} (${rows.length} companies).`);

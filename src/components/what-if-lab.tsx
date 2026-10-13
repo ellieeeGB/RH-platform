@@ -83,7 +83,7 @@ export function WhatIfLab() {
           </div>
 
           <div className="space-y-3">
-            <SliderField label="Rotación objetivo" value={inputs.turnoverTargetPct} min={3} max={10} step={0.1} suffix="%" onChange={(value) => update("turnoverTargetPct", value)} helper={`Actual: ${scenarioBaseline.currentTurnoverPct}% bimestral`} />
+            <SliderField label="Bajas / plantilla objetivo" value={inputs.turnoverTargetPct} min={3} max={20} step={0.1} suffix="%" onChange={(value) => update("turnoverTargetPct", value)} helper={`Actual: ${scenarioBaseline.currentTurnoverPct.toFixed(2)}% bimestral`} />
             <SliderField label="Aumento salario de ingreso" value={inputs.salaryIncreasePct} min={0} max={15} step={0.5} suffix="%" onChange={(value) => update("salaryIncreasePct", value)} helper={`Mediana actual: ${mxn2(scenarioBaseline.currentSalaryEntryDaily)}/día`} />
             <SliderField label="Time-to-fill técnico objetivo" value={inputs.technicalTimeToFillTargetDays} min={10} max={30} step={1} suffix=" d" onChange={(value) => update("technicalTimeToFillTargetDays", value)} helper={`Actual: ${scenarioBaseline.currentTechnicalTimeToFillDays} días`} />
             <SliderField label="Contrataciones operativas afectadas" value={inputs.affectedOperationalHires} min={100} max={2500} step={25} suffix="" onChange={(value) => update("affectedOperationalHires", value)} helper={`Vacantes operativas previstas: ${scenarioBaseline.operationalVacancies.toLocaleString("es-MX")}`} />
@@ -103,8 +103,8 @@ export function WhatIfLab() {
             <div className="rounded-2xl bg-white/5 p-5">
               <div className="flex items-center justify-between"><TrendingDown size={18} className="text-emerald-300" /><span className="text-[10px] uppercase tracking-wide text-slate-400">Retención</span></div>
               <div className="mt-4 text-3xl font-black">≈ {scenario.estimatedExitsAvoided.toLocaleString("es-MX")}</div>
-              <div className="mt-1 text-xs text-slate-300">bajas equivalentes evitadas si la rotación bajara a {inputs.turnoverTargetPct}%</div>
-              <div className="mt-4 text-[10px] leading-4 text-slate-500">({scenarioBaseline.currentTurnoverPct}% − {inputs.turnoverTargetPct}%) × {scenarioBaseline.headcount.toLocaleString("es-MX")} HC</div>
+              <div className="mt-1 text-xs text-slate-300">bajas equivalentes evitadas si la tasa de bajas bajara a {inputs.turnoverTargetPct}%</div>
+              <div className="mt-4 text-[10px] leading-4 text-slate-500">({scenarioBaseline.currentTurnoverPct.toFixed(2)}% − {inputs.turnoverTargetPct}%) × {scenarioBaseline.headcount.toLocaleString("es-MX")} personas · subconjunto con ambos datos</div>
             </div>
 
             <div className="rounded-2xl bg-white/5 p-5">

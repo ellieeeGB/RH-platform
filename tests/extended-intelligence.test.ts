@@ -27,6 +27,6 @@ test("percentage metrics remain within bounds", () => {
   assert.ok(extended.rewardsEconomics.transport.usageMedianPct <= 100);
   assert.ok(extended.rewardsEconomics.cafeteria.usageMedianPct <= 100);
   for (const level of Object.values(extended.talentMarket.recruitingSourceMix)) {
-    for (const source of level) assert.ok(source.medianUsePct >= 0 && source.medianUsePct <= 100);
+    for (const source of level) assert.ok(source.medianUsageScore >= 0 && source.medianUsageScore <= 10);
   }
 });

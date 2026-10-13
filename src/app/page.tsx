@@ -1,4 +1,5 @@
 "use client";
+import { SignalPreview } from "@/components/signal-preview";
 
 import Link from "next/link";
 import {
@@ -53,12 +54,12 @@ export default function Home() {
   const primarySignal = metrics.netMovement == null
     ? "No hay datos suficientes de altas y bajas para este corte."
     : metrics.netMovement >= 0
-      ? `La plantilla tuvo un balance neto de +${int(metrics.netMovement)} personas.`
-      : `La plantilla cerró con un balance neto de ${int(metrics.netMovement)} personas.`;
+      ? `Las altas menos las bajas suman +${int(metrics.netMovement)} personas.`
+      : `Las altas menos las bajas suman ${int(metrics.netMovement)} personas.`;
 
   const cards = [
     {
-      label: "Personas en plantilla",
+      label: "Plantilla reportada",
       value: int(scope?.headcount.total),
       note: hcChange == null ? "sin comparación anterior" : `${hcChange >= 0 ? "+" : ""}${hcChange.toFixed(1)}% vs. corte anterior`,
       icon: UsersRound,
@@ -86,7 +87,7 @@ export default function Home() {
   return (
     <DashboardFrame>
       <div className="-mx-5 -mt-5 overflow-hidden md:-mx-7 md:-mt-7 xl:-mx-8 xl:-mt-8">
-        <section className="relative min-h-[420px] overflow-hidden bg-[#061529] px-6 py-8 text-white md:px-10 xl:px-14 xl:py-10">
+        <section className="relative min-h-[360px] overflow-hidden bg-[#061529] px-6 py-8 text-white md:px-10 xl:px-14 xl:py-10">
           <div className="absolute inset-0 opacity-40 [background:radial-gradient(circle_at_78%_18%,rgba(34,211,238,.25),transparent_28%),radial-gradient(circle_at_22%_85%,rgba(112,93,248,.22),transparent_28%)]" />
           <div className="relative mx-auto grid max-w-[1660px] gap-8 xl:grid-cols-[.88fr_1.12fr] xl:items-center">
             <div className="z-10 max-w-3xl">
@@ -94,7 +95,7 @@ export default function Home() {
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><CalendarDays size={12} /> {period}</span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5"><Building2 size={12} /> {companyLabel}</span>
               </div>
-              <h1 className="mt-7 max-w-4xl text-[2.5rem] font-black leading-[.9] tracking-[-.07em] sm:text-[3rem] xl:text-[3.6rem]">
+              <h1 className="mt-7 max-w-4xl text-[2.5rem] font-black leading-[1.05] tracking-[-.07em] sm:text-[3rem] xl:text-[3.6rem]">
                 Panorama laboral
                 <span className="block text-cyan-300">del bimestre.</span>
               </h1>
@@ -114,31 +115,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative min-h-[320px] md:min-h-[360px]">
-              <div className="absolute left-[2%] top-[4%] h-[78%] w-[69%] overflow-hidden rounded-[42px] shadow-[0_45px_120px_rgba(0,0,0,.4)] ring-1 ring-white/10">
-                <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=1400&q=88" alt="Operación industrial" className="kenburns h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#061529]/95 via-[#061529]/15 to-transparent" />
-                <div className="absolute bottom-8 left-7 right-7">
-                  <div className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-300">Cobertura de talento técnico</div>
-                  <div className="mt-2 text-4xl font-black">{scope?.timeToFill.technical ?? "—"} <span className="text-lg text-slate-300">días</span></div>
-                  <div className="mt-2 text-xs text-slate-300">
-                    {technicalGap == null ? "Sin comparación disponible" : isMarket ? `${technicalGap >= 0 ? "+" : ""}${technicalGap.toFixed(0)} días vs. bimestre anterior` : `${technicalGap >= 0 ? "+" : ""}${technicalGap.toFixed(0)} días vs. mercado`}
-                  </div>
-                </div>
-              </div>
-              <div className="absolute right-[1%] top-[17%] h-[43%] w-[40%] rotate-[3deg] overflow-hidden rounded-[32px] border-[6px] border-[#061529] shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1000&q=88" alt="Equipo de trabajo" className="h-full w-full object-cover" />
-              </div>
-              <div className="absolute bottom-[7%] right-[2%] w-[48%] rounded-[28px] border border-white/15 bg-[#16283f]/90 p-5 shadow-2xl backdrop-blur-2xl">
-                <div className="text-[9px] font-black uppercase tracking-[.2em] text-cyan-200">Salario diario de ingreso</div>
-                <div className="mt-2 text-4xl font-black">{money(scope?.salaryDaily.entry)}</div>
-                <div className="mt-2 text-xs text-slate-300">
-                  {isMarket
-                    ? salaryGap == null ? "Sin comparación anterior" : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% vs. corte anterior`
-                    : salaryGap == null ? "Sin benchmark disponible" : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% vs. mediana de mercado`}
-                </div>
-              </div>
-            </div>
+            <SignalPreview />
           </div>
         </section>
 

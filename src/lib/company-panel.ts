@@ -1,3 +1,4 @@
+import { matchedRate, completeSum } from "./metric-math";
 import julAgo24 from "../../data/processed/company-periods/jul-ago-24.json";
 import sepOct24 from "../../data/processed/company-periods/sep-oct-24.json";
 import novDic24 from "../../data/processed/company-periods/nov-dic-24.json";
@@ -350,14 +351,13 @@ export function getMarketExtendedStats(period: string) {
 
 export function completeHeadcount(row: CompanySnapshot): number | null {
   const parts = [row.headcount.operational, row.headcount.administrative, row.headcount.other];
-  return parts.every(v => v !== null && v >= 0) ? row.headcount.total : null;
+  return completeSum(parts);
 }
 
 export function deriveScopeMetrics(snapshot: CompanySnapshot | null) {
   const rows = !snapshot ? [] : snapshot.company === "Mercado" ? getPeriodSnapshots(snapshot.period) : [snapshot];
   const pairedRate = (numerator: (r: CompanySnapshot) => number | null, denominator: (r: CompanySnapshot) => number | null = completeHeadcount, scale = 100) => {
-    const paired = rows.filter(r => numerator(r) !== null && denominator(r) !== null && denominator(r)! > 0);
-    return { n: paired.length, value: paired.length ? paired.reduce((s,r) => s + numerator(r)!, 0) / paired.reduce((s,r) => s + denominator(r)!, 0) * scale : null };
+    return matchedRate(rows, numerator, denominator, scale);
   };
   const both = rows.filter(r => r.hires !== null && r.exits !== null);
   const exits = pairedRate(r => r.exits);

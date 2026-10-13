@@ -10,7 +10,7 @@ import { MONTH_PERIODS } from "@/lib/company-detail";
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const pathname = usePathname();
-  const hasFilters = !["/signals", "/data-atlas", "/data-quality", "/copilot", "/what-if"].includes(pathname);
+  const hasFilters = !["/data-atlas", "/copilot", "/what-if"].includes(pathname);
   const { period, company, month, periods, companies, setPeriod, setCompany, setMonth } = useFilters();
 
   return (
