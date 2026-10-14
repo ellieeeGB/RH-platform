@@ -8,7 +8,8 @@ import mayJun25 from "../../data/processed/company-periods/may-jun-25.json";
 import julAgo25 from "../../data/processed/company-periods/jul-ago-25.json";
 
 type RawValue = string | number | boolean | null;
-type RawDataset = { period: string; columns: string[]; rows: RawValue[][] };
+type SourceIssue = { company: string; field: string; cell: string; value: number; reason: string };
+type RawDataset = { period: string; columns: string[]; rows: RawValue[][]; issues?: SourceIssue[] };
 
 const datasets = [julAgo24, sepOct24, novDic24, eneFeb25, marAbr25, mayJun25, julAgo25] as RawDataset[];
 
@@ -31,6 +32,7 @@ export type RejectionMix = {
 export type CompanySnapshot = {
   company: string;
   period: string;
+  sourceIssues?: SourceIssue[];
   headcount: { operational: number | null; administrative: number | null; other: number | null; total: number | null };
   salaryDaily: { entry: number | null; low: number | null; high: number | null; max: number | null };
   hires: number | null;
@@ -111,6 +113,7 @@ function toSnapshot(dataset: RawDataset, row: RawValue[]): CompanySnapshot {
   return {
     company,
     period: dataset.period,
+    sourceIssues: dataset.issues?.filter(issue => issue.company === company) ?? [],
     headcount: { operational, administrative, other, total },
     salaryDaily: {
       entry: numberValue("salaryEntry"),
@@ -302,17 +305,6 @@ export function getPreviousPeriod(period: string) {
 export function getPreviousScopeSnapshot(company: string, period: string) {
   const previousPeriod = getPreviousPeriod(period);
   return previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
-}
-
-export function getMarketSalaryPercentile(value: number | null, period: string) {
-  if (value === null) return null;
-  const salaryValues = getPeriodSnapshots(period)
-    .filter((row) => row.salaryDaily.entry !== null)
-    .map((row) => row.salaryDaily.entry as number)
-    .sort((a, b) => a - b);
-  if (!salaryValues.length) return null;
-  const belowOrEqual = salaryValues.filter((salary) => salary <= value).length;
-  return Math.round((belowOrEqual / salaryValues.length) * 100);
 }
 
 export function getMarketExtendedStats(period: string) {

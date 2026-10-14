@@ -102,14 +102,14 @@ export function SalaryDistributionChart() {
   );
 }
 
-export function SalaryEntryTrendChart() {
+export function SalaryEntryTrendChart({ data = compensationData.entryMedianTrend }: { data?: Array<{period: string; value: number | null}> }) {
   return (
     <div className="h-[250px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={compensationData.entryMedianTrend} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+        <LineChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
           <CartesianGrid stroke="#eef2f6" vertical={false} />
           <XAxis dataKey="period" tick={{ fill: "#64748b", fontSize: 9 }} axisLine={false} tickLine={false} />
-          <YAxis domain={[280, 360]} tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} />
+          <YAxis domain={[0, "auto"]} tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} />
           <Tooltip contentStyle={tooltipStyle} formatter={(value) => [`$${Number(value).toLocaleString("es-MX", { maximumFractionDigits: 2 })}`, "Mediana diaria"]} />
           <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={3} dot={{ r: 4, fill: "#2563eb" }} />
         </LineChart>

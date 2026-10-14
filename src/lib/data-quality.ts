@@ -6,7 +6,8 @@ export type QualityCheck = {company: string; field: string; source: string; stat
 export function checkCompany(r: CompanySnapshot): QualityCheck[] {
   const checks: QualityCheck[] = [];
   const add = (field: string, source: string, parts: Array<number | null>, predicate: () => boolean, detail: string) => {
-    const state = parts.some(v => v === null) ? "missing" : parts.some(v => v! < 0 || !Number.isFinite(v)) || !predicate() ? "review" : "pass";
+    const invalidPresent = parts.some(v => v !== null && (v < 0 || !Number.isFinite(v)));
+    const state = invalidPresent ? "review" : parts.some(v => v === null) ? "missing" : !predicate() ? "review" : "pass";
     checks.push({company: r.company, field, source, state, detail: state === "missing" ? "Faltan componentes; no se completan con cero." : detail});
   };
   add("Plantilla", "GL–GN", [r.headcount.operational, r.headcount.administrative, r.headcount.other], () => completeHeadcount(r) !== null, "Tres componentes no negativos.");
@@ -19,6 +20,12 @@ export function checkCompany(r: CompanySnapshot): QualityCheck[] {
   add("Vacantes", "RB–RC", [r.vacancies.operational, r.vacancies.administrative], () => Number.isInteger(r.vacancies.operational) && Number.isInteger(r.vacancies.administrative), "Conteos enteros para ambas poblaciones.");
   add("Candidatos adecuados", "KR", [r.acceptedPer10], () => r.acceptedPer10! <= 10, "Escala de 0 a 10, no porcentaje directo.");
   add("Motivos de rechazo", "KS–LA", Object.values(r.rejectionPct), () => Object.values(r.rejectionPct).every(v => v! <= 100), "Cada causa entre 0 y 100; no se exige sumar 100.");
+  const issues = r.sourceIssues?.filter(i => i.field.startsWith("rejection")) ?? [];
+  if (issues.length) {
+    const check = checks.at(-1)!;
+    check.state = "review";
+    check.detail = `Respuestas excluidas del cálculo: ${issues.map(i => `${i.cell} = ${i.value}`).join(", ")}. Fuera de 0–100; confirmar el valor original.`;
+  }
   return checks;
 }
 
@@ -27,7 +34,7 @@ export function qualityReport(period: string, company = MARKET_SCOPE) {
   const checks = rows.flatMap(checkCompany);
   const anomalies = rows.flatMap(row => {
     const reported = completeHeadcount(row);
-    const history = PERIODS.filter(p => p !== period).flatMap(p => getPeriodSnapshots(p).filter(r => r.company === row.company)).map(completeHeadcount).filter((v): v is number => v !== null && v > 0);
+    const history = PERIODS.slice(0, Math.max(0, PERIODS.indexOf(period))).flatMap(p => getPeriodSnapshots(p).filter(r => r.company === row.company)).map(completeHeadcount).filter((v): v is number => v !== null && v > 0);
     const baseline = median(history);
     return reported !== null && reported > 0 && baseline && history.length >= 3 && (reported / baseline > 3 || reported / baseline < 0.33) ? [{company: row.company, reported, baseline}] : [];
   });

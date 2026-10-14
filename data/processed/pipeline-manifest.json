@@ -1,14 +1,14 @@
 {
   "schemaVersion": 3,
   "sourceSha256": "52fcf05bbfd2e230f0ca8b16317df86499fea3d335dac8119738a6a9a6ad934d",
-  "implementationSha256": "28d76370b559c617af20bd4d2464e970993ca732b6e77c092e86e385bd74f181",
+  "implementationSha256": "4667d964eb677bdecb718753f4feb6f44606a4fccfbb0826e965a89c72eb7d16",
   "periods": 7,
   "companies": 40,
   "records": 280,
   "outputs": {
-    "company-periods/jul-ago-24.json": "60a26c69b5ee5cc9a45db75cd3e20d8271fbe34237ac95ab03d59c2624059a75",
-    "company-periods/sep-oct-24.json": "57d5c1d16a59829013cf0222aa3da40fbe1b9b6e7b6a6b8ef524b2556a7ebd65",
-    "company-periods/nov-dic-24.json": "736667fab410aa48edfb61000d4b9c0beb3282496c15577d2b2cf6f1d7b2143e",
+    "company-periods/jul-ago-24.json": "56c36d51092ff964650b401ae94e77d57ddf40a092069f4627d9ca02120cc5e7",
+    "company-periods/sep-oct-24.json": "e9b66ff1f3ecb6cb4d9d0ebe43a26066402cf64100c898f7c3f8e3eddbc7c588",
+    "company-periods/nov-dic-24.json": "981c2e0c0920d345f14501149fea0ccddb64622e69c603a7cb1a405b75bfc02d",
     "company-periods/ene-feb-25.json": "e7819cdafb8b079d07d63b351103c623ebf90d2bd02cf4843cd9b19a3968a43b",
     "company-periods/mar-abr-25.json": "02704906764481ce24fa31e5cdb31321c5bc3ad159fdc7e2d7ab2278785b19b6",
     "company-periods/may-jun-25.json": "5ebc7633086cd9f300aff0ec7d23d082972bc3ee2f3991a61285b8fb2f5cdc7a",

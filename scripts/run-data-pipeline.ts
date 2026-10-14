@@ -6,12 +6,15 @@ import { assertCompanyIds, PERIOD_SLUGS } from "./lib/data-contract";
 import { STAGES, OUTPUT_FILES, digest, implementationHash } from "./lib/pipeline-contract";
 import { completeSum, matchedRate } from "../src/lib/metric-math";
 
+import { assertPanelSchema } from "./lib/panel-schema";
+
 const readJson = async (file: string) => JSON.parse(await fs.readFile(file, "utf8"));
 
 export async function validateOutput(root: string) {
   const panels = await Promise.all(PERIOD_SLUGS.map(slug => readJson(path.join(root, "company-periods", `${slug}.json`))));
   const keys = new Set<string>();
   for (const [i, panel] of panels.entries()) {
+    assertPanelSchema(panel);
     if (panel.period.toLowerCase().replaceAll(" ", "-") !== PERIOD_SLUGS[i]) throw new Error("Panel period does not match its file");
     if (new Set(panel.columns).size !== panel.columns.length) throw new Error("Duplicate field in panel");
     const companyIndex = panel.columns.indexOf("company");

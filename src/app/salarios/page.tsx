@@ -4,26 +4,27 @@ import { BadgeDollarSign, Gauge, TrendingUp } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
 import { useFilters } from "@/components/filter-context";
 import { SalaryEntryTrendChart } from "@/components/people-intelligence-charts";
-import { getMarketSalaryPercentile, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
+import { salaryReference } from "@/lib/benchmark-comparison";
+import { PERIODS, MARKET_SCOPE } from "@/lib/company-panel";
 
 const mxn = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(value);
 const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 
 export default function SalariesPage() {
   const { period, company, companyLabel, isMarket } = useFilters();
-  const scope = getScopeSnapshot(company, period);
-  const market = getMarketSnapshot(period);
-  const entry = scope?.salaryDaily.entry ?? null;
-  const maximum = scope?.salaryDaily.max ?? null;
+  const reference = salaryReference(period, company);
+  const own = isMarket ? reference.bands : reference.ownBands;
+  const market = { salaryDaily: reference.bands };
+  const entry = reference.entry;
+  const maximum = own?.max ?? null;
   const progression = entry && maximum ? maximum / entry : null;
-  const marketGap = !isMarket && entry != null && market.salaryDaily.entry != null ? ((entry / market.salaryDaily.entry) - 1) * 100 : null;
-  const percentile = !isMarket ? getMarketSalaryPercentile(entry, period) : null;
-
+  const marketGap = reference.gap;
+  const percentile = reference.percentile;
   const bands = [
-    ["Ingreso", scope?.salaryDaily.entry ?? null, market.salaryDaily.entry],
-    ["Intermedio bajo", scope?.salaryDaily.low ?? null, market.salaryDaily.low],
-    ["Intermedio alto", scope?.salaryDaily.high ?? null, market.salaryDaily.high],
-    ["Máximo", scope?.salaryDaily.max ?? null, market.salaryDaily.max],
+    ["Ingreso", own?.entry ?? null, reference.bands.entry],
+    ["Intermedio bajo", own?.low ?? null, reference.bands.low],
+    ["Intermedio alto", own?.high ?? null, reference.bands.high],
+    ["Máximo", own?.max ?? null, reference.bands.max],
   ] as const;
 
   const maxScale = Math.max(...bands.flatMap(([, own, benchmark]) => [own ?? 0, benchmark ?? 0]), 1);
@@ -42,14 +43,14 @@ export default function SalariesPage() {
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Salario de ingreso</div><BadgeDollarSign size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{mxn(entry)}</div><div className="mt-2 text-xs text-slate-500">MXN por día</div></article>
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Salario máximo</div><TrendingUp size={18} className="text-violet-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{mxn(maximum)}</div><div className="mt-2 text-xs text-slate-500">banda superior</div></article>
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Progresión</div><Gauge size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{progression == null ? "—" : `${progression.toFixed(2)}×`}</div><div className="mt-2 text-xs text-slate-500">máximo / ingreso</div></article>
-        <article className="panel p-5"><div className="metric-label">{isMarket ? "Referencia" : "Posición de ingreso"}</div><div className="mt-3 text-3xl font-black text-[#07182d]">{isMarket ? "Mediana" : percentile == null ? "—" : `P${percentile}`}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? "40 empresas" : `${pct(marketGap)} vs. mercado`}</div></article>
+        <article className="panel p-5"><div className="metric-label">{isMarket ? "Referencia" : "Posición de ingreso"}</div><div className="mt-3 text-3xl font-black text-[#07182d]">{isMarket ? "Mediana" : percentile == null ? "—" : `P${percentile}`}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? `${reference.n} empresas con bandas válidas` : `${pct(marketGap)} vs. ${reference.n} empresas`}</div></article>
       </section>
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
         <article className="panel p-5 md:p-6">
           <div className="eyebrow">Arquitectura salarial</div>
           <h2 className="mt-1 text-lg font-extrabold text-slate-950">Bandas frente al mercado</h2>
-          <p className="mt-2 text-xs leading-5 text-slate-400">La longitud muestra el nivel salarial. Cuando eliges una empresa, el marcador cyan es la empresa y el violeta es la mediana del mercado.</p>
+          <p className="mt-2 text-xs leading-5 text-slate-400">{reference.n} empresas con las cuatro bandas completas y ordenadas. {isMarket ? "Se usa el mismo grupo en todas las bandas." : "La empresa elegida se excluye de la referencia: turquesa = empresa, violeta = mercado."} Se requieren cinco respuestas para publicar medianas.</p>
           <div className="mt-8 space-y-7">
             {bands.map(([label, own, benchmark]) => {
               const ownWidth = ((own ?? 0) / maxScale) * 100;
@@ -78,17 +79,17 @@ export default function SalariesPage() {
           <p className="mt-5 text-sm leading-7 text-slate-300">
             {isMarket
               ? `El salario de ingreso mediano es ${mxn(market.salaryDaily.entry)} y la banda máxima mediana llega a ${mxn(market.salaryDaily.max)}.`
-              : `El ingreso reportado es ${mxn(entry)} frente a ${mxn(market.salaryDaily.entry)} del mercado. La comparación usa el mismo bimestre.`}
+              : `El ingreso reportado es ${mxn(entry)} frente a ${mxn(market.salaryDaily.entry)} del grupo. La comparación usa el mismo bimestre y excluye a la empresa seleccionada.`}
           </p>
-          {!isMarket && percentile != null && <div className="mt-7 rounded-2xl bg-white/[.06] p-5"><div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">Percentil aproximado</div><div className="mt-2 text-5xl font-black">P{percentile}</div><div className="mt-2 text-xs leading-5 text-slate-400">Porcentaje de salarios de ingreso de la muestra iguales o menores al valor de la empresa.</div></div>}
+          {!isMarket && percentile != null && <div className="mt-7 rounded-2xl bg-white/[.06] p-5"><div className="text-[10px] font-black uppercase tracking-[.16em] text-slate-400">Posición frente al grupo</div><div className="mt-2 text-5xl font-black">P{percentile}</div><div className="mt-2 text-xs leading-5 text-slate-400">P{percentile}: {percentile}% de las {reference.n} empresas de referencia reporta un ingreso igual o menor. No incluye a la empresa seleccionada.</div></div>}
         </article>
       </section>
 
       <section className="mt-4 panel p-5 md:p-6">
         <div className="eyebrow">Evolución del mercado</div>
-        <h2 className="mt-1 text-lg font-extrabold text-slate-950">Salario de ingreso a través de los siete bimestres</h2>
-        <p className="mt-2 text-xs leading-5 text-slate-400">Serie de referencia del mercado. El selector de periodo define el corte principal mostrado arriba.</p>
-        <SalaryEntryTrendChart />
+        <h2 className="mt-1 text-lg font-extrabold text-slate-950">Referencia salarial hasta {period}</h2>
+        <p className="mt-2 text-xs leading-5 text-slate-500">Mediana de bandas válidas por bimestre{isMarket ? "" : ", excluyendo a la empresa seleccionada"}. La cobertura puede cambiar entre cortes; esta serie describe la referencia disponible, no un aumento para las mismas personas.</p>
+        <SalaryEntryTrendChart data={PERIODS.slice(0, PERIODS.indexOf(period)+1).map(p => ({ period: p, value: salaryReference(p, isMarket ? MARKET_SCOPE : company).bands.entry }))}/>
       </section>
     </DashboardFrame>
   );

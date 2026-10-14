@@ -1,3 +1,4 @@
+import { PANEL_COLUMNS as COLUMNS } from "./lib/panel-schema";
 import { SOURCE_SHEETS, assertCompanyIds } from "./lib/data-contract";
 import { percentagePoints } from "./lib/data-contract";
 import ExcelJS from "exceljs";
@@ -14,24 +15,7 @@ const PERIOD_LABELS: Record<string, string> = {
   "JUL-AGO_2025": "Jul-Ago 25",
 };
 
-const COLUMNS = [
-  "company",
-  "hcOperational", "hcAdministrative", "hcOther",
-  "salaryEntry", "salaryLow", "salaryHigh", "salaryMax",
-  "hires", "exits",
-  "ttfOperational", "ttfTechnical", "ttfAdministrative", "ttfManagerial", "acceptedPer10",
-  "rejectionAntidoping", "rejectionSchooling", "rejectionVision", "rejectionLumbar", "rejectionAudiometry",
-  "rejectionExperience", "rejectionResidence", "rejectionNumerical", "rejectionPsychometric",
-  "vacanciesOperational", "vacanciesAdministrative",
-  "absencesTotal", "incapacityCases", "incapacityWorkRisk", "incapacityGeneralIllness", "incapacityMaternity",
-  "trainingOperational", "trainingAdministrative",
-  "unionized", "unionRelationship", "negotiationStatus",
-  "grantedSalaryOperationalPct", "grantedSalaryAdministrativePct", "grantedBenefitsOperationalPct", "grantedBenefitsAdministrativePct",
-  "voucherOperationalPct", "voucherAdministrativePct", "voucherManagerialPct",
-  "savingsOperationalPct", "savingsAdministrativePct", "savingsManagerialPct",
-  "vacationOperationalYear1", "vacationAdministrativeYear1",
-  "lifeInsurance", "transportBenefit", "cafeteriaBenefit",
-] as const;
+
 
 type OutputValue = string | number | boolean | null;
 
@@ -183,20 +167,26 @@ async function main() {
     assertSchema(worksheet);
     const period = PERIOD_LABELS[worksheet.name];
     const rows: OutputValue[][] = [];
+    const issues: Array<{company: string; field: string; cell: string; value: number; reason: string}> = [];
 
     for (let row = 3; row <= worksheet.rowCount; row += 1) {
       const company = text(worksheet.getCell(`F${row}`).value);
       if (!company || !/^COMPAÑIA\s+\d+$/i.test(company)) continue;
       const record = new Map<string, OutputValue>();
       for (const spec of COLUMN_SPECS) {
-        record.set(spec.key, transform(worksheet.getCell(`${spec.address}${row}`).value, spec.transform));
+        const raw = worksheet.getCell(`${spec.address}${row}`).value;
+        const value = transform(raw, spec.transform);
+        if (spec.key.startsWith("rejection") && typeof value === "number" && (value < 0 || value > 100)) {
+          issues.push({company, field: spec.key, cell: `${spec.address}${row}`, value, reason: "Porcentaje fuera de 0–100; confirmar con la empresa."});
+          record.set(spec.key, null);
+        } else record.set(spec.key, value);
       }
       rows.push(COLUMNS.map((column) => record.get(column) ?? null));
     }
 
     if (rows.length !== 40) throw new Error(`${worksheet.name}: expected 40 companies, found ${rows.length}.`);
     assertCompanyIds(rows.map(row => row[0]), worksheet.name);
-    const payload = { period, columns: COLUMNS, rows };
+    const payload = { period, columns: COLUMNS, rows, ...(issues.length ? {issues} : {}) };
     await fs.writeFile(path.join(outputDir, `${slug(period)}.json`), JSON.stringify(payload));
     console.log(`Company-period extract written: ${period} (${rows.length} companies).`);
   }

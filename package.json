@@ -11,7 +11,9 @@
     "data:extract": "node --import tsx scripts/run-data-pipeline.ts",
     "data:verify": "node --import tsx scripts/verify-data.ts",
     "prebuild": "npm run data:verify",
-    "predev": "npm run data:verify"
+    "predev": "npm run data:verify",
+    "build:static": "node scripts/build-static.mjs",
+    "prebuild:static": "npm run data:verify"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
