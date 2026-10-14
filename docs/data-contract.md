@@ -20,7 +20,7 @@ Hay **40 compañías presentes en los siete periodos**, por lo que la fuente per
 
 ## Principio de ingestión
 
-El frontend nunca debe leer el Excel directamente. El pipeline futuro debe transformar la encuesta wide en un esquema largo/normalizado:
+El frontend nunca debe leer el Excel directamente. El pipeline actual ejecuta seis extractores en aislamiento, valida 280 registros y publica doce salidas junto a un manifiesto. El panel empresa-periodo conserva el formato por columnas; una futura capa de servidor puede normalizarlo como:
 
 `archivo -> staging -> validación -> normalización -> métricas -> API`
 
@@ -50,17 +50,21 @@ Antes de publicar KPIs o usar registros para modelos:
 1. `mujeres_pct + hombres_pct ≈ 100` cuando ambos sean porcentajes.
 2. Las bandas salariales deben respetar `ingreso <= medio_bajo <= medio_alto <= máximo`, salvo justificación explícita.
 3. Los componentes de contratación deben reconciliar con el total cuando existan todos los campos.
-4. Los motivos de baja/rechazo expresados como porcentajes deben sumar aproximadamente 100.
+4. Las composiciones exhaustivas de antigüedad y edad deben estar completas y conciliar a 100% (tolerancia de cinco puntos). Los motivos de rechazo no son una composición exhaustiva y no se obliga a que sumen 100.
 5. Headcount debe compararse contra el periodo previo mediante reglas de anomalía y no aceptar saltos extremos silenciosamente.
 6. Valores de texto como `Desconocido`, `No aplica`, `-` y vacíos deben convertirse a estados explícitos; no a cero.
 7. PII de contacto no debe entrar a tablas analíticas ni a prompts del copiloto.
 
-## Multi-tenant
+## Arquitectura de permisos pendiente
 
-Toda tabla analítica debe incluir como mínimo:
+La arquitectura propuesta para una futura capa de servidor debe incluir como mínimo:
 
 - `organization_id`
 - `company_id`
 - `period_id`
 
-Los endpoints y consultas deben estar scopeados por organización. El benchmark debe utilizar agregados y aplicar un tamaño mínimo de cohort antes de mostrar resultados.
+Los endpoints futuros deben limitarse por organización. La aplicación actual distribuye JSON analíticos en el cliente; no implementa ese aislamiento. Exigir cinco respuestas para un benchmark mejora la interpretación, pero no restringe el acceso a los registros.
+
+## Verificación vigente
+
+El manifiesto de esquema 3 enumera exactamente las doce salidas esperadas. Desarrollo y compilación verifican sus hashes y la firma del código de extracción. Se reconcilian las tasas de bajas, ausencias e incapacidades y los conteos de altas y bajas en los siete periodos. Cambiar el Excel o la implementación exige una extracción completa; no se actualizan firmas manualmente.

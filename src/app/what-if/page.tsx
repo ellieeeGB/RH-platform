@@ -5,9 +5,9 @@ export default function WhatIfPage() {
   return (
     <DashboardFrame>
       <PageHeader
-        eyebrow="Decision Intelligence · What-If"
-        title="Workforce What-If Lab"
-        description="Explora escenarios con fórmulas visibles y supuestos editables. El simulador distingue cálculos determinísticos de futuras predicciones estadísticas."
+        eyebrow="Planeación de escenarios"
+        title="Explora una decisión antes de aplicarla"
+        description="Ajusta metas de bajas, salario y tiempo de contratación. Consulta su equivalente en personas, días y exposición salarial para el último corte del mercado."
       />
       <WhatIfLab />
     </DashboardFrame>

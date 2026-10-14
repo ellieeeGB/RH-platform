@@ -354,6 +354,13 @@ export function completeHeadcount(row: CompanySnapshot): number | null {
   return completeSum(parts);
 }
 
+export function scopeCoverage(company: string, period: string) {
+  const rows = getPeriodSnapshots(period).filter(r => company === MARKET_SCOPE || r.company === company);
+  return { total: rows.length, headcount: rows.filter(r => completeHeadcount(r) !== null).length,
+    hires: rows.filter(r => r.hires !== null).length, exits: rows.filter(r => r.exits !== null).length,
+    vacancies: rows.filter(r => completeSum([r.vacancies.operational, r.vacancies.administrative]) !== null).length };
+}
+
 export function deriveScopeMetrics(snapshot: CompanySnapshot | null) {
   const rows = !snapshot ? [] : snapshot.company === "Mercado" ? getPeriodSnapshots(snapshot.period) : [snapshot];
   const pairedRate = (numerator: (r: CompanySnapshot) => number | null, denominator: (r: CompanySnapshot) => number | null = completeHeadcount, scale = 100) => {

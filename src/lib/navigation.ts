@@ -14,6 +14,7 @@ import {
   HeartPulse,
   LayoutDashboard,
   Radar,
+  Orbit,
   ShieldCheck,
   Sparkles,
   Table2,
@@ -36,6 +37,7 @@ export const navigation: NavigationGroup[] = [
     label: "Resumen",
     items: [
       { label: "Inicio", icon: LayoutDashboard, href: "/" },
+      { label: "Estudio de decisiones", icon: Orbit, href: "/decisiones" },
       { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
       { label: "Laboratorio de señales", icon: Radar, href: "/signals" },
     ],

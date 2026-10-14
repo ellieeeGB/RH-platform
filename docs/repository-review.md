@@ -111,3 +111,20 @@ Se encontró un flujo todavía inconsistente con el resto de la plataforma: el a
 - Se sustituyeron textos de prototipo y etiquetas de IA por lenguaje de consulta guiada, evidencia legible y navegación interna. Mejoras de accesibilidad: campo y botón nombrados, estado vacío, registro de conversación y límites de ancho para texto largo.
 
 Validación: 45 pruebas, TypeScript y compilación de producción correctos. Hay casos específicos de empresa, bimestre anterior, muestras pequeñas, primer corte y desconocido versus no. La revisión en navegador permanece pendiente: esta sesión no dispone del controlador de navegador exigido por la guía de Sites para la vista local. No se inició un servidor alternativo ni se modificó el Site privado. La evidencia disponible sigue siendo la grabación de la versión anterior.
+
+
+## Segunda revisión del 14 de octubre: decisiones y preprocesamiento
+
+Se usó la copia legible de `Screencast From 2026-10-14 08-23-09.webm` (3 min 13 s), incluidos inicio, reporte, señales, indicadores, retención, benchmark, asistente y calidad. La copia con sufijo `(1)` dio errores de decodificación. El recorrido muestra la portada de fotografías y módulos anteriores al PR; no se atribuye a la versión modificada.
+
+Comprobación independiente de 19 campos en 280 registros del Excel: 5,320 celdas, 5,038 numéricas y 282 ausentes; ningún tipo inesperado, negativo o conteo fraccionario en ese conjunto. Esto no certifica todas las columnas del cuestionario. Las doce salidas regeneradas conservan los mismos hashes de contenido de la edición anterior; no se anuncian nuevas correcciones de valores en esta pasada.
+
+Correcciones adicionales:
+
+- El verificador antes solo comprobaba los hashes de los JSON. Ahora exige también la firma vigente del código de extracción y exactamente los nombres de las doce salidas. El generador detecta si el código o el Excel cambian durante la extracción.
+- La validación cruzada de altas, bajas y tasas se extiende a los siete cortes, no solo a los totales del último. Se añaden anclajes de encabezado en plantilla, salario, movimientos, tiempos, rechazos y vacantes.
+- La portada muestra indicadores antes del relato, informa cobertura completa versus sumas reportadas y calcula variaciones con las mismas empresas. Se eliminan los deltas antiguos sobre totales de distintas respuestas.
+- Nuevo estudio de decisiones: mapa entre salario y bajas, pares de contraste, descomposición simétrica de tasas, sensibilidad sin saltos por confirmar y bitácora con evidencia congelada. Método y límites en `decision-study.md`.
+- El simulador utiliza lenguaje de consulta y enlaza al estudio. Se retiran promesas de funciones estadísticas futuras. CI instala desde el lockfile con `npm ci`.
+
+El nuevo resultado aún requiere comprobación visual interactiva en escritorio y móvil. El entorno administrado no dispone del controlador de navegador previsto por Sites; no se instaló otro navegador ni se inició una vista alternativa. La fusión del repositorio no despliega ni modifica el Site privado.

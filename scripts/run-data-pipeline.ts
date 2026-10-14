@@ -1,18 +1,18 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { assertCompanyIds, PERIOD_SLUGS } from "./lib/data-contract";
+import { STAGES, OUTPUT_FILES, digest, implementationHash } from "./lib/pipeline-contract";
+import { completeSum, matchedRate } from "../src/lib/metric-math";
 
-const stages = ["company-periods", "historical", "people-intelligence", "workforce-rewards", "extended-intelligence", "company-detail"];
-const digest = (data: Uint8Array | string) => createHash("sha256").update(data).digest("hex");
 const readJson = async (file: string) => JSON.parse(await fs.readFile(file, "utf8"));
 
 export async function validateOutput(root: string) {
   const panels = await Promise.all(PERIOD_SLUGS.map(slug => readJson(path.join(root, "company-periods", `${slug}.json`))));
   const keys = new Set<string>();
-  for (const panel of panels) {
+  for (const [i, panel] of panels.entries()) {
+    if (panel.period.toLowerCase().replaceAll(" ", "-") !== PERIOD_SLUGS[i]) throw new Error("Panel period does not match its file");
     if (new Set(panel.columns).size !== panel.columns.length) throw new Error("Duplicate field in panel");
     const companyIndex = panel.columns.indexOf("company");
     if (companyIndex < 0) throw new Error("Missing company column");
@@ -27,6 +27,21 @@ export async function validateOutput(root: string) {
   if (keys.size !== 280 || detailKeys.length !== 280 || new Set(detailKeys).size !== 280 || detailKeys.some((key: string) => !keys.has(key))) throw new Error("Panel and company detail are from different cohorts");
   const benchmark = await readJson(path.join(root, "benchmark.json"));
   const latest = panels.at(-1)!;
+  if (benchmark.periods.length !== panels.length) throw new Error("Missing historical aggregate");
+  for (const panel of panels) {
+    const aggregate = benchmark.periods.find((r: {period: string}) => r.period === panel.period);
+    if (!aggregate) throw new Error(`Missing historical aggregate: ${panel.period}`);
+    const value = (row: Array<number | null>, field: string) => row[panel.columns.indexOf(field)];
+    for (const field of ["hires", "exits"] as const) {
+      const sum = panel.rows.reduce((s: number, r: Array<number | null>) => s + (value(r, field) ?? 0), 0);
+      if (sum !== aggregate[field]) throw new Error(`Historical aggregate disagrees with panel: ${panel.period}/${field}`);
+    }
+    for (const [rate, field] of [["exits", "exits"], ["absences", "absencesTotal"], ["incapacity", "incapacityCases"]]) {
+      const calculated = matchedRate(panel.rows as Array<Array<number | null>>, r => value(r, field), r => completeSum(["hcOperational", "hcAdministrative", "hcOther"].map(f => value(r, f))));
+      const saved = aggregate.matchedRates[rate];
+      if (!saved || ["n", "numerator", "denominator", "value"].some(k => saved[k] !== calculated[k as keyof typeof calculated])) throw new Error(`Historical rate disagrees with panel: ${panel.period}/${rate}`);
+    }
+  }
   for (const field of ["hires", "exits"] as const) {
     const col = latest.columns.indexOf(field);
     const sum = latest.rows.reduce((s: number, row: (number | null)[]) => s + (row[col] ?? 0), 0);
@@ -40,6 +55,7 @@ export async function validateOutput(root: string) {
 export async function runPipeline(source: string, destination = "data/processed") {
   const sourcePath = path.resolve(source);
   const sourceHash = digest(await fs.readFile(sourcePath));
+  const codeHash = await implementationHash();
   const target = path.resolve(destination);
   const parent = path.dirname(target);
   await fs.mkdir(parent, { recursive: true });
@@ -49,17 +65,15 @@ export async function runPipeline(source: string, destination = "data/processed"
   let backup: string | undefined;
   try {
     stage = await fs.mkdtemp(path.join(parent, ".data-stage-"));
-    for (const name of stages) {
+    for (const name of STAGES) {
       const result = spawnSync(process.execPath, ["--import", "tsx", `scripts/extract-${name}.ts`, sourcePath], { env: { ...process.env, CATCH_DATA_OUTPUT: stage }, stdio: "inherit" });
       if (result.error || result.status !== 0) throw new Error(`Extraction failed: ${name}`, { cause: result.error });
     }
     if (digest(await fs.readFile(sourcePath)) !== sourceHash) throw new Error("Workbook changed during extraction; outputs discarded");
+    if (await implementationHash() !== codeHash) throw new Error("Extraction code changed during execution; outputs discarded");
     const cohort = await validateOutput(stage);
-    const files = [...PERIOD_SLUGS.map(s => `company-periods/${s}.json`), "benchmark.json", "people-intelligence.json", "workforce-rewards.json", "extended-intelligence.json", "company-detail.json"];
-    const outputs = Object.fromEntries(await Promise.all(files.map(async file => [file, digest(await fs.readFile(path.join(stage!, file)))])));
-    const scriptFiles = [...stages.map(s => `scripts/extract-${s}.ts`), "scripts/run-data-pipeline.ts", "scripts/lib/data-contract.ts", "src/lib/metric-math.ts"];
-    const implementationSha256 = digest((await Promise.all(scriptFiles.map(file => fs.readFile(file)))).map(b => b.toString()).join("\n"));
-    await fs.writeFile(path.join(stage, "pipeline-manifest.json"), JSON.stringify({ schemaVersion: 2, sourceSha256: sourceHash, implementationSha256, ...cohort, outputs }, null, 2) + "\n");
+    const outputs = Object.fromEntries(await Promise.all(OUTPUT_FILES.map(async file => [file, digest(await fs.readFile(path.join(stage!, file)))])));
+    await fs.writeFile(path.join(stage, "pipeline-manifest.json"), JSON.stringify({ schemaVersion: 3, sourceSha256: sourceHash, implementationSha256: codeHash, ...cohort, outputs }, null, 2) + "\n");
     try { await fs.access(target); backup = `${stage}-previous`; await fs.rename(target, backup); } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
     try { await fs.rename(stage, target); stage = undefined; }
     catch (error) { if (backup) { await fs.rename(backup, target); backup = undefined; } throw error; }

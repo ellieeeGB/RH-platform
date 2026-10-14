@@ -11,6 +11,7 @@ import manifest from "../data/processed/pipeline-manifest.json";
 import { completeSum, matchedRate } from "../src/lib/metric-math";
 import { getCompanySnapshot } from "../src/lib/company-panel";
 import { checkCompany } from "../src/lib/data-quality";
+import { IMPLEMENTATION_FILES } from "../scripts/lib/pipeline-contract";
 
 test("units belong to the field, never the magnitude; inequalities remain missing",()=>{
  assert.equal(percentagePoints(1,"points"),1);assert.equal(percentagePoints(1,"fraction"),100);
@@ -76,4 +77,32 @@ test("verification rejects a mixed generation before development or build",async
   await fs.appendFile(path.join(dir,"benchmark.json")," ");
   await assert.rejects(verifyData(dir),/changed outside the complete pipeline/);
  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test("verification rejects stale extraction code and swapped manifest output names",async()=>{
+ const {verifyData}=await import("../scripts/verify-data");
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),"catch-code-contract-"));
+ try {
+  const project=path.join(dir,"project"),data=path.join(dir,"data");
+  await fs.cp("data/processed",data,{recursive:true});
+  for(const file of IMPLEMENTATION_FILES){const target=path.join(project,file);await fs.mkdir(path.dirname(target),{recursive:true});await fs.copyFile(file,target);}
+  await verifyData(data,project);
+  await fs.appendFile(path.join(project,IMPLEMENTATION_FILES[0]),"\n// changed extraction\n");
+  await assert.rejects(verifyData(data,project),/Extraction code changed/);
+  const m=structuredClone(manifest) as {outputs:Record<string,string>};
+  m.outputs["unrecognized.json"]=m.outputs["benchmark.json"];delete m.outputs["benchmark.json"];
+  await fs.writeFile(path.join(data,"pipeline-manifest.json"),JSON.stringify(m));
+  await assert.rejects(verifyData(data),/incomplete pipeline manifest/);
+ } finally {await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test("validation catches historical drift even when the latest aggregate still agrees",async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),"catch-history-contract-"));
+ try {
+  await fs.cp("data/processed",dir,{recursive:true});
+  const file=path.join(dir,"benchmark.json"),b=JSON.parse(await fs.readFile(file,"utf8"));
+  b.periods[0].matchedRates.exits.denominator++;
+  await fs.writeFile(file,JSON.stringify(b));
+  await assert.rejects(validateOutput(dir),/Historical rate disagrees/);
+ } finally {await fs.rm(dir,{recursive:true,force:true});}
 });

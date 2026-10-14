@@ -43,7 +43,7 @@ export function PageHeader({
   const pathname = usePathname();
   const { period, companyLabel, isMarket } = useFilters();
   const latestPeriod = PERIODS.at(-1) ?? "Último corte";
-  const effectiveScopeMode = scopeMode ?? (pathname === "/data-atlas" ? "none" : ACTIVE_FILTER_ROUTES.has(pathname) ? "active" : "marketLatest");
+  const effectiveScopeMode = scopeMode ?? (pathname === "/data-atlas" ? "none" : pathname === "/decisiones" || ACTIVE_FILTER_ROUTES.has(pathname) ? "active" : "marketLatest");
 
   return (
     <section className="mb-8 animate-reveal">
