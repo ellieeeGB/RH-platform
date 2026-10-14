@@ -10,7 +10,7 @@ import { MONTH_PERIODS } from "@/lib/company-detail";
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const pathname = usePathname();
-  const hasFilters = !["/data-atlas", "/copilot", "/what-if"].includes(pathname);
+  const hasFilters = !["/data-atlas", "/what-if"].includes(pathname);
   const { period, company, month, periods, companies, setPeriod, setCompany, setMonth } = useFilters();
 
   return (
@@ -55,7 +55,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
           </>}
           {!hasFilters && <span className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">{pathname === "/data-atlas" ? "Cobertura del estudio" : "Vista de mercado · Jul–Ago 25"}</span>}
           <Link href="/copilot" className="hidden items-center gap-2 rounded-xl bg-[#0b2140] px-3.5 py-2.5 text-xs font-black text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 md:flex">
-            <Sparkles size={14} className="text-cyan-300" /> Catch AI
+            <Sparkles size={14} className="text-cyan-300" /> Asistente
           </Link>
         </div>
       </div>

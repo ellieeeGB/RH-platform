@@ -60,7 +60,7 @@ export const navigation: NavigationGroup[] = [
       { label: "Ausentismo y riesgo", icon: HeartPulse, href: "/labor-risk" },
       { label: "Benchmark", icon: Activity, href: "/benchmark" },
       { label: "Simulador", icon: ClipboardCheck, href: "/what-if" },
-      { label: "Catch AI", icon: Sparkles, href: "/copilot" },
+      { label: "Asistente de análisis", icon: Sparkles, href: "/copilot" },
     ],
   },
   {

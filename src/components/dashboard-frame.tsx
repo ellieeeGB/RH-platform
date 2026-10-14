@@ -8,7 +8,7 @@ import { Topbar } from "@/components/topbar";
 import { useFilters } from "@/components/filter-context";
 import { PERIODS } from "@/lib/company-panel";
 
-const ACTIVE_FILTER_ROUTES = new Set(["/signals", "/data-quality", "/benchmark","/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning", "/beneficios", "/talent-acquisition", "/relaciones-laborales", "/labor-risk", "/tabulador"]);
+const ACTIVE_FILTER_ROUTES = new Set(["/copilot", "/signals", "/data-quality", "/benchmark","/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning", "/beneficios", "/talent-acquisition", "/relaciones-laborales", "/labor-risk", "/tabulador"]);
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
   const menu = useRef<HTMLDialogElement>(null);

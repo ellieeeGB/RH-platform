@@ -98,3 +98,16 @@ Pendiente comprobar visualmente el renderizado final en escritorio y móvil. La 
 2. Priorizar datos faltantes según cuánto reducirían la incertidumbre de una comparación. Requiere límites plausibles acordados; no inventar salarios ni bajas.
 3. Alertas de cambios sostenidos en varios cortes, con estabilidad de composición. Siete bimestres no sustentan pronósticos individuales fiables.
 4. Extender el copiloto a la selección activa y a las exclusiones de cada cálculo. El asistente actual es de reglas; este PR no presume una conexión a un modelo generativo.
+
+## Continuación del 14 de octubre: asistente con contexto
+
+Se encontró un flujo todavía inconsistente con el resto de la plataforma: el asistente ignoraba la empresa y el periodo y respondía siempre con agregados del último mercado. También mostraba notas de implementación y aseguraba no acceder a filas de compañías, cuando la aplicación ya contiene el panel de compañías codificadas.
+
+- Los filtros de empresa y bimestre ahora funcionan en el asistente. Cada respuesta conserva su contexto y las consultas se reinician al cambiar de selección para no mezclar cortes.
+- Salarios excluye la empresa seleccionada de la referencia, usa bandas completas y exige cinco respuestas para cuartiles. Bajas, ausencias, vacantes y calidad usan los mismos cálculos del panel.
+- Antigüedad del último mercado no se atribuye a empresas individuales ni a otros periodos. Prestaciones distingue respuesta negativa de dato ausente.
+- Las preguntas sobre cambios abren la descomposición de mismas empresas, cobertura y sensibilidad, con la mayor aportación identificada. No se afirma causalidad.
+- Preguntas fuera de alcance, pronósticos, meses o selecciones explícitas diferentes no reciben un resumen genérico como si fuera una respuesta. El asistente explica qué dato o selección falta.
+- Se sustituyeron textos de prototipo y etiquetas de IA por lenguaje de consulta guiada, evidencia legible y navegación interna. Mejoras de accesibilidad: campo y botón nombrados, estado vacío, registro de conversación y límites de ancho para texto largo.
+
+Validación: 45 pruebas, TypeScript y compilación de producción correctos. Hay casos específicos de empresa, bimestre anterior, muestras pequeñas, primer corte y desconocido versus no. La revisión en navegador permanece pendiente: esta sesión no dispone del controlador de navegador exigido por la guía de Sites para la vista local. No se inició un servidor alternativo ni se modificó el Site privado. La evidencia disponible sigue siendo la grabación de la versión anterior.
