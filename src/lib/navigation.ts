@@ -37,6 +37,7 @@ export const navigation: NavigationGroup[] = [
     label: "Resumen",
     items: [
       { label: "Inicio", icon: LayoutDashboard, href: "/" },
+      { label: "Agenda de consultoría", icon: ClipboardCheck, href: "/agenda" },
       { label: "Estudio de decisiones", icon: Orbit, href: "/decisiones" },
       { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
       { label: "Laboratorio de señales", icon: Radar, href: "/signals" },

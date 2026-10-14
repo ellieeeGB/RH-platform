@@ -16,6 +16,8 @@ import { DashboardFrame } from "@/components/dashboard-frame";
 import { useFilters } from "@/components/filter-context";
 import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 
+import { salaryReference } from "@/lib/benchmark-comparison";
+
 const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);
 const money = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(value);
 const pct = (value: number | null | undefined) => value == null || !Number.isFinite(value) ? "—" : `${value.toFixed(1)}%`;
@@ -36,9 +38,8 @@ export default function ReportsPage() {
   const scope = getScopeSnapshot(company, period);
   const market = getMarketSnapshot(period);
   const metrics = deriveScopeMetrics(scope);
-  const salaryGap = !isMarket && scope?.salaryDaily.entry != null && market.salaryDaily.entry != null
-    ? ((scope.salaryDaily.entry / market.salaryDaily.entry) - 1) * 100
-    : null;
+  const salary = salaryReference(period, company);
+  const salaryGap = salary.gap;
   const ttfGap = !isMarket && scope?.timeToFill.technical != null && market.timeToFill.technical != null
     ? scope.timeToFill.technical - market.timeToFill.technical
     : null;
@@ -99,7 +100,7 @@ export default function ReportsPage() {
           <div className="mt-7 grid gap-3 md:grid-cols-2">
             <div className="rounded-2xl bg-cyan-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-cyan-700">Movimiento de plantilla</div><div className="mt-2 text-3xl font-black text-cyan-950">{pct(metrics.movementLoadPct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-cyan-900/70">Altas + bajas respecto al headcount del corte.</p></div>
             <div className="rounded-2xl bg-violet-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-violet-700">Presión de contratación</div><div className="mt-2 text-3xl font-black text-violet-950">{pct(metrics.hiringPressurePct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-violet-900/70">Vacantes próximas respecto a la plantilla.</p></div>
-            <div className="rounded-2xl bg-emerald-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-emerald-700">Salario de ingreso</div><div className="mt-2 text-3xl font-black text-emerald-950">{money(scope?.salaryDaily.entry)}</div><p className="mb-0 mt-2 text-xs leading-5 text-emerald-900/70">{isMarket ? "Mediana diaria del mercado." : salaryGap == null ? "Sin comparación disponible." : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% frente a la mediana del mercado.`}</p></div>
+            <div className="rounded-2xl bg-emerald-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-emerald-700">Salario de ingreso</div><div className="mt-2 text-3xl font-black text-emerald-950">{money(salary.entry)}</div><p className="mb-0 mt-2 text-xs leading-5 text-emerald-900/70">{isMarket ? `Mediana diaria · ${salary.n} empresas con bandas válidas.` : salaryGap == null ? "Sin comparación disponible." : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% frente a ${salary.n} empresas, excluyendo la propia.`}</p></div>
             <div className="rounded-2xl bg-amber-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-amber-700">Cobertura técnica</div><div className="mt-2 text-3xl font-black text-amber-950">{scope?.timeToFill.technical == null ? "—" : `${scope.timeToFill.technical} días`}</div><p className="mb-0 mt-2 text-xs leading-5 text-amber-900/70">{isMarket ? "Mediana de tiempo para cubrir puestos técnicos." : ttfGap == null ? "Sin comparación disponible." : `${ttfGap >= 0 ? "+" : ""}${ttfGap.toFixed(0)} días frente al mercado.`}</p></div>
           </div>
         </article>

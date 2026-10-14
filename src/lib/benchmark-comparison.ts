@@ -1,4 +1,4 @@
-import { completeHeadcount, getPeriodSnapshots, type CompanySnapshot } from "./company-panel";
+import { completeHeadcount, getPeriodSnapshots, getCompanySnapshot, MARKET_SCOPE, type CompanySnapshot } from "./company-panel";
 
 export type PeerSize = "all" | "under250" | "250to999" | "1000plus";
 export type PeerUnion = "all" | "yes" | "no";
@@ -25,5 +25,18 @@ export function distribution(values: (number | null)[]) {
 
 export function validSalaryBands(row: CompanySnapshot) {
   const values = [row.salaryDaily.entry, row.salaryDaily.low, row.salaryDaily.high, row.salaryDaily.max];
-  return values.every((value, i) => value !== null && value > 0 && (i === 0 || value >= values[i-1]!));
+  return values.every((value, i) => value !== null && Number.isFinite(value) && value > 0 && (i === 0 || value >= values[i-1]!));
+}
+
+/** Same complete salary cohort for all four bands; own company never benchmarks itself. */
+export function salaryReference(period: string, company = MARKET_SCOPE) {
+  const peers = comparisonPeers(period, "all", "all", company === MARKET_SCOPE ? undefined : company).filter(validSalaryBands);
+  const bands = Object.fromEntries((["entry", "low", "high", "max"] as const).map(key => [key, distribution(peers.map(r => r.salaryDaily[key])).median])) as CompanySnapshot["salaryDaily"];
+  const own = getCompanySnapshot(company, period);
+  const ownBands = own && validSalaryBands(own) ? own.salaryDaily : null;
+  const entry = company === MARKET_SCOPE ? bands.entry : ownBands?.entry ?? null;
+  return { n: peers.length, bands, ownBands, entry,
+    gap: company !== MARKET_SCOPE && entry !== null && bands.entry !== null ? (entry / bands.entry - 1) * 100 : null,
+    percentile: company !== MARKET_SCOPE && entry !== null && peers.length >= MIN_BENCHMARK_RESPONSES ? Math.round(peers.filter(r => r.salaryDaily.entry! <= entry).length / peers.length * 100) : null,
+  };
 }

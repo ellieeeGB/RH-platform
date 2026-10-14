@@ -40,6 +40,7 @@ Mantener los dashboards operativos y de benchmarking que ya utiliza el negocio �
 14. What‑If / Workforce Digital Twin
 15. Asistente de análisis guiado
 16. Estudio de decisiones y bitácora
+17. Agenda de consultoría: persistencia, recuperación de cobertura y sesión imprimible
 
 ## Datos
 
@@ -51,7 +52,7 @@ Proyecto en construcción para la competencia de dashboard dinámico de RH.
 
 ## Ejecutar la revisión auditada
 
-La versión integrada está en `main` (PR #15). El menú incluye **Estudio de decisiones**: mapa entre pares, descomposición de tasas y bitácora de hipótesis. Si no aparece, actualiza tu copia local.
+La base auditada se integró en el PR #15. El menú incluye **Agenda de consultoría** y **Estudio de decisiones**: mapa entre pares, descomposición de tasas y bitácora de hipótesis. Si no aparece, actualiza tu copia local.
 
 ```sh
 git clone https://github.com/ellieeeGB/RH-platform.git RH-platform-audit
@@ -74,6 +75,12 @@ npm run build
 
 No ejecutes extractores individuales sobre `data/processed`: producirían archivos sin renovar el manifiesto. La extracción completa incluye el tabulador y espera las siete hojas y 40 compañías del estudio. Una nueva estructura requiere actualizar el contrato. Si se interrumpe una extracción, confirma que ya no siga ejecutándose antes de retirar su bloqueo `data/.data-pipeline.lock`.
 
-Consulta [la auditoría](docs/repository-review.md) y [el estudio de decisiones](docs/decision-study.md) para ver métodos y límites. Actualizar GitHub no sustituye el Site privado. El asistente actual responde mediante reglas y datos calculados; no está conectado a un modelo generativo.
+Consulta [la auditoría](docs/repository-review.md) y [el estudio de decisiones](docs/decision-study.md) para ver métodos y límites. El Site privado usa la exportación de esta aplicación; actualizar GitHub requiere publicar también esa exportación. El asistente actual responde mediante reglas y datos calculados; no está conectado a un modelo generativo.
 
 La bitácora se guarda en localStorage de este navegador; su descarga JSON incluye evidencia y seguimiento. No se comparte entre usuarios ni sincroniza con una base de datos. Los JSON analíticos por compañía se distribuyen con el cliente web: los umbrales de muestra son criterios estadísticos de presentación, no un sistema de autorización.
+
+## Agenda y publicación estática
+
+Consulta [la revisión de consultoría](docs/consulting-review-2026-10-14.md). `npm run build:static` verifica la edición y genera `out/` con todas las rutas de la plataforma. CI valida esta variante. `npm run build` conserva la compilación habitual de Next.js.
+
+Los porcentajes de rechazo fuera de rango se conservan como evidencia de revisión y se excluyen de las cifras analíticas, sin corregirlos por suposición. Los filtros y acciones de la edición alojada anterior se recuperan desde el navegador del propietario.

@@ -253,6 +253,11 @@ textarea:focus-visible { outline: 3px solid #0891b2; outline-offset: 3px; }
 main h1, main h2 { text-wrap: balance; }
 main table th, main table td { vertical-align: top; }
 header select { min-height: 24px; }
+.agenda-hero { border-radius: 26px; background: radial-gradient(ellipse at 90% 0, #1a5660 0, transparent 65%), #0b2140; }
+.agenda-preview { border: 1px solid #a5d9d9; border-radius: 24px; background: linear-gradient(110deg,#effafa,#f7f9fc); transition: border-color .2s, box-shadow .2s; }
+.agenda-preview:hover { border-color: #0e7490; box-shadow: 0 10px 25px #0e749010; }
+.agenda-next { display:flex; align-items:center; gap:16px; padding:22px; border:1px solid #dce5ed; border-radius:20px; background:white; color:#0b2140; }
+@media print { .agenda-hero { background:#fff!important;color:#0b2140!important;border:1px solid #cbd5e1; } .agenda-hero * { color:#0b2140!important; } .agenda-hero, article { break-inside:avoid; } }
 @media(max-width:640px) {
   header > div { gap: 8px; padding: 10px 16px; }
   header label { min-width: 0; max-width: 100%; }
