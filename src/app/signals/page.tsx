@@ -1,176 +1,70 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeDollarSign, BriefcaseBusiness, Sparkles, Target, UsersRound } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ArrowRight, Download, Fingerprint, Layers3, ScanLine, Sparkles } from "lucide-react";
 import { DashboardFrame } from "@/components/dashboard-frame";
-import { SignatureMetricStrip } from "@/components/signature-metric-strip";
-import { SignatureSignalField } from "@/components/signature-signal-field";
-import { signatureMetrics } from "@/lib/signature-metrics";
-import people from "../../../data/processed/people-intelligence.json";
-import rewards from "../../../data/processed/workforce-rewards.json";
+import { useFilters } from "@/components/filter-context";
+import { analyzeSignal, signalCoverage, signalMetrics, type SignalMetric } from "@/lib/signal-analysis";
+import { qualityReport } from "@/lib/data-quality";
+import manifest from "../../../data/processed/pipeline-manifest.json";
 
-const moves = [
-  {
-    label: "01 · RETENER",
-    title: "Cortar la fuga temprana",
-    value: `${signatureMetrics.earlyAttritionSharePct}%`,
-    text: "de las bajas conciliadas sucede antes de tres meses. Contratar más sin corregir esta fuga aumenta trabajo, no estabilidad.",
-    href: "/retencion",
-    icon: UsersRound,
-    className: "bg-[#ffdf6e] text-[#07182d]",
-  },
-  {
-    label: "02 · RECLUTAR",
-    title: "Absorber la siguiente ola",
-    value: `${signatureMetrics.vacancyCarryoverPct}%`,
-    text: "de la capacidad reciente de contratación ya está representada por vacantes próximas. La carga no terminó con el corte actual.",
-    href: "/talent-acquisition",
-    icon: BriefcaseBusiness,
-    className: "bg-[#705df8] text-white",
-  },
-  {
-    label: "03 · ENFOCAR",
-    title: "Atacar el hotspot correcto",
-    value: `${signatureMetrics.demandConcentrationPct}%`,
-    text: `de la demanda operativa estructurada está concentrada en ${rewards.workforcePlanning.hotspots[0].role.toLowerCase()} con ${rewards.workforcePlanning.hotspots[0].education.toLowerCase()}.`,
-    href: "/workforce-planning",
-    icon: Target,
-    className: "bg-[#0a2141] text-white",
-  },
-];
-
-const bubbleSizes = [190, 110, 82, 76, 66, 58];
+const fmt = (n: number | null) => n === null ? "—" : new Intl.NumberFormat("es-MX", {maximumFractionDigits:1}).format(n);
+const signed = (n: number | null, suffix = "") => n === null ? "Sin base comparable" : `${n > 0 ? "+" : ""}${fmt(n)}${suffix}`;
 
 export default function SignalsPage() {
-  return (
-    <DashboardFrame>
-      <div className="-mx-5 -mt-5 overflow-hidden bg-[#f3f5f8] md:-mx-8 md:-mt-8">
-        <section className="relative overflow-hidden px-6 pb-14 pt-16 md:px-10 xl:px-14 xl:pb-20 xl:pt-24">
-          <div className="absolute right-[-8%] top-[-18%] h-[420px] w-[420px] rounded-full bg-cyan-300/20 blur-3xl" />
-          <div className="mx-auto max-w-[1660px]">
-            <div className="grid gap-10 xl:grid-cols-[1.15fr_.85fr] xl:items-end">
-              <div>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.24em] text-cyan-700"><Sparkles size={14} /> Catch Signals</div>
-                <h1 className="mt-5 max-w-5xl text-5xl font-black leading-[.9] tracking-[-.065em] text-[#07182d] md:text-7xl xl:text-[7.2rem]">
-                  Lo que el headcount <span className="text-cyan-600">no te está contando.</span>
-                </h1>
-              </div>
-              <div className="max-w-xl xl:justify-self-end">
-                <p className="text-base leading-8 text-slate-500 md:text-lg">Una lectura de segundo nivel: movimiento, carga futura, calidad de candidatos y concentración de demanda. Métricas diseñadas para descubrir tensión oculta, no para repetir el reporte.</p>
-                <div className="mt-5 flex items-center gap-3 text-xs font-bold text-slate-400"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Datos agregados · Jul–Ago 2025 · confianza {signatureMetrics.dataConfidence}/100</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <SignatureMetricStrip />
-
-        <section className="px-6 py-16 md:px-10 xl:px-14 xl:py-24">
-          <div className="mx-auto max-w-[1660px]"><SignatureSignalField /></div>
-        </section>
-
-        <section className="px-6 pb-24 md:px-10 xl:px-14 xl:pb-32">
-          <div className="mx-auto max-w-[1660px]">
-            <div className="mb-8 grid gap-5 lg:grid-cols-[.7fr_1.3fr] lg:items-end">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Next best moves</div>
-                <h2 className="mt-3 text-4xl font-black tracking-[-.05em] text-[#07182d] md:text-5xl">Tres decisiones. No veinte gráficas.</h2>
-              </div>
-              <p className="max-w-2xl text-sm leading-7 text-slate-500 lg:justify-self-end">Las acciones se ordenan por el patrón actual de los datos, no por una plantilla genérica. Cada tarjeta conduce a la evidencia donde puede validarse la señal.</p>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-3">
-              {moves.map((move) => {
-                const Icon = move.icon;
-                return (
-                  <Link key={move.label} href={move.href} className={`group relative min-h-[420px] overflow-hidden rounded-[34px] p-7 shadow-[0_22px_60px_rgba(7,24,45,.08)] transition duration-300 hover:-translate-y-1 md:p-8 ${move.className}`}>
-                    <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full border-[28px] border-current opacity-[.07] transition duration-500 group-hover:scale-110" />
-                    <div className="relative flex h-full flex-col justify-between">
-                      <div className="flex items-center justify-between"><span className="text-[10px] font-black tracking-[.2em] opacity-65">{move.label}</span><Icon size={20} /></div>
-                      <div>
-                        <div className="text-[5rem] font-black leading-none tracking-[-.08em] opacity-90">{move.value}</div>
-                        <h3 className="mt-5 text-3xl font-black tracking-[-.035em]">{move.title}</h3>
-                        <p className="mt-4 max-w-sm text-sm leading-6 opacity-70">{move.text}</p>
-                        <div className="mt-8 inline-flex items-center gap-2 text-xs font-black">Abrir evidencia <ArrowRight size={14} /></div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-[#07182d] px-6 py-24 text-white md:px-10 xl:px-14 xl:py-32">
-          <div className="mx-auto max-w-[1660px]">
-            <div className="mb-12 grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-300">Visual evidence</div>
-                <h2 className="mt-3 text-4xl font-black tracking-[-.05em] md:text-6xl">Dos dibujos. Dos problemas obvios.</h2>
-              </div>
-              <p className="max-w-2xl text-sm leading-7 text-slate-400 lg:justify-self-end">En lugar de otra cuadrícula de barras, la forma visual cambia según la pregunta: una fuga para antigüedad y una constelación para demanda.</p>
-            </div>
-
-            <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
-              <article className="rounded-[34px] border border-white/10 bg-white/[.055] p-6 md:p-8">
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <div className="text-[10px] font-black uppercase tracking-[.18em] text-amber-300">Leak path</div>
-                    <h3 className="mt-2 text-2xl font-black">¿Cuándo se nos va la gente?</h3>
-                  </div>
-                  <div className="text-right"><div className="text-4xl font-black text-amber-300">{signatureMetrics.earlyAttritionSharePct}%</div><div className="text-[10px] text-slate-500">antes de 3 meses</div></div>
-                </div>
-                <div className="mt-9 space-y-2.5">
-                  {people.retention.tenureDistributionPct.map((item, index) => (
-                    <div key={item.bucket} className="grid grid-cols-[88px_1fr_48px] items-center gap-3">
-                      <div className="text-[10px] font-bold text-slate-400">{item.bucket}</div>
-                      <div className="h-9 overflow-hidden rounded-full bg-white/[.04]">
-                        <div className={`h-full rounded-full transition-all ${index < 2 ? "bg-gradient-to-r from-rose-400 to-amber-300" : "bg-white/15"}`} style={{ width: `${Math.min(100, item.value * 2.8)}%` }} />
-                      </div>
-                      <div className={`text-right text-sm font-black ${index < 2 ? "text-amber-200" : "text-slate-400"}`}>{item.value}%</div>
-                    </div>
-                  ))}
-                </div>
-                <p className="mb-0 mt-7 text-xs leading-6 text-slate-500">La forma se estrecha conforme aumenta la antigüedad: la pérdida está cargada hacia el inicio de la relación laboral.</p>
-              </article>
-
-              <article className="relative min-h-[520px] overflow-hidden rounded-[34px] border border-white/10 bg-[#0a2141] p-6 md:p-8">
-                <div className="absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:24px_24px]" />
-                <div className="relative z-10 flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-[10px] font-black uppercase tracking-[.18em] text-violet-300">Demand constellation</div>
-                    <h3 className="mt-2 text-2xl font-black">¿Dónde está concentrada la demanda?</h3>
-                  </div>
-                  <div className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-[10px] font-black text-violet-200">Tamaño = demanda</div>
-                </div>
-                <div className="relative z-10 mt-8 flex min-h-[360px] flex-wrap items-center justify-center gap-4">
-                  {rewards.workforcePlanning.hotspots.slice(0, 6).map((item, index) => {
-                    const size = bubbleSizes[index];
-                    return (
-                      <div key={`${item.role}-${item.education}`} className={`group flex shrink-0 items-center justify-center rounded-full border text-center shadow-[0_12px_50px_rgba(0,0,0,.18)] transition duration-300 hover:scale-105 ${index === 0 ? "border-cyan-300/50 bg-cyan-300 text-[#07182d]" : index < 3 ? "border-violet-300/30 bg-violet-400/20 text-white" : "border-white/15 bg-white/[.06] text-white"}`} style={{ width: size, height: size }}>
-                        <div className="px-3">
-                          <div className={`${index === 0 ? "text-4xl" : "text-xl"} font-black tracking-[-.05em]`}>{item.demand}</div>
-                          <div className={`${index === 0 ? "mt-2 text-[11px]" : "mt-1 text-[9px]"} font-black uppercase leading-4 opacity-70`}>{item.role}</div>
-                          {index < 3 && <div className="mt-1 text-[8px] opacity-55">{item.education}</div>}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white px-6 py-20 md:px-10 xl:px-14 xl:py-24">
-          <div className="mx-auto grid max-w-[1660px] gap-8 rounded-[38px] border border-slate-200 bg-[#f8fafc] p-7 md:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[.2em] text-violet-600">Una métrica con contexto vale más</div>
-              <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] text-[#07182d] md:text-5xl">+{signatureMetrics.salaryDriftPct}% en salario de entrada en un año, pero {signatureMetrics.candidateFitPct}% de candidate fit.</h2>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-500">Ese contraste abre una pregunta más útil que “¿subió el salario?”: ¿la compensación está creciendo al ritmo correcto para ampliar la oferta efectiva de talento?</p>
-            </div>
-            <Link href="/salarios" className="inline-flex items-center gap-2 rounded-full bg-[#07182d] px-5 py-3 text-xs font-black text-white">Explorar compensación <BadgeDollarSign size={15} /></Link>
-          </div>
-        </section>
+  const [metric, setMetric] = useState<SignalMetric>("exits");
+  const {period, company, companyLabel, isMarket} = useFilters();
+  const result = analyzeSignal(metric, period, company);
+  const spec = signalMetrics[metric];
+  const coverage = signalCoverage(metric, company);
+  const quality = qualityReport(period, company);
+  const comparable = result.n >= (isMarket ? 5 : 1);
+  const maxContribution = Math.max(1, ...result.contributors.map(c => Math.abs(c.delta)));
+  const exportEvidence = () => {
+    const report = {title: `Catch · ${spec.label}`, period, company: companyLabel, sourceSha256: manifest.sourceSha256, sourceColumns: spec.source, method: "Suma de respuestas no negativas; comparación entre empresas con datos en ambos cortes. Sensibilidad al omitir una empresa, no intervalo de confianza ni efecto causal.", result, quality, nextStep: "Confirmar los cambios con mayor aportación y completar las respuestas ausentes antes de decidir."};
+    const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], {type:"application/json"}));
+    const anchor = document.createElement("a"); anchor.href = url; anchor.download = `catch-evidencia-${metric}-${period.toLowerCase().replaceAll(" ", "-")}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  const direction = result.matchedDelta === null ? "Falta un corte comparable" : result.matchedDelta > 0 ? `${spec.label} en aumento` : result.matchedDelta < 0 ? `${spec.label} en descenso` : `${spec.label} sin cambio neto`;
+  return <DashboardFrame>
+    <section className="relative overflow-hidden rounded-[28px] bg-[#091d35] p-6 text-white md:p-8">
+      <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(#6be6dd_1px,transparent_1px)] [background-size:24px_24px]" />
+      <div className="relative flex flex-wrap items-start justify-between gap-5">
+        <div className="max-w-2xl"><div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-cyan-300"><ScanLine size={16}/> Catch Signals · Laboratorio de evidencia</div><h1 className="mt-4 text-3xl font-black leading-tight tracking-tight md:text-4xl">Descubre qué cambió.<br/><span className="text-cyan-300">Y qué sostiene la señal.</span></h1><p className="mt-4 max-w-xl text-sm leading-6 text-slate-300">Separa el cambio de las mismas empresas del cambio en respuestas. Explora quién lo explica y cuánto depende de un solo caso.</p></div>
+        <button onClick={exportEvidence} className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-xs font-bold hover:bg-white/20"><Download size={16}/> Descargar evidencia</button>
       </div>
-    </DashboardFrame>
-  );
+      <div className="relative mt-6 flex flex-wrap gap-2 text-xs text-slate-200"><span className="rounded-full bg-white/10 px-3 py-2">{companyLabel}</span><span className="rounded-full bg-white/10 px-3 py-2">{result.previous ?? "Sin corte anterior"} → {period}</span><span className="rounded-full bg-cyan-300/10 px-3 py-2 text-cyan-200">Datos reportados · sin imputación</span></div>
+    </section>
+
+    <div className="my-5 flex flex-wrap gap-2" role="group" aria-label="Indicador por investigar">{Object.entries(signalMetrics).map(([key, s]) => <button key={key} onClick={() => setMetric(key as SignalMetric)} aria-pressed={metric === key} className={`rounded-full border px-4 py-2.5 text-sm font-bold transition ${metric === key ? "border-cyan-700 bg-cyan-700 text-white" : "border-slate-200 bg-white text-slate-600 hover:border-cyan-600"}`}>{s.label}</button>)}</div>
+
+    <section aria-live="polite" className="grid gap-4 xl:grid-cols-[1.45fr_1fr]">
+      <article className="panel p-5 md:p-7">
+        <div className="flex items-center justify-between gap-3"><div className="eyebrow">01 · El cambio comparable</div><Layers3 size={20} className="text-cyan-700"/></div>
+        <h2 className="mt-3 text-xl font-black text-slate-950">{comparable ? direction : "Necesitamos más respuestas comparables"}</h2>
+        <div className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2"><div className="text-5xl font-black tracking-tight text-[#0b2140]">{comparable && result.matchedPct !== null ? signed(result.matchedPct, "%") : "—"}</div><div className="text-sm font-semibold text-slate-500">{result.n} {result.n === 1 ? "empresa en ambos cortes" : "empresas en ambos cortes"}</div></div>
+        <p className="mt-4 text-sm leading-6 text-slate-600">{comparable ? `${fmt(result.matchedBefore)} → ${fmt(result.matchedAfter)} ${spec.unit}. ${result.matchedBefore === 0 ? "La base anterior es cero: se muestra el cambio absoluto, sin inventar un porcentaje." : "La comparación conserva exactamente las mismas empresas."}` : result.previous ? "El mercado necesita al menos cinco empresas con este dato en ambos periodos. Puedes revisar la cobertura abajo." : "Este es el primer bimestre disponible. Selecciona uno posterior para comparar."}</p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[["Cambio observado",result.delta,"Todas las respuestas"],["Mismas empresas",result.matchedDelta,"Cambio dentro del panel"],["Respuestas que cambian",result.compositionDelta,`${result.entering} aparecen · ${result.leaving} faltan`]].map(([label,value,note])=><div key={String(label)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="text-xs font-bold text-slate-500">{String(label)}</div><div className="mt-2 text-2xl font-black text-slate-950">{signed(value as number|null)}</div><div className="mt-2 text-xs leading-5 text-slate-500">{String(note)}</div></div>)}
+        </div>
+        <p className="mt-4 text-xs leading-5 text-slate-500">Cambio observado = cambio de las mismas empresas + aportación de respuestas que aparecen o faltan. Esto describe los datos disponibles; no demuestra una causa.</p>
+      </article>
+      <article className="rounded-[26px] border border-cyan-200 bg-[#eaf8f8] p-5 md:p-7">
+        <div className="flex items-center justify-between"><div className="eyebrow">02 · Pon la señal a prueba</div><Fingerprint size={21} className="text-cyan-800"/></div>
+        <h2 className="mt-3 text-xl font-black text-[#0b2140]">¿Y si quitamos una empresa?</h2>
+        {result.sensitivity ? <><div className="mt-6 flex flex-wrap items-baseline gap-2 text-3xl font-black tracking-tight text-cyan-900"><span>{signed(result.sensitivity.min, "%")}</span><span className="text-lg font-normal">a</span><span>{signed(result.sensitivity.max, "%")}</span></div><p className="mt-3 text-sm leading-6 text-slate-700">Rango del cambio al retirar cada empresa, una por una. Siempre quedan al menos cinco.</p><div className="mt-5 rounded-2xl border border-cyan-200 bg-white/80 p-4"><div className="text-sm font-black text-cyan-950">{result.sensitivity.directionStable ? "La dirección se mantiene" : "La dirección puede cambiar"}</div><p className="mt-2 text-xs leading-5 text-slate-600">{result.sensitivity.directionStable ? "Ninguna empresa por sí sola invierte el sentido del cambio. Revisa también la cobertura y la magnitud." : "Conviene confirmar las principales aportaciones antes de generalizar la señal."}</p></div></> : <p className="mt-6 text-sm leading-7 text-slate-600">Esta prueba necesita al menos seis empresas comparables y denominadores positivos después de cada exclusión. Selecciona mercado completo u otro indicador.</p>}
+        <p className="mt-5 text-xs leading-5 text-slate-600">Es una prueba de sensibilidad, no una predicción ni un intervalo de confianza estadístico.</p>
+      </article>
+    </section>
+
+    <section className="mt-4 grid items-start gap-4 xl:grid-cols-[1.45fr_1fr]">
+      <article className="panel overflow-hidden"><div className="p-5 md:p-7"><div className="eyebrow">03 · Sigue las aportaciones</div><h2 className="mt-2 text-xl font-black text-slate-950">Qué empresas explican el movimiento</h2><p className="mt-2 text-xs leading-5 text-slate-500">Ordenadas por cambio absoluto. El signo indica aumento o descenso, sin calificarlo como bueno o malo.</p></div><div className="overflow-x-auto"><table className="w-full min-w-[480px] text-sm"><caption className="sr-only">Aportación por empresa al cambio de {spec.label}</caption><thead className="border-y border-slate-100 bg-slate-50 text-left text-xs text-slate-500"><tr><th className="px-5 py-3">Empresa</th><th className="px-3 py-3 text-right">Anterior</th><th className="px-3 py-3 text-right">Actual</th><th className="px-5 py-3 text-right">Cambio</th></tr></thead><tbody>{comparable && result.contributors.map(c=><tr key={c.company} className="border-b border-slate-100 last:border-0"><th scope="row" className="px-5 py-3 text-left text-xs font-bold text-slate-700">{c.company}</th><td className="px-3 py-3 text-right tabular-nums text-slate-500">{fmt(c.before)}</td><td className="px-3 py-3 text-right tabular-nums text-slate-800">{fmt(c.after)}</td><td className="px-5 py-3"><div className="flex items-center justify-end gap-1 font-bold text-slate-800">{c.delta >= 0 ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>} {signed(c.delta)}</div><div className="ml-auto mt-1.5 h-1 w-24 rounded-full bg-slate-100"><div className={`ml-auto h-1 rounded-full ${c.delta >= 0 ? "bg-cyan-600" : "bg-indigo-400"}`} style={{width:`${Math.abs(c.delta)/maxContribution*100}%`}}/></div></td></tr>)}</tbody></table>{!comparable&&<p className="p-6 text-sm text-slate-500">Sin detalle comparable para esta selección.</p>}</div></article>
+      <div className="space-y-4">
+        <article className="panel p-5 md:p-7"><div className="eyebrow">04 · El contexto que suele faltar</div><h2 className="mt-2 text-xl font-black text-slate-950">La huella de cobertura</h2><p className="mt-2 text-xs leading-5 text-slate-500">Empresas con {spec.label.toLowerCase()} completo en cada bimestre. Un cero reportado sí cuenta.</p><div className="mt-5 space-y-3">{coverage.map(c=><div key={c.period} className="grid grid-cols-[80px_1fr_40px] items-center gap-3 text-xs"><span className={c.period===period?"font-black text-cyan-800":"text-slate-600"}>{c.period}</span><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className={`h-full rounded-full ${c.period===period?"bg-cyan-600":"bg-slate-300"}`} style={{width:`${c.n/(isMarket?40:1)*100}%`}}/></div><span className="text-right font-bold text-slate-600">{c.n}/{isMarket?40:1}</span></div>)}</div></article>
+        <article className="rounded-[26px] bg-[#0b2140] p-5 text-white md:p-7"><div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300"><Sparkles size={15}/> Tu siguiente investigación</div><h2 className="mt-3 text-xl font-black">{quality.anomalies.length ? "Confirma primero la plantilla atípica" : result.compositionDelta ? "Comprueba qué respuestas cambiaron" : "Empieza por las mayores aportaciones"}</h2><p className="mt-3 text-sm leading-6 text-slate-300">{quality.anomalies.length ? "Hay un salto histórico pendiente de confirmación en este corte. Se conserva el valor original; no se sustituye por una estimación." : "Contrasta los primeros casos con el equipo. Esta vista permite formular una hipótesis; para explicar causas hacen falta motivos y contexto operativo."}</p><Link href="/data-quality" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cyan-200">Revisar calidad de este corte <ArrowRight size={16}/></Link></article>
+        <details className="rounded-2xl border border-slate-200 bg-white p-5 text-xs leading-6 text-slate-600"><summary className="cursor-pointer font-bold text-slate-800">Cómo se calculó esta evidencia</summary><p className="mt-3">Fuente: BASE HISTORICA.xlsx · columnas {spec.source}. Valores negativos y ausentes no forman parte de los cálculos. Los componentes deben estar completos. Las exclusiones no borran ni corrigen la fuente.</p><p>Edición de datos <code>{manifest.sourceSha256.slice(0,12)}</code> · {manifest.records} registros. El archivo descargable conserva el método, los resultados y las comprobaciones.</p></details>
+      </div>
+    </section>
+  </DashboardFrame>;
 }

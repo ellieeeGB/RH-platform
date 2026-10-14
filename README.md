@@ -10,7 +10,7 @@ Mantener los dashboards operativos y de benchmarking que ya utiliza el negocio �
 
 - **Decisiones antes que gráficas:** cada dashboard debe responder qué pasó, por qué importa y qué acción conviene evaluar.
 - **KPIs verificables:** las fórmulas viven en una capa de métricas reusable, no embebidas en componentes visuales.
-- **Privacidad por diseño:** datos crudos fuera del repositorio; benchmarks agregados con controles de confidencialidad.
+- **Alcance explícito:** Excel crudo fuera del repositorio; panel analítico por códigos incluido en el cliente. Los permisos por organización requieren una capa de servidor.
 - **IA con evidencia:** cualquier explicación futura deberá citar métricas calculadas y respetar permisos por organización.
 - **Diseño modular:** dashboards clásicos + módulos de People Intelligence.
 
@@ -38,7 +38,8 @@ Mantener los dashboards operativos y de benchmarking que ya utiliza el negocio �
 12. Benchmark Studio
 13. Data Quality Center
 14. What‑If / Workforce Digital Twin
-15. AI HR Copilot
+15. Asistente de análisis guiado
+16. Estudio de decisiones y bitácora
 
 ## Datos
 
@@ -47,3 +48,32 @@ La base histórica original **no debe subirse a este repositorio público**. Los
 ## Estado
 
 Proyecto en construcción para la competencia de dashboard dinámico de RH.
+
+## Ejecutar la revisión auditada
+
+La versión integrada está en `main` (PR #15). El menú incluye **Estudio de decisiones**: mapa entre pares, descomposición de tasas y bitácora de hipótesis. Si no aparece, actualiza tu copia local.
+
+```sh
+git clone https://github.com/ellieeeGB/RH-platform.git RH-platform-audit
+cd RH-platform-audit
+npm ci
+npm run dev
+```
+
+Abre la dirección local que imprime Next.js, normalmente `http://localhost:3000`. Para detenerla, `Ctrl+C`. Los datos procesados ya están incluidos: no necesitas el Excel para explorar. `predev` verifica los archivos y el código de extracción contra el manifiesto de la edición.
+
+## Actualizar datos y verificar
+
+```sh
+npm run data:extract -- "/ruta/BASE HISTORICA.xlsx"
+npm run data:verify
+npm test
+npm run typecheck
+npm run build
+```
+
+No ejecutes extractores individuales sobre `data/processed`: producirían archivos sin renovar el manifiesto. La extracción completa incluye el tabulador y espera las siete hojas y 40 compañías del estudio. Una nueva estructura requiere actualizar el contrato. Si se interrumpe una extracción, confirma que ya no siga ejecutándose antes de retirar su bloqueo `data/.data-pipeline.lock`.
+
+Consulta [la auditoría](docs/repository-review.md) y [el estudio de decisiones](docs/decision-study.md) para ver métodos y límites. Actualizar GitHub no sustituye el Site privado. El asistente actual responde mediante reglas y datos calculados; no está conectado a un modelo generativo.
+
+La bitácora se guarda en localStorage de este navegador; su descarga JSON incluye evidencia y seguimiento. No se comparte entre usuarios ni sincroniza con una base de datos. Los JSON analíticos por compañía se distribuyen con el cliente web: los umbrales de muestra son criterios estadísticos de presentación, no un sistema de autorización.

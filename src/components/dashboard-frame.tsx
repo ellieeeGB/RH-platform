@@ -1,23 +1,29 @@
 "use client";
 
-import { Building2, CalendarDays } from "lucide-react";
+import { useRef } from "react";
+import { Building2, CalendarDays, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
 import { useFilters } from "@/components/filter-context";
 import { PERIODS } from "@/lib/company-panel";
 
-const ACTIVE_FILTER_ROUTES = new Set(["/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning"]);
+const ACTIVE_FILTER_ROUTES = new Set(["/copilot", "/signals", "/data-quality", "/benchmark","/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning", "/beneficios", "/talent-acquisition", "/relaciones-laborales", "/labor-risk", "/tabulador"]);
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
+  const menu = useRef<HTMLDialogElement>(null);
+  const pathname = usePathname();
+  const { month, monthLabel, period } = useFilters();
   return (
     <div className="min-h-screen bg-[#f7f9fc] lg:flex">
+      <a href="#main-content" className="skip-link">Saltar al contenido</a>
       <Sidebar />
-      <div className="relative min-w-0 flex-1 overflow-hidden">
+      <dialog ref={menu} id="mobile-navigation" aria-label="Navegación" className="mobile-navigation" onClick={e=>{if(e.target===e.currentTarget)menu.current?.close();}}><div className="relative h-full"><button type="button" aria-label="Cerrar navegación" autoFocus onClick={()=>menu.current?.close()} className="absolute right-2 top-2 z-10 rounded-lg bg-slate-800 p-2 text-white"><X size={18}/></button><Sidebar mobile onNavigate={()=>menu.current?.close()}/></div></dialog>
+      <div className="relative min-w-0 flex-1 overflow-clip">
         <div className="pointer-events-none absolute -right-24 top-20 h-96 w-96 rounded-full bg-cyan-300/10 blur-3xl" />
         <div className="pointer-events-none absolute left-[35%] top-[38%] h-80 w-80 rounded-full bg-violet-300/10 blur-3xl" />
-        <Topbar />
-        <main className="relative mx-auto max-w-[1540px] p-5 md:p-7 xl:p-8">{children}</main>
+        <Topbar onOpenMenu={()=>menu.current?.showModal()} />
+        <main id="main-content" tabIndex={-1} className="relative mx-auto max-w-[1540px] p-5 md:p-7 xl:p-8">{pathname === "/retencion" && month!=="all" && <p className="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-xs leading-5 text-cyan-950">Consulta de bajas: <strong>{monthLabel}</strong>. El resto de los indicadores corresponde al bimestre {period}. El desglose mensual solo se muestra cuando está confirmado en la fuente.</p>}{children}</main>
       </div>
     </div>
   );
@@ -37,7 +43,7 @@ export function PageHeader({
   const pathname = usePathname();
   const { period, companyLabel, isMarket } = useFilters();
   const latestPeriod = PERIODS.at(-1) ?? "Último corte";
-  const effectiveScopeMode = scopeMode ?? (pathname === "/data-atlas" ? "none" : ACTIVE_FILTER_ROUTES.has(pathname) ? "active" : "marketLatest");
+  const effectiveScopeMode = scopeMode ?? (pathname === "/data-atlas" ? "none" : pathname === "/decisiones" || ACTIVE_FILTER_ROUTES.has(pathname) ? "active" : "marketLatest");
 
   return (
     <section className="mb-8 animate-reveal">

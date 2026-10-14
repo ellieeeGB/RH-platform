@@ -31,7 +31,7 @@ export function WorkforceTrendChart() {
           <YAxis tick={{ fill: "#7b8798", fontSize: 11 }} axisLine={false} tickLine={false} domain={[30000, 54000]} />
           <Tooltip
             contentStyle={tooltipStyle}
-            formatter={(value, name) => [Number(value).toLocaleString("es-MX"), name === "reportedHeadcount" ? "Reportado" : "Ajustado por calidad"]}
+            formatter={(value, name) => [Number(value).toLocaleString("es-MX"), name === "reportedHeadcount" ? "Reportado" : "Escenario con imputación (estimado)"]}
           />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           <Line
@@ -46,7 +46,7 @@ export function WorkforceTrendChart() {
           <Line
             type="monotone"
             dataKey="qualityAdjustedHeadcount"
-            name="Ajustado por calidad"
+            name="Escenario con imputación (estimado)"
             stroke="#0ea5b7"
             strokeWidth={3}
             dot={{ r: 4, fill: "#0ea5b7" }}

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
 export function KpiCard({
   label,
@@ -11,17 +11,19 @@ export function KpiCard({
 }: {
   label: string;
   value: string;
-  change: number;
+  change?: number;
   changeLabel: string;
   icon: LucideIcon;
   inverse?: boolean;
 }) {
-  const isPositive = inverse ? change <= 0 : change >= 0;
-  const TrendIcon = change >= 0 ? ArrowUpRight : ArrowDownRight;
+  const hasChange = change != null && Number.isFinite(change);
+  const isPositive = hasChange && (inverse ? change < 0 : change > 0);
+  const isNeutral = !hasChange || change === 0;
+  const TrendIcon = change === 0 ? Minus : (change ?? 0) > 0 ? ArrowUpRight : ArrowDownRight;
 
   return (
     <article className="group relative overflow-hidden rounded-[22px] border border-slate-200/75 bg-white/90 p-5 shadow-[0_12px_34px_rgba(15,35,65,.045)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(15,35,65,.075)]">
-      <div className={`absolute inset-x-0 top-0 h-0.5 ${isPositive ? "bg-gradient-to-r from-emerald-400 to-cyan-400" : "bg-gradient-to-r from-amber-400 to-rose-400"}`} />
+      <div className={`absolute inset-x-0 top-0 h-0.5 ${isNeutral ? "bg-slate-200" : isPositive ? "bg-gradient-to-r from-emerald-400 to-cyan-400" : "bg-gradient-to-r from-amber-400 to-rose-400"}`} />
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="metric-label">{label}</div>
@@ -32,10 +34,10 @@ export function KpiCard({
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-[11px]">
-        <span className={`inline-flex items-center gap-1 font-black ${isPositive ? "text-emerald-700" : "text-rose-700"}`}>
-          <TrendIcon size={12} /> {change > 0 ? "+" : ""}{change}%
-        </span>
-        <span className="text-right font-semibold text-slate-400">{changeLabel}</span>
+        {hasChange && <span className={`inline-flex items-center gap-1 font-black ${isNeutral ? "text-slate-500" : isPositive ? "text-emerald-700" : "text-rose-700"}`}>
+          <TrendIcon size={12} /> {(change ?? 0) > 0 ? "+" : ""}{change}%
+        </span>}
+        <span className="text-right font-semibold text-slate-600">{changeLabel}</span>
       </div>
     </article>
   );

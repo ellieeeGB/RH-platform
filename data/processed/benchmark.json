@@ -1,68 +1,449 @@
 {
   "metadata": {
-    "source": "BASE HISTORICA(1).xlsx",
     "companyCount": 40,
     "periodCount": 7,
-    "privacy": "aggregated-only",
-    "generatedFrom": "anonymized competition dataset"
+    "privacy": "aggregated-only"
   },
   "periods": [
-    {"period":"Jul-Ago 24","reportedHeadcount":35948,"qualityAdjustedHeadcount":35948,"operational":24680,"administrative":10520,"other":748,"hires":2763,"exits":3132,"absences":26609,"incapacityCases":10961,"trainingHours":157982,"salaryEntryMedian":301.02,"timeToFill":{"operational":12.5,"technical":15,"administrative":30,"managerial":40},"anomalyCount":0},
-    {"period":"Sep-Oct 24","reportedHeadcount":36177,"qualityAdjustedHeadcount":36177,"operational":24875,"administrative":10556,"other":746,"hires":2815,"exits":2741,"absences":31424,"incapacityCases":7287,"trainingHours":118104,"salaryEntryMedian":301.02,"timeToFill":{"operational":10,"technical":15,"administrative":30,"managerial":45},"anomalyCount":0},
-    {"period":"Nov-Dic 24","reportedHeadcount":35530,"qualityAdjustedHeadcount":35530,"operational":24387,"administrative":10425,"other":718,"hires":1299,"exits":1885,"absences":32838,"incapacityCases":7262,"trainingHours":97489,"salaryEntryMedian":314.29,"timeToFill":{"operational":8,"technical":15,"administrative":25,"managerial":30},"anomalyCount":0},
-    {"period":"Ene-Feb 25","reportedHeadcount":35579,"qualityAdjustedHeadcount":35579,"operational":24803,"administrative":10094,"other":682,"hires":2554,"exits":2605,"absences":36987,"incapacityCases":7963,"trainingHours":96766,"salaryEntryMedian":321.26,"timeToFill":{"operational":15,"technical":15,"administrative":30,"managerial":45},"anomalyCount":0},
-    {"period":"Mar-Abr 25","reportedHeadcount":50829,"qualityAdjustedHeadcount":35469,"operational":39384,"administrative":10763,"other":682,"hires":1940,"exits":2280,"absences":30951,"incapacityCases":10145,"trainingHours":90036,"salaryEntryMedian":321.46,"timeToFill":{"operational":15,"technical":17.5,"administrative":30,"managerial":45},"anomalyCount":1},
-    {"period":"May-Jun 25","reportedHeadcount":35005,"qualityAdjustedHeadcount":35005,"operational":23665,"administrative":10663,"other":677,"hires":3509,"exits":2772,"absences":40759,"incapacityCases":13578,"trainingHours":154114,"salaryEntryMedian":339.63,"timeToFill":{"operational":15,"technical":15,"administrative":30,"managerial":45},"anomalyCount":0},
-    {"period":"Jul-Ago 25","reportedHeadcount":35128,"qualityAdjustedHeadcount":35128,"operational":24554,"administrative":9863,"other":711,"hires":2779,"exits":2807,"absences":31360,"incapacityCases":13204,"trainingHours":159851,"salaryEntryMedian":339.63,"timeToFill":{"operational":15,"technical":20,"administrative":30,"managerial":45},"anomalyCount":0}
+    {
+      "period": "Jul-Ago 24",
+      "matchedRates": {
+        "exits": {
+          "n": 27,
+          "numerator": 2902,
+          "denominator": 23398,
+          "value": 12.402769467475853
+        },
+        "absences": {
+          "n": 27,
+          "numerator": 22165,
+          "denominator": 23398,
+          "value": 94.73031883066929
+        },
+        "incapacity": {
+          "n": 32,
+          "numerator": 9721,
+          "denominator": 29926,
+          "value": 32.483459199358414
+        }
+      },
+      "reportedHeadcount": 35948,
+      "qualityAdjustedHeadcount": 35948,
+      "operational": 24680,
+      "administrative": 10520,
+      "other": 748,
+      "hires": 2763,
+      "exits": 3132,
+      "absences": 26609,
+      "incapacityCases": 10961,
+      "trainingHours": 157982,
+      "salaryEntryMedian": 301.02,
+      "timeToFill": {
+        "operational": 12.5,
+        "technical": 15,
+        "administrative": 30,
+        "managerial": 40
+      },
+      "anomalyCount": 0
+    },
+    {
+      "period": "Sep-Oct 24",
+      "matchedRates": {
+        "exits": {
+          "n": 30,
+          "numerator": 2553,
+          "denominator": 27844,
+          "value": 9.168941244074128
+        },
+        "absences": {
+          "n": 30,
+          "numerator": 25349,
+          "denominator": 27844,
+          "value": 91.0393621606091
+        },
+        "incapacity": {
+          "n": 33,
+          "numerator": 6078,
+          "denominator": 30359,
+          "value": 20.02042228004875
+        }
+      },
+      "reportedHeadcount": 36177,
+      "qualityAdjustedHeadcount": 36177,
+      "operational": 24875,
+      "administrative": 10556,
+      "other": 746,
+      "hires": 2815,
+      "exits": 2741,
+      "absences": 31424,
+      "incapacityCases": 7287,
+      "trainingHours": 118104,
+      "salaryEntryMedian": 301.02,
+      "timeToFill": {
+        "operational": 10,
+        "technical": 15,
+        "administrative": 30,
+        "managerial": 45
+      },
+      "anomalyCount": 0
+    },
+    {
+      "period": "Nov-Dic 24",
+      "matchedRates": {
+        "exits": {
+          "n": 31,
+          "numerator": 1836,
+          "denominator": 28285,
+          "value": 6.491073006894113
+        },
+        "absences": {
+          "n": 31,
+          "numerator": 29976,
+          "denominator": 28285,
+          "value": 105.9784337988333
+        },
+        "incapacity": {
+          "n": 35,
+          "numerator": 6884,
+          "denominator": 33190,
+          "value": 20.741187104549564
+        }
+      },
+      "reportedHeadcount": 35530,
+      "qualityAdjustedHeadcount": 35530,
+      "operational": 24387,
+      "administrative": 10425,
+      "other": 718,
+      "hires": 1299,
+      "exits": 1885,
+      "absences": 32838,
+      "incapacityCases": 7262,
+      "trainingHours": 97489,
+      "salaryEntryMedian": 314.29,
+      "timeToFill": {
+        "operational": 11.5,
+        "technical": 15,
+        "administrative": 25,
+        "managerial": 45
+      },
+      "anomalyCount": 0
+    },
+    {
+      "period": "Ene-Feb 25",
+      "matchedRates": {
+        "exits": {
+          "n": 32,
+          "numerator": 2544,
+          "denominator": 28337,
+          "value": 8.977661714366377
+        },
+        "absences": {
+          "n": 32,
+          "numerator": 34529,
+          "denominator": 28337,
+          "value": 121.85128983308043
+        },
+        "incapacity": {
+          "n": 35,
+          "numerator": 7729,
+          "denominator": 33204,
+          "value": 23.27731598602578
+        }
+      },
+      "reportedHeadcount": 35579,
+      "qualityAdjustedHeadcount": 35579,
+      "operational": 24803,
+      "administrative": 10094,
+      "other": 682,
+      "hires": 2554,
+      "exits": 2605,
+      "absences": 36987,
+      "incapacityCases": 7963,
+      "trainingHours": 96766,
+      "salaryEntryMedian": 321.27,
+      "timeToFill": {
+        "operational": 15,
+        "technical": 15,
+        "administrative": 30,
+        "managerial": 45
+      },
+      "anomalyCount": 0
+    },
+    {
+      "period": "Mar-Abr 25",
+      "matchedRates": {
+        "exits": {
+          "n": 31,
+          "numerator": 2231,
+          "denominator": 43372,
+          "value": 5.143871622244766
+        },
+        "absences": {
+          "n": 31,
+          "numerator": 27861,
+          "denominator": 43372,
+          "value": 64.23729595130499
+        },
+        "incapacity": {
+          "n": 35,
+          "numerator": 9689,
+          "denominator": 48458,
+          "value": 19.99463452887036
+        }
+      },
+      "reportedHeadcount": 50829,
+      "qualityAdjustedHeadcount": 35469,
+      "operational": 39384,
+      "administrative": 10763,
+      "other": 682,
+      "hires": 1940,
+      "exits": 2280,
+      "absences": 30951,
+      "incapacityCases": 10145,
+      "trainingHours": 90036,
+      "salaryEntryMedian": 321.46,
+      "timeToFill": {
+        "operational": 15,
+        "technical": 20,
+        "administrative": 30,
+        "managerial": 45
+      },
+      "anomalyCount": 1
+    },
+    {
+      "period": "May-Jun 25",
+      "matchedRates": {
+        "exits": {
+          "n": 29,
+          "numerator": 2721,
+          "denominator": 29679,
+          "value": 9.168098655615081
+        },
+        "absences": {
+          "n": 28,
+          "numerator": 40427,
+          "denominator": 29090,
+          "value": 138.97215537985562
+        },
+        "incapacity": {
+          "n": 36,
+          "numerator": 13079,
+          "denominator": 32669,
+          "value": 40.03489546665034
+        }
+      },
+      "reportedHeadcount": 35005,
+      "qualityAdjustedHeadcount": 35005,
+      "operational": 23665,
+      "administrative": 10663,
+      "other": 677,
+      "hires": 3509,
+      "exits": 2772,
+      "absences": 40759,
+      "incapacityCases": 13578,
+      "trainingHours": 154114,
+      "salaryEntryMedian": 339.63,
+      "timeToFill": {
+        "operational": 15,
+        "technical": 15,
+        "administrative": 30,
+        "managerial": 45
+      },
+      "anomalyCount": 0
+    },
+    {
+      "period": "Jul-Ago 25",
+      "matchedRates": {
+        "exits": {
+          "n": 29,
+          "numerator": 2791,
+          "denominator": 26977,
+          "value": 10.345850168662194
+        },
+        "absences": {
+          "n": 29,
+          "numerator": 28899,
+          "denominator": 26977,
+          "value": 107.12458761166921
+        },
+        "incapacity": {
+          "n": 36,
+          "numerator": 12720,
+          "denominator": 32793,
+          "value": 38.78876589516055
+        }
+      },
+      "reportedHeadcount": 35128,
+      "qualityAdjustedHeadcount": 35128,
+      "operational": 24554,
+      "administrative": 9863,
+      "other": 711,
+      "hires": 2779,
+      "exits": 2807,
+      "absences": 31360,
+      "incapacityCases": 13204,
+      "trainingHours": 159851,
+      "salaryEntryMedian": 339.63,
+      "timeToFill": {
+        "operational": 15,
+        "technical": 20,
+        "administrative": 30,
+        "managerial": 45
+      },
+      "anomalyCount": 0
+    }
   ],
   "latest": {
     "period": "Jul-Ago 25",
     "headcount": 35128,
     "headcountChangePct": 0.35,
-    "turnoverBimonthlyPct": 8.0,
+    "turnoverBimonthlyPct": 10.35,
     "hires": 2779,
     "exits": 2807,
-    "vacancies": {"operational":1853,"administrative":471,"total":2324},
-    "hiringPressurePct": 6.62,
-    "salaryBandsDaily": {"entryMedian":339.63,"lowMedian":382.94,"highMedian":444.2,"maxMedian":560.64},
+    "vacancies": {
+      "operational": 1853,
+      "administrative": 471,
+      "total": 2324
+    },
+    "hiringPressurePct": 6.81,
+    "salaryBandsDaily": {
+      "entryMedian": 339.63,
+      "lowMedian": 382.94,
+      "highMedian": 444.2,
+      "maxMedian": 560.64
+    },
     "candidateAcceptancePer10Median": 4.5,
-    "trainingHoursPerHead": 4.55,
+    "trainingHoursPerHead": 4.66,
+    "matchedCoverage": {
+      "exits": {
+        "n": 29,
+        "numerator": 2791,
+        "denominator": 26977,
+        "value": 10.345850168662194
+      },
+      "vacancies": {
+        "n": 36,
+        "numerator": 2266,
+        "denominator": 33255,
+        "value": 6.814012930386408
+      },
+      "training": {
+        "n": 39,
+        "numerator": 159851,
+        "denominator": 34267,
+        "value": 4.664867073277497
+      }
+    },
+    "rateDefinition": "Bajas / plantilla completa al cierre, mismas empresas; no rotación sobre plantilla promedio.",
     "genderValidCompanyCount": 28,
     "womenWeightedPct": 38.6,
     "menWeightedPct": 61.4,
-    "timeToFillDays": {"operational":15,"technical":20,"administrative":30,"managerial":45},
+    "timeToFillDays": {
+      "operational": 15,
+      "technical": 20,
+      "administrative": 30,
+      "managerial": 45
+    },
     "recruitmentSourcePrevalence": [
-      {"source":"Referencias de Empleados Internos","companies":38,"pct":95.0},
-      {"source":"Promociones Internas","companies":34,"pct":85.0},
-      {"source":"Facebook","companies":32,"pct":80.0},
-      {"source":"LinkedIn","companies":31,"pct":77.5},
-      {"source":"Portal OCC","companies":24,"pct":60.0},
-      {"source":"Bolsa de Empleo de Gobierno","companies":23,"pct":57.5},
-      {"source":"Reclutamiento de Campo","companies":23,"pct":57.5},
-      {"source":"Anuncios propios en la calle","companies":20,"pct":50.0}
+      {
+        "source": "Referencias de Empleados Internos",
+        "companies": 38,
+        "pct": 95
+      },
+      {
+        "source": "Promociones Internas",
+        "companies": 34,
+        "pct": 85
+      },
+      {
+        "source": "Facebook",
+        "companies": 32,
+        "pct": 80
+      },
+      {
+        "source": "LinkedIn",
+        "companies": 31,
+        "pct": 77.5
+      },
+      {
+        "source": "Portal OCC",
+        "companies": 24,
+        "pct": 60
+      },
+      {
+        "source": "Bolsa de Empleo de Gobierno",
+        "companies": 23,
+        "pct": 57.5
+      },
+      {
+        "source": "Reclutamiento de Campo",
+        "companies": 23,
+        "pct": 57.5
+      },
+      {
+        "source": "Anuncios propios en la calle",
+        "companies": 20,
+        "pct": 50
+      }
     ],
     "rejectionReasonMedianPct": [
-      {"cause":"Antidoping","medianPct":10.0,"responses":36},
-      {"cause":"Escolaridad","medianPct":0.0,"responses":33},
-      {"cause":"Examen Visual","medianPct":5.0,"responses":32},
-      {"cause":"Examen Lumbar","medianPct":10.0,"responses":36},
-      {"cause":"Examen de Audiometría","medianPct":10.0,"responses":31},
-      {"cause":"Falta de experiencia en industria","medianPct":17.0,"responses":32},
-      {"cause":"Lugar de residencia","medianPct":10.0,"responses":33},
-      {"cause":"Pruebas de Habilidad Numérica","medianPct":4.0,"responses":26},
-      {"cause":"Pruebas Psicométricas","medianPct":0.0,"responses":28}
+      {
+        "cause": "Antidoping",
+        "medianPct": 10,
+        "responses": 36
+      },
+      {
+        "cause": "Escolaridad",
+        "medianPct": 0,
+        "responses": 33
+      },
+      {
+        "cause": "Examen Visual",
+        "medianPct": 5,
+        "responses": 32
+      },
+      {
+        "cause": "Examen Lumbar",
+        "medianPct": 10,
+        "responses": 36
+      },
+      {
+        "cause": "Examen de Audiometría",
+        "medianPct": 10,
+        "responses": 31
+      },
+      {
+        "cause": "Falta de experiencia en industria",
+        "medianPct": 17,
+        "responses": 32
+      },
+      {
+        "cause": "Lugar de residencia",
+        "medianPct": 10,
+        "responses": 33
+      },
+      {
+        "cause": "Pruebas de Habilidad Numérica",
+        "medianPct": 4,
+        "responses": 26
+      },
+      {
+        "cause": "Pruebas Psicométricas",
+        "medianPct": 0,
+        "responses": 28
+      }
     ]
   },
   "quality": {
     "score": 90,
-    "rulesEvaluated": 240,
-    "rulesPassed": 216,
-    "ruleFailures": 24,
+    "rulesEvaluated": 217,
+    "rulesPassed": 196,
+    "rulesIncomplete": 63,
+    "ruleFailures": 21,
     "criticalAnomalies": 1,
     "notes": [
-      "Mar-Abr 25 contains a headcount outlier for COMPAÑIA 28: 17,560 reported versus a cross-period median near 2,200.",
-      "Gender proportions have 9 failures among 37 companies with both values present.",
-      "Quality-adjusted headcount is an analytical estimate and never overwrites the reported source value."
+      "Reported values are immutable; quality-adjusted values are analytical estimates only.",
+      "Longitudinal headcount anomalies use the median of the same company across the other periods as the comparison baseline."
     ]
   }
 }

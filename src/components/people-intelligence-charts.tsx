@@ -27,8 +27,8 @@ export function TurnoverTrendChart() {
         <LineChart data={retentionData.turnoverTrendPct} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
           <CartesianGrid stroke="#eef2f6" vertical={false} />
           <XAxis dataKey="period" tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} />
-          <YAxis domain={[0, 10]} tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
-          <Tooltip contentStyle={tooltipStyle} formatter={(value) => [`${Number(value).toFixed(2)}%`, "Rotación"]} />
+          <YAxis domain={[0, "auto"]} tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
+          <Tooltip contentStyle={tooltipStyle} formatter={(value) => [`${Number(value).toFixed(2)}%`, "Bajas / plantilla al cierre"]} />
           <Line type="monotone" dataKey="value" stroke="#0ea5b7" strokeWidth={3} dot={{ r: 4, fill: "#0ea5b7" }} />
         </LineChart>
       </ResponsiveContainer>

@@ -14,6 +14,7 @@ import {
   HeartPulse,
   LayoutDashboard,
   Radar,
+  Orbit,
   ShieldCheck,
   Sparkles,
   Table2,
@@ -36,8 +37,9 @@ export const navigation: NavigationGroup[] = [
     label: "Resumen",
     items: [
       { label: "Inicio", icon: LayoutDashboard, href: "/" },
+      { label: "Estudio de decisiones", icon: Orbit, href: "/decisiones" },
       { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
-      { label: "Señales clave", icon: Radar, href: "/signals" },
+      { label: "Laboratorio de señales", icon: Radar, href: "/signals" },
     ],
   },
   {
@@ -60,7 +62,7 @@ export const navigation: NavigationGroup[] = [
       { label: "Ausentismo y riesgo", icon: HeartPulse, href: "/labor-risk" },
       { label: "Benchmark", icon: Activity, href: "/benchmark" },
       { label: "Simulador", icon: ClipboardCheck, href: "/what-if" },
-      { label: "Catch AI", icon: Sparkles, href: "/copilot" },
+      { label: "Asistente de análisis", icon: Sparkles, href: "/copilot" },
     ],
   },
   {

@@ -4,11 +4,12 @@ import { calculateScenario, defaultScenario, scenarioBaseline } from "../src/lib
 
 test("default scenario reproduces transparent expected outputs", () => {
   const result = calculateScenario(defaultScenario);
-  assert.equal(result.estimatedExitsAvoided, 527);
+  assert.equal(scenarioBaseline.headcount, 26977);
+  assert.equal(result.estimatedExitsAvoided, Math.round(2791 - 0.065 * 26977));
   assert.equal(result.technicalVacancyDaysAvoided, 465);
   assert.ok(Math.abs(result.newSalaryEntryDaily - 356.6115) < 0.0001);
   assert.ok(Math.abs(result.annualizedSalaryExposure - 11485352.6175) < 0.01);
-  assert.ok(Math.abs(result.salaryIncreaseToQ3Pct - 8.94797) < 0.001);
+  assert.ok(Math.abs(result.salaryIncreaseToQ3Pct - ((370.03 / 339.63 - 1) * 100)) < 0.001);
 });
 
 test("scenario never reports negative avoided exits or vacancy-days", () => {

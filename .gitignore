@@ -38,3 +38,10 @@ data/processed/*.tmp.json
 __pycache__/
 *.py[cod]
 .venv/
+
+# TypeScript incremental cache
+*.tsbuildinfo
+
+# Isolated pipeline stages and writer lock
+data/.data-stage-*/
+data/.data-pipeline.lock/

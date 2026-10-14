@@ -2,6 +2,7 @@
 
 import { BriefcaseBusiness, Clock3, Radar, UserCheck } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
+import { getDetails } from "@/lib/company-detail";
 import { useFilters } from "@/components/filter-context";
 import { RecruitmentSourcesChart, TimeToFillChart } from "@/components/classic-charts";
 import { HiringPressureChart } from "@/components/charts";
@@ -38,6 +39,7 @@ export default function TalentAcquisitionPage() {
   const metrics = deriveScopeMetrics(scope);
   const marketMetrics = deriveScopeMetrics(market);
   const rows = getPeriodSnapshots(period);
+  const intervalCounts = getDetails(company,period);
 
   const rejectionRows = (Object.keys(rejectionLabels) as (keyof RejectionMix)[])
     .map((key) => ({
@@ -91,6 +93,7 @@ export default function TalentAcquisitionPage() {
           : `${companyLabel}: cobertura de vacantes y fricción de selección comparadas con el mercado del mismo bimestre.`}
       />
 
+      <details className="panel mb-4 p-4 text-xs leading-6 text-slate-600"><summary className="cursor-pointer font-bold text-slate-800">Cómo leer los tiempos de cobertura</summary><p>Medianas de respuestas exactas positivas, en días hábiles. Cero significa que la empresa no tiene esa posición.</p><p>Respuestas de más de 60 días: operativo {intervalCounts.filter(r=>r.ttfOperationalStatus==='over-60').length}, técnico {intervalCounts.filter(r=>r.ttfTechnicalStatus==='over-60').length}, administrativo {intervalCounts.filter(r=>r.ttfAdministrativeStatus==='over-60').length}, gerencial {intervalCounts.filter(r=>r.ttfManagerialStatus==='over-60').length}. Se conservan como intervalos y no se incluyen en la mediana numérica.</p></details>
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ label, value, note, icon: Icon }) => (
           <article key={label} className="panel p-5">

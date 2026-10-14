@@ -76,14 +76,14 @@ export function WhatIfLab() {
         <article className="panel p-5 md:p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <div className="eyebrow">Scenario controls</div>
+              <div className="eyebrow">Supuestos del escenario</div>
               <h2 className="mt-1 text-lg font-extrabold text-slate-950">Mueve los supuestos</h2>
             </div>
             <button onClick={() => setInputs(defaultScenario)} className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-500"><RefreshCcw size={14} /> Restablecer</button>
           </div>
 
           <div className="space-y-3">
-            <SliderField label="Rotación objetivo" value={inputs.turnoverTargetPct} min={3} max={10} step={0.1} suffix="%" onChange={(value) => update("turnoverTargetPct", value)} helper={`Actual: ${scenarioBaseline.currentTurnoverPct}% bimestral`} />
+            <SliderField label="Bajas / plantilla objetivo" value={inputs.turnoverTargetPct} min={3} max={20} step={0.1} suffix="%" onChange={(value) => update("turnoverTargetPct", value)} helper={`Actual: ${scenarioBaseline.currentTurnoverPct.toFixed(2)}% bimestral`} />
             <SliderField label="Aumento salario de ingreso" value={inputs.salaryIncreasePct} min={0} max={15} step={0.5} suffix="%" onChange={(value) => update("salaryIncreasePct", value)} helper={`Mediana actual: ${mxn2(scenarioBaseline.currentSalaryEntryDaily)}/día`} />
             <SliderField label="Time-to-fill técnico objetivo" value={inputs.technicalTimeToFillTargetDays} min={10} max={30} step={1} suffix=" d" onChange={(value) => update("technicalTimeToFillTargetDays", value)} helper={`Actual: ${scenarioBaseline.currentTechnicalTimeToFillDays} días`} />
             <SliderField label="Contrataciones operativas afectadas" value={inputs.affectedOperationalHires} min={100} max={2500} step={25} suffix="" onChange={(value) => update("affectedOperationalHires", value)} helper={`Vacantes operativas previstas: ${scenarioBaseline.operationalVacancies.toLocaleString("es-MX")}`} />
@@ -93,7 +93,7 @@ export function WhatIfLab() {
         <article className="overflow-hidden rounded-3xl bg-slate-950 p-5 text-white shadow-soft md:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="eyebrow !text-cyan-300">Scenario output</div>
+              <div className="eyebrow !text-cyan-300">Resultado del escenario</div>
               <h2 className="mt-1 text-xl font-black">Impacto calculado</h2>
             </div>
             <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-cyan-100">No causal · fórmula transparente</span>
@@ -103,8 +103,8 @@ export function WhatIfLab() {
             <div className="rounded-2xl bg-white/5 p-5">
               <div className="flex items-center justify-between"><TrendingDown size={18} className="text-emerald-300" /><span className="text-[10px] uppercase tracking-wide text-slate-400">Retención</span></div>
               <div className="mt-4 text-3xl font-black">≈ {scenario.estimatedExitsAvoided.toLocaleString("es-MX")}</div>
-              <div className="mt-1 text-xs text-slate-300">bajas equivalentes evitadas si la rotación bajara a {inputs.turnoverTargetPct}%</div>
-              <div className="mt-4 text-[10px] leading-4 text-slate-500">({scenarioBaseline.currentTurnoverPct}% − {inputs.turnoverTargetPct}%) × {scenarioBaseline.headcount.toLocaleString("es-MX")} HC</div>
+              <div className="mt-1 text-xs text-slate-300">bajas equivalentes evitadas si la tasa de bajas bajara a {inputs.turnoverTargetPct}%</div>
+              <div className="mt-4 text-[10px] leading-4 text-slate-500">({scenarioBaseline.currentTurnoverPct.toFixed(2)}% − {inputs.turnoverTargetPct}%) × {scenarioBaseline.headcount.toLocaleString("es-MX")} personas · subconjunto con ambos datos</div>
             </div>
 
             <div className="rounded-2xl bg-white/5 p-5">
@@ -133,7 +133,7 @@ export function WhatIfLab() {
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1fr_.8fr]">
         <article className="panel p-5 md:p-6">
-          <div className="eyebrow">Decision bridge</div>
+          <div className="eyebrow">Lectura para la decisión</div>
           <h2 className="mt-1 text-lg font-extrabold text-slate-950">Qué sí puedes concluir</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-3">
             <div className="rounded-2xl border border-slate-100 p-4"><div className="text-sm font-extrabold text-slate-900">Costo</div><p className="mb-0 mt-2 text-xs leading-5 text-slate-500">Cuánto presupuesto adicional implicaría una política salarial bajo un número explícito de contrataciones afectadas.</p></div>
@@ -143,8 +143,8 @@ export function WhatIfLab() {
         </article>
 
         <article className="rounded-3xl border border-amber-200 bg-amber-50 p-5 md:p-6">
-          <div className="eyebrow !text-amber-700">Guardrails</div>
-          <h2 className="mt-1 text-lg font-extrabold text-amber-950">Qué NO afirma este simulador</h2>
+          <div className="eyebrow !text-amber-700">Alcance del escenario</div>
+          <h2 className="mt-1 text-lg font-extrabold text-amber-950">Qué revisar antes de usarlo</h2>
           <div className="mt-4 space-y-3 text-xs leading-5 text-amber-900/80">
             <p className="m-0">• No afirma que subir salario cause automáticamente menor rotación.</p>
             <p className="m-0">• No suma vacantes futuras + reemplazos porque podrían solaparse en la fuente.</p>
@@ -157,11 +157,11 @@ export function WhatIfLab() {
       <section className="mt-4 panel p-5 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="eyebrow">Next decision</div>
+            <div className="eyebrow">Siguiente paso</div>
             <h2 className="mt-1 text-lg font-extrabold text-slate-950">Usa el escenario como hipótesis, no como pronóstico.</h2>
-            <p className="mb-0 mt-2 max-w-3xl text-xs leading-5 text-slate-500">La siguiente etapa será estimar asociaciones históricas con modelos explicables y mostrar intervalos de incertidumbre. Este módulo ya separa esa futura capa estadística de los cálculos determinísticos.</p>
+            <p className="mb-0 mt-2 max-w-3xl text-xs leading-5 text-slate-500">Contrasta el escenario con empresas de contexto parecido y guarda la pregunta que quieres comprobar. El estudio de decisiones conserva el corte y la evidencia junto a tu seguimiento.</p>
           </div>
-          <a href="/copilot" className="flex shrink-0 items-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white">Preguntar al Copilot <ArrowRight size={14} /></a>
+          <a href="/decisiones" className="flex shrink-0 items-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white">Abrir estudio de decisiones <ArrowRight size={14} /></a>
         </div>
       </section>
     </>

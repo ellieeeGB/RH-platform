@@ -1,3 +1,4 @@
+import { matchedRate, completeSum } from "./metric-math";
 import julAgo24 from "../../data/processed/company-periods/jul-ago-24.json";
 import sepOct24 from "../../data/processed/company-periods/sep-oct-24.json";
 import novDic24 from "../../data/processed/company-periods/nov-dic-24.json";
@@ -70,6 +71,8 @@ export type CompanySnapshot = {
   };
 };
 
+function positive(value: number | null) { return value !== null && value > 0 ? value : null; }
+
 function num(value: RawValue): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
@@ -118,10 +121,10 @@ function toSnapshot(dataset: RawDataset, row: RawValue[]): CompanySnapshot {
     hires: numberValue("hires"),
     exits: numberValue("exits"),
     timeToFill: {
-      operational: numberValue("ttfOperational"),
-      technical: numberValue("ttfTechnical"),
-      administrative: numberValue("ttfAdministrative"),
-      managerial: numberValue("ttfManagerial"),
+      operational: positive(numberValue("ttfOperational")),
+      technical: positive(numberValue("ttfTechnical")),
+      administrative: positive(numberValue("ttfAdministrative")),
+      managerial: positive(numberValue("ttfManagerial")),
     },
     acceptedPer10: numberValue("acceptedPer10"),
     rejectionPct: {
@@ -330,12 +333,8 @@ export function getMarketExtendedStats(period: string) {
 
   return {
     attendance: {
-      absenceEventsPer100: market.headcount.total && market.attendance.absences !== null
-        ? (market.attendance.absences / market.headcount.total) * 100
-        : null,
-      incapacityCasesPer100: market.headcount.total && market.attendance.incapacityCases !== null
-        ? (market.attendance.incapacityCases / market.headcount.total) * 100
-        : null,
+      absenceEventsPer100: deriveScopeMetrics(market).absenceEventsPer100,
+      incapacityCasesPer100: deriveScopeMetrics(market).incapacityCasesPer100,
     },
     laborRelations: {
       unionizedCompanies: unionized,
@@ -350,29 +349,36 @@ export function getMarketExtendedStats(period: string) {
   };
 }
 
+export function completeHeadcount(row: CompanySnapshot): number | null {
+  const parts = [row.headcount.operational, row.headcount.administrative, row.headcount.other];
+  return completeSum(parts);
+}
+
+export function scopeCoverage(company: string, period: string) {
+  const rows = getPeriodSnapshots(period).filter(r => company === MARKET_SCOPE || r.company === company);
+  return { total: rows.length, headcount: rows.filter(r => completeHeadcount(r) !== null).length,
+    hires: rows.filter(r => r.hires !== null).length, exits: rows.filter(r => r.exits !== null).length,
+    vacancies: rows.filter(r => completeSum([r.vacancies.operational, r.vacancies.administrative]) !== null).length };
+}
+
 export function deriveScopeMetrics(snapshot: CompanySnapshot | null) {
-  if (!snapshot) {
-    return {
-      netMovement: null,
-      movementLoadPct: null,
-      turnoverPct: null,
-      hiringPressurePct: null,
-      absenceEventsPer100: null,
-      incapacityCasesPer100: null,
-      trainingHoursPerHead: null,
-    };
-  }
-  const hc = snapshot.headcount.total;
-  const hires = snapshot.hires;
-  const exits = snapshot.exits;
-  const vacancies = snapshot.vacancies.total;
+  const rows = !snapshot ? [] : snapshot.company === "Mercado" ? getPeriodSnapshots(snapshot.period) : [snapshot];
+  const pairedRate = (numerator: (r: CompanySnapshot) => number | null, denominator: (r: CompanySnapshot) => number | null = completeHeadcount, scale = 100) => {
+    return matchedRate(rows, numerator, denominator, scale);
+  };
+  const both = rows.filter(r => r.hires !== null && r.exits !== null);
+  const exits = pairedRate(r => r.exits);
+  const absence = pairedRate(r => r.attendance.absences);
+  const incapacity = pairedRate(r => r.attendance.incapacityCases);
+  const training = pairedRate(r => r.training.operationalHours !== null && r.training.administrativeHours !== null ? r.training.totalHours : null, r => r.headcount.operational !== null && r.headcount.administrative !== null ? r.headcount.operational + r.headcount.administrative : null, 1);
   return {
-    netMovement: hires !== null && exits !== null ? hires - exits : null,
-    movementLoadPct: hc && hires !== null && exits !== null ? ((hires + exits) / hc) * 100 : null,
-    turnoverPct: hc && exits !== null ? (exits / hc) * 100 : null,
-    hiringPressurePct: hc && vacancies !== null ? (vacancies / hc) * 100 : null,
-    absenceEventsPer100: hc && snapshot.attendance.absences !== null ? (snapshot.attendance.absences / hc) * 100 : null,
-    incapacityCasesPer100: hc && snapshot.attendance.incapacityCases !== null ? (snapshot.attendance.incapacityCases / hc) * 100 : null,
-    trainingHoursPerHead: hc && snapshot.training.totalHours !== null ? snapshot.training.totalHours / hc : null,
+    netMovement: both.length ? both.reduce((s,r) => s + r.hires! - r.exits!, 0) : null,
+    movementLoadPct: pairedRate(r => r.hires !== null && r.exits !== null ? r.hires + r.exits : null).value,
+    turnoverPct: exits.value,
+    hiringPressurePct: pairedRate(r => r.vacancies.operational !== null && r.vacancies.administrative !== null ? r.vacancies.total : null).value,
+    absenceEventsPer100: absence.value,
+    incapacityCasesPer100: incapacity.value,
+    trainingHoursPerHead: training.value,
+    coverage: { exits: exits.n, net: both.length, absence: absence.n, incapacity: incapacity.n, training: training.n },
   };
 }

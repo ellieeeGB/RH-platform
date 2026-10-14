@@ -13,7 +13,6 @@ import {
   YAxis,
 } from "recharts";
 import { laborRiskTrend } from "@/lib/risk-benchmark-data";
-import { compensationData } from "@/lib/people-intelligence-data";
 
 const tooltipStyle = {
   borderRadius: 16,
@@ -52,25 +51,6 @@ export function LaborRiskEventsChart() {
           <Legend wrapperStyle={{ fontSize: 11 }} />
           <Bar dataKey="absences" name="Eventos ausencia" fill="#0ea5b7" radius={[6, 6, 2, 2]} />
           <Bar dataKey="incapacityCases" name="Casos incapacidad" fill="#163c67" radius={[6, 6, 2, 2]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-export function BenchmarkSalaryRangeChart() {
-  return (
-    <div className="h-[300px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={compensationData.bands} margin={{ top: 8, right: 8, left: -2, bottom: 0 }}>
-          <CartesianGrid stroke="#eef2f6" vertical={false} />
-          <XAxis dataKey="band" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip contentStyle={tooltipStyle} formatter={(value) => [`$${Number(value).toLocaleString("es-MX", { maximumFractionDigits: 2 })}`, ""]} />
-          <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Bar dataKey="q1" name="Q1" fill="#cbd5e1" radius={[6, 6, 2, 2]} />
-          <Bar dataKey="median" name="Mediana" fill="#0ea5b7" radius={[6, 6, 2, 2]} />
-          <Bar dataKey="q3" name="Q3" fill="#163c67" radius={[6, 6, 2, 2]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

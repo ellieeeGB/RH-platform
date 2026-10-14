@@ -1,3 +1,5 @@
+import { reconcile } from "./lib/data-contract";
+import { completeSum, matchedRate } from "../src/lib/metric-math";
 import ExcelJS from "exceljs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -42,8 +44,8 @@ type CompanyPeriodRecord = {
   exitsTotal: number | null;
   exitsOperational: number | null;
   exitsAdministrative: number | null;
-  exitsByMonth: number[];
-  exitsByReason: number[];
+  exitsByMonth: Array<number | null>;
+  exitsByReason: Array<number | null>;
   absencesTotal: number | null;
   incapacityTotal: number | null;
   incapacityRisk: number | null;
@@ -233,8 +235,8 @@ function mapWorksheet(worksheet: ExcelJS.Worksheet): CompanyPeriodRecord[] {
       exitsTotal: numericAt(worksheet, row, cols.exitsTotal),
       exitsOperational: numericAt(worksheet, row, cols.exitsOperational),
       exitsAdministrative: numericAt(worksheet, row, cols.exitsAdministrative),
-      exitsByMonth: exitsByMonthGroup.map((header) => numericAt(worksheet, row, header.column)).filter((value): value is number => value !== null),
-      exitsByReason: exitsByReasonGroup.map((header) => numericAt(worksheet, row, header.column)).filter((value): value is number => value !== null),
+      exitsByMonth: exitsByMonthGroup.map((header) => numericAt(worksheet, row, header.column)),
+      exitsByReason: exitsByReasonGroup.filter(header => !normalize(header.sub).includes("open ended")).map((header) => numericAt(worksheet, row, header.column)),
       absencesTotal: numericAt(worksheet, row, cols.absencesTotal),
       incapacityTotal: numericAt(worksheet, row, cols.incapacityTotal),
       incapacityRisk: numericAt(worksheet, row, cols.incapacityRisk),
@@ -265,17 +267,15 @@ function sumNumbers(values: Array<number | null>): number {
   return values.reduce<number>((sum, value) => sum + (value ?? 0), 0);
 }
 
-function evaluateRule(parts: Array<number | null>, expected: number | null): boolean | null {
-  if (expected === null || parts.every((value) => value === null)) return null;
-  return Math.abs(sumNumbers(parts) - expected) < 0.01;
-}
+const evaluateRule = reconcile;
 
 function qualityForLatest(records: CompanyPeriodRecord[]) {
   let evaluated = 0;
   let passed = 0;
+  let incomplete = 0;
 
   const recordRule = (result: boolean | null) => {
-    if (result === null) return;
+    if (result === null) { incomplete += 1; return; }
     evaluated += 1;
     if (result) passed += 1;
   };
@@ -295,13 +295,14 @@ function qualityForLatest(records: CompanyPeriodRecord[]) {
     if (record.genderWomen !== null && record.genderMen !== null) {
       const total = record.genderWomen + record.genderMen;
       recordRule(Math.abs(total - 100) <= 2 || Math.abs(total - 1) <= 0.02);
-    }
+    } else recordRule(null);
   }
 
   return {
     score: evaluated ? Math.round((passed / evaluated) * 100) : 0,
     rulesEvaluated: evaluated,
     rulesPassed: passed,
+    rulesIncomplete: incomplete,
     ruleFailures: evaluated - passed,
   };
 }
@@ -334,6 +335,8 @@ function detectHeadcountAnomalies(records: CompanyPeriodRecord[]) {
   return anomalies;
 }
 
+const fullHeadcount = (r: CompanyPeriodRecord) => completeSum([r.headcountOperational, r.headcountAdministrative, r.headcountOther]);
+
 function aggregate(records: CompanyPeriodRecord[]) {
   const anomalies = detectHeadcountAnomalies(records);
   const periodOrder = Object.values(PERIOD_LABELS);
@@ -348,8 +351,15 @@ function aggregate(records: CompanyPeriodRecord[]) {
       }, 0);
       const positiveMedian = (selector: (record: CompanyPeriodRecord) => number | null) => median(rows.map(selector).filter((value): value is number => value !== null && value > 0));
 
+      const rates = {
+        exits: matchedRate(rows, r => r.exitsTotal, fullHeadcount),
+        absences: matchedRate(rows, r => r.absencesTotal, fullHeadcount),
+        incapacity: matchedRate(rows, r => r.incapacityTotal, fullHeadcount),
+      };
+      if (Object.values(rates).some(r => r.value === null)) throw new Error(`No matched rate coverage: ${period}`);
       return {
         period,
+        matchedRates: rates,
         reportedHeadcount: Math.round(reportedHeadcount),
         qualityAdjustedHeadcount: Math.round(qualityAdjustedHeadcount),
         operational: Math.round(sumNumbers(rows.map((record) => record.headcountOperational))),
@@ -399,7 +409,7 @@ function aggregate(records: CompanyPeriodRecord[]) {
   const vacanciesOperational = sumNumbers(latestRows.map((record) => record.vacanciesOperational));
   const vacanciesAdministrative = sumNumbers(latestRows.map((record) => record.vacanciesAdministrative));
   const vacanciesTotal = vacanciesOperational + vacanciesAdministrative;
-  const latestHeadcount = latestPeriod.qualityAdjustedHeadcount;
+  const latestHeadcount = latestPeriod.reportedHeadcount;
 
   let validGenderCompanies = 0;
   let weightedWomen = 0;
@@ -424,20 +434,23 @@ function aggregate(records: CompanyPeriodRecord[]) {
     weightedMen += hc * menRatio;
   }
 
-  const turnoverBimonthlyPct = latestPeriod.exits / ((previousPeriod.qualityAdjustedHeadcount + latestPeriod.qualityAdjustedHeadcount) / 2) * 100;
+  const exitsRate = matchedRate(latestRows, r => r.exitsTotal, fullHeadcount);
+  const vacancyRate = matchedRate(latestRows, r => completeSum([r.vacanciesOperational, r.vacanciesAdministrative]), fullHeadcount);
+  const trainingRate = matchedRate(latestRows, r => completeSum([r.trainingOperational, r.trainingAdministrative]), r => completeSum([r.headcountOperational, r.headcountAdministrative]), 1);
+  if (exitsRate.value === null || vacancyRate.value === null || trainingRate.value === null) throw new Error("Insufficient matched coverage for required latest metrics");
+  const turnoverBimonthlyPct = exitsRate.value;
 
   return {
     metadata: {
       companyCount: new Set(records.map((record) => record.company)).size,
       periodCount: periods.length,
       privacy: "aggregated-only",
-      generatedAt: new Date().toISOString(),
     },
     periods,
     latest: {
       period: latestPeriod.period,
       headcount: latestHeadcount,
-      headcountChangePct: round(((latestHeadcount / previousPeriod.qualityAdjustedHeadcount) - 1) * 100),
+      headcountChangePct: round(((latestHeadcount / previousPeriod.reportedHeadcount) - 1) * 100),
       turnoverBimonthlyPct: round(turnoverBimonthlyPct),
       hires: latestPeriod.hires,
       exits: latestPeriod.exits,
@@ -446,7 +459,7 @@ function aggregate(records: CompanyPeriodRecord[]) {
         administrative: Math.round(vacanciesAdministrative),
         total: Math.round(vacanciesTotal),
       },
-      hiringPressurePct: round((vacanciesTotal / latestHeadcount) * 100),
+      hiringPressurePct: round(vacancyRate.value),
       salaryBandsDaily: {
         entryMedian: round(median(salaries((record) => record.salaryEntry)) ?? 0),
         lowMedian: round(median(salaries((record) => record.salaryLow)) ?? 0),
@@ -454,7 +467,9 @@ function aggregate(records: CompanyPeriodRecord[]) {
         maxMedian: round(median(salaries((record) => record.salaryMax)) ?? 0),
       },
       candidateAcceptancePer10Median: median(accepted) ?? 0,
-      trainingHoursPerHead: round(latestPeriod.trainingHours / latestHeadcount),
+      trainingHoursPerHead: round(trainingRate.value),
+      matchedCoverage: { exits: exitsRate, vacancies: vacancyRate, training: trainingRate },
+      rateDefinition: "Bajas / plantilla completa al cierre, mismas empresas; no rotación sobre plantilla promedio.",
       genderValidCompanyCount: validGenderCompanies,
       womenWeightedPct: weightedHeadcount ? round((weightedWomen / weightedHeadcount) * 100, 1) : 0,
       menWeightedPct: weightedHeadcount ? round((weightedMen / weightedHeadcount) * 100, 1) : 0,
@@ -475,7 +490,7 @@ function aggregate(records: CompanyPeriodRecord[]) {
 
 async function main() {
   const source = process.argv[2] ?? "data/raw/BASE HISTORICA(1).xlsx";
-  const outputDir = path.resolve("data/processed");
+  const outputDir = path.resolve(process.env.CATCH_DATA_OUTPUT ?? "data/processed");
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(source);
 
