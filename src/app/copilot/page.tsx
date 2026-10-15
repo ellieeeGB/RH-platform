@@ -1,5 +1,5 @@
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { HRCopilot } from "@/components/hr-copilot";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { HRCopilot } from "@/components/analysis/hr-copilot";
 
 export default function CopilotPage() {
   return (

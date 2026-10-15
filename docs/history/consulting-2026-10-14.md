@@ -1,3 +1,5 @@
+> Documento histórico. Describe la revisión en esa fecha, no el estado actual. Consulta [la documentación vigente](../README.md).
+
 # Revisión de consultoría · 14 de octubre de 2026
 
 Base: `7cb57ca`, integración del PR #15. Se revisó el historial de los PR #4–15, la grabación `Screencast From 2026-10-14 09-01-30.webm` (5 min 33 s) y el Excel de la edición. Esta grabación ya muestra el estudio de decisiones; el problema pendiente era facilitar su lectura, no agregar otra copia del módulo.

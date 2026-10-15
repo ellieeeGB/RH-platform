@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ArrowRight, ScanLine } from "lucide-react";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { analyzeSignal, type SignalMetric } from "@/lib/signal-analysis";
 const items: Array<[SignalMetric,string]> = [["headcount","Empleados al cierre"],["hires","Contrataciones"],["exits","Bajas"],["vacancies","Puestos por cubrir"]];
 export function SignalPreview() {

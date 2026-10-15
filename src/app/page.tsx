@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CalendarDays, Building2, UsersRound, UserPlus, UserMinus, Orbit, GitCompareArrows, ShieldCheck } from "lucide-react";
-import { DashboardFrame } from "@/components/dashboard-frame";
-import { SignalPreview } from "@/components/signal-preview";
-import { ExecutiveBrief } from "@/components/executive-brief";
-import { AgendaPreview } from "@/components/agenda-preview";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame } from "@/components/layout/dashboard-frame";
+import { SignalPreview } from "@/components/analysis/signal-preview";
+import { ExecutiveBrief } from "@/components/analysis/executive-brief";
+import { AgendaPreview } from "@/components/analysis/agenda-preview";
+import { useFilters } from "@/components/filters/filter-context";
 import { deriveScopeMetrics, getScopeSnapshot, scopeCoverage } from "@/lib/company-panel";
 import { analyzeSignal, type SignalMetric } from "@/lib/signal-analysis";
 import { qualityReport } from "@/lib/data-quality";

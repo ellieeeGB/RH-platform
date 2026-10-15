@@ -1,8 +1,8 @@
 "use client";
 
 import { AlertTriangle, CalendarRange, Gavel, Handshake, ShieldCheck, UsersRound } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { getMarketExtendedStats, getMarketSnapshot, getPeriodSnapshots, getScopeSnapshot } from "@/lib/company-panel";
 import { laborRelations } from "@/lib/extended-intelligence";
 

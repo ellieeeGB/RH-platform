@@ -1,9 +1,9 @@
 "use client";
 
 import { Activity, AlertTriangle, HeartPulse, ShieldCheck } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { LaborRiskEventsChart, LaborRiskTrendChart } from "@/components/risk-benchmark-charts";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { LaborRiskEventsChart, LaborRiskTrendChart } from "@/components/charts/risk-benchmark-charts";
 import { deriveScopeMetrics, getMarketSnapshot, getPreviousScopeSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 
 const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);

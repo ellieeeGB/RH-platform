@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Building2, Scale, Timer, UsersRound } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { KpiCard } from "@/components/kpi-card";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { useFilters } from "@/components/filters/filter-context";
 import { getCompanySnapshot } from "@/lib/company-panel";
 import { comparisonPeers, distribution, validSalaryBands, type PeerSize, type PeerUnion } from "@/lib/benchmark-comparison";
 

@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, Download, FileCheck2, ListChecks, Printer, ScanLine, TrendingUp } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { consultingTrajectories, scopedRecoveryPlan, trajectoryMetrics, recoveryCsv } from "@/lib/consulting-agenda";
 
 type Trajectory = ReturnType<typeof consultingTrajectories>[number];

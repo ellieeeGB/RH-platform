@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FilterProvider } from "@/components/filter-context";
+import { FilterProvider } from "@/components/filters/filter-context";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -1,6 +1,5 @@
 import workforceRewards from "../../data/processed/workforce-rewards.json";
 
-export const workforceRewardsData = workforceRewards;
 export const workforcePlanningData = workforceRewards.workforcePlanning;
 export const totalRewardsData = workforceRewards.totalRewards;
 

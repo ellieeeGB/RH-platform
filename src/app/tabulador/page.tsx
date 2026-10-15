@@ -1,8 +1,8 @@
 "use client";
 import { useMemo, useState } from 'react';
 import { Download, Search } from 'lucide-react';
-import { DashboardFrame, PageHeader } from '@/components/dashboard-frame';
-import { useFilters } from '@/components/filter-context';
+import { DashboardFrame, PageHeader } from '@/components/layout/dashboard-frame';
+import { useFilters } from '@/components/filters/filter-context';
 import { technicalTable, downloadCsv } from '@/lib/company-detail';
 const money=(v:number|null)=>v===null?'—':new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(v);
 export default function TabulatorPage(){

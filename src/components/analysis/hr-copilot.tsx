@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Bot, Database, Send, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { answerCopilot, copilotPrompts, type CopilotAnswer, type CopilotScope } from "@/lib/copilot-engine";
 
 type Message =

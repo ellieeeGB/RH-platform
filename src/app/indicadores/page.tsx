@@ -1,9 +1,9 @@
 "use client";
 
 import { Activity, BriefcaseBusiness, Clock3, UserCheck } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { RecruitmentSourcesChart } from "@/components/classic-charts";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { RecruitmentSourcesChart } from "@/components/charts/recruitment-charts";
 import { rejectionReasonBenchmark } from "@/lib/benchmark-data";
 import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 

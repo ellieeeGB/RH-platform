@@ -1,9 +1,9 @@
 "use client";
 
 import { BadgeDollarSign, Gauge, TrendingUp } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { SalaryEntryTrendChart } from "@/components/people-intelligence-charts";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { SalaryEntryTrendChart } from "@/components/charts/people-intelligence-charts";
 import { salaryReference } from "@/lib/benchmark-comparison";
 import { PERIODS, MARKET_SCOPE } from "@/lib/company-panel";
 
