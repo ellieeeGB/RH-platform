@@ -44,7 +44,7 @@ export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNa
             <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-200">Estudio RH</div>
             <div className="mt-1 text-xs font-black text-white">40 empresas · 7 bimestres</div>
           </div>
-          <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,.65)]" />
+          <div className="h-1.5 w-7 rounded-full bg-cyan-300/70" />
         </div>
       </div>
 

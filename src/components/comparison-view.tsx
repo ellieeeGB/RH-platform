@@ -11,18 +11,21 @@ import { DecisionReading } from "./executive-brief";
 import { EXECUTIVE_METRICS } from "@/lib/executive-reading";
 
 const colors = ["#087e8b", "#7555b7", "#b25927", "#2563ab", "#a53d68", "#386a46"];
+const strokes = [undefined, "9 4", "3 4", "12 4 3 4", "1 4", "7 3 1 3"];
 const number = (value: number | null, digits = 1) => value === null ? "—" : value.toLocaleString("es-MX", { maximumFractionDigits: digits });
 const signed = (value: number | null) => value === null ? "—" : `${value > 0 ? "+" : ""}${number(value)}`;
 type Result = ReturnType<typeof buildComparison>;
 
 export function ComparisonPlot({ result, grouped }: { result: Result; grouped: boolean }) {
   const id = useId();
+  const [focus, setFocus] = useState<string | null>(null);
   const spec = COMPARISON_METRICS[result.metric];
   if (result.cuts.length === 1) {
     const max = Math.max(1, ...result.rows.map(r => r.values[0] ?? 0));
-    return <div aria-label={`${spec.label} por compañía`} className="max-h-[360px] space-y-4 overflow-y-auto pr-3">{result.rows.map((r, i)=><div key={r.company} className="grid grid-cols-[100px_1fr_82px] items-center gap-3 text-xs"><span className="font-semibold">{r.company}</span><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full" style={{width:`${(r.values[0]??0)/max*100}%`,background:colors[i%colors.length]}}/></div><span className="text-right font-bold">{number(r.values[0])}</span></div>)}</div>;
+    return <div aria-label={`${spec.label} por compañía`} className="max-h-[360px] space-y-4 overflow-y-auto pr-3">{result.rows.map(r=><div key={r.company} className="grid grid-cols-[100px_1fr_82px] items-center gap-3 text-xs"><span className="font-semibold">{r.company}</span><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full" style={{width:`${(r.values[0]??0)/max*100}%`,background:colors[0]}}/></div><span className="text-right font-bold">{number(r.values[0])}</span></div>)}</div>;
   }
   const series = grouped ? [{ company: "Conjunto comparable", values: result.points.map(p=>p.fixed.value) }] : result.rows;
+  const activeFocus = series.some(row => row.company === focus) ? focus : null;
   const max = Math.max(1, ...series.flatMap(r=>r.values.filter((v):v is number=>v!==null))) * 1.1;
   const dates = result.cuts.map(c=>{const [year,month]=c.date.split("-").map(Number);return year*12+month;});
   const x = (index:number) => 85+(dates[index]-dates[0])/Math.max(1,dates.at(-1)!-dates[0])*790;
@@ -37,10 +40,11 @@ export function ComparisonPlot({ result, grouped }: { result: Result; grouped: b
         const segments:string[][]=[];let segment:string[]=[];
         r.values.forEach((v,i)=>{if(v===null){if(segment.length)segments.push(segment);segment=[];}else segment.push(`${x(i)},${y(v)}`);});
         if(segment.length)segments.push(segment);
-        return <g key={r.company} stroke={colors[index%colors.length]} fill={colors[index%colors.length]}>{segments.map((s,i)=><polyline key={i} points={s.join(" ")} fill="none" strokeWidth="3"/>)}{r.values.map((v,i)=>v===null?null:<circle key={i} cx={x(i)} cy={y(v)} r="4.5"><title>{r.company} · {result.cuts[i].label}: {number(v)} {spec.unit}</title></circle>)}</g>;
+        return <g key={r.company} data-company={r.company} opacity={activeFocus && activeFocus !== r.company ? .2 : 1} stroke={colors[index%colors.length]} fill={colors[index%colors.length]}>{segments.map((s,i)=><polyline key={i} points={s.join(" ")} fill="none" strokeWidth={activeFocus === r.company ? 4 : 2.5} strokeDasharray={strokes[index%strokes.length]}/>)}{r.values.map((v,i)=>v===null?null:<circle key={i} cx={x(i)} cy={y(v)} r="4.5"><title>{r.company} · {result.cuts[i].label}: {number(v)} {spec.unit}</title></circle>)}</g>;
       })}
     </svg>
-    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-xs">{series.map((s,i)=><span key={s.company} className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{background:colors[i%colors.length]}}/>{s.company}</span>)}</div>
+    <div className="plot-legend" role="group" aria-label="Destacar compañía en la gráfica">{series.map((s,i)=>series.length===1?<span key={s.company} className="text-xs font-semibold text-cyan-900">{s.company}</span>:<button key={s.company} type="button" aria-pressed={activeFocus===s.company} aria-label={`Destacar ${s.company}`} onClick={()=>setFocus(activeFocus===s.company?null:s.company)}><svg width="24" height="8" aria-hidden="true"><line x1="0" x2="24" y1="4" y2="4" stroke={colors[i%colors.length]} strokeWidth="2.5" strokeDasharray={strokes[i%strokes.length]}/></svg>{s.company}</button>)}</div>
+    {series.length>1&&<p className="mt-2 text-xs text-slate-500" aria-live="polite">{activeFocus?`${activeFocus} destacada. Pulsa de nuevo para restablecer la vista.`:"Selecciona una compañía en la leyenda para destacar su trayectoria."}</p>}
   </>;
 }
 
