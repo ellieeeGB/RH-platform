@@ -79,7 +79,7 @@ export default function BenefitsPage() {
         <section className="mt-4 grid gap-4 lg:grid-cols-2">
           <article className="panel p-5 md:p-6">
             <div className="eyebrow">Administrativos</div>
-            <h2 className="mt-1 text-lg font-extrabold text-slate-950">Generosidad por población</h2>
+            <h2 className="mt-1 text-lg font-extrabold text-slate-950">Beneficios por tipo de personal</h2>
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4"><span className="text-slate-600">Vales</span><strong>{pct(scope?.benefits.voucherAdministrativePct)}</strong></div>
               <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4"><span className="text-slate-600">Fondo de ahorro</span><strong>{pct(scope?.benefits.savingsAdministrativePct)}</strong></div>

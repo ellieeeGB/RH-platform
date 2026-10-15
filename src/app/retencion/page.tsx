@@ -28,7 +28,7 @@ export default function RetentionPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Retención"
-        title="Rotación y Retención"
+        title="Salidas y permanencia del personal"
         description={isMarket
           ? "Bajas, movimiento de plantilla y patrones de permanencia para el periodo seleccionado."
           : `${companyLabel}: rotación bimestral comparada con el mercado, con referencias de causas y antigüedad de salida.`}
@@ -36,10 +36,10 @@ export default function RetentionPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Bajas / plantilla del corte", pct(turnoverPct), `${month === "all" ? metrics.coverage.exits : monthly.n} empresas con ambos datos`, DoorOpen],
+          ["Salidas por cada 100 empleados al cierre", pct(turnoverPct), `${month === "all" ? metrics.coverage.exits : monthly.n} empresas con ambos datos`, DoorOpen],
           [month === "all" ? "Bajas del bimestre" : "Bajas del mes", int(month === "all" ? scope?.exits : monthly.count), month === "all" ? period : monthLabel, UserMinus],
-          ["Balance altas-bajas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, `${metrics.coverage.net} empresas con altas y bajas · bimestre`, UsersRound],
-          ["Movimiento de talento", pct(metrics.movementLoadPct), "altas + bajas / headcount", CalendarClock],
+          ["Contrataciones menos salidas", metrics.netMovement == null ? "—" : `${metrics.netMovement > 0 ? "+" : ""}${int(metrics.netMovement)}`, `${metrics.coverage.net} empresas con altas y bajas · bimestre`, UsersRound],
+          ["Contrataciones y salidas por cada 100 empleados", pct(metrics.movementLoadPct), "Usa el personal registrado al cierre del bimestre", CalendarClock],
         ].map(([label, value, note, Icon]) => (
           <article key={String(label)} className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">{String(label)}</div><Icon size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{String(value)}</div><div className="mt-2 text-xs text-slate-500">{String(note)}</div></article>
         ))}
@@ -54,15 +54,15 @@ export default function RetentionPage() {
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.1fr_.9fr]">
         <article className="panel p-5 md:p-6">
-          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Evolución del mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Bajas por plantilla al cierre</h2><p className="mt-2 text-xs leading-5 text-slate-400">Mismas empresas en numerador y denominador de cada corte. La cobertura puede variar entre cortes.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado</span></div>
+          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Evolución del mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Salidas en relación con el personal</h2><p className="mt-2 text-xs leading-5 text-slate-400">Cada periodo usa empresas que reportaron tanto salidas como personal. El número de empresas con datos puede cambiar de un bimestre a otro.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Mercado</span></div>
           <TurnoverTrendChart />
         </article>
 
         <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft">
           <div className="eyebrow !text-cyan-300">Referencia de permanencia</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">En el subconjunto completo, las salidas se concentran al inicio.</h2>
+          <h2 className="mt-4 text-2xl font-black leading-tight">Entre las empresas con datos completos, muchas salidas ocurren al inicio.</h2>
           <p className="mt-4 text-sm leading-6 text-slate-300">En {retentionData.tenureValidCompanies} empresas del último corte con todas las categorías reportadas, {retentionData.earlyAttritionUnder3MonthsPct}% de las bajas se concentra en los primeros tres meses y {retentionData.firstYearExitSharePct}% antes del primer año.</p>
-          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.06] p-4 text-xs leading-5 text-slate-300">Conviene revisar este patrón junto con onboarding, salario de entrada, fuente de reclutamiento, transporte, turno y supervisión.</div>
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.06] p-4 text-xs leading-5 text-slate-300">Conviene revisar este patrón junto con la incorporación al puesto, el sueldo de entrada y el canal de contratación, transporte, turno y supervisión.</div>
           <div className="mt-4 text-[10px] font-bold uppercase tracking-[.14em] text-slate-500">Referencia de mercado · Jul–Ago 25</div>
         </article>
       </section>

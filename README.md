@@ -91,3 +91,9 @@ Los porcentajes de rechazo fuera de rango se conservan como evidencia de revisi�
 Los controles superiores permiten elegir una, dos, varias o todas las compañías. Puedes consultar un bimestre, ver los siete juntos, comparar bimestres específicos o comparar meses con bajas confirmadas. La selección múltiple abre **Comparar compañías y periodos** (`/comparar`), con gráfica, tabla y descarga CSV; cada cifra abre el detalle de esa compañía y fecha. Las vistas de detalle mantienen su alcance individual explícito y la comparación queda guardada para volver a ella.
 
 El historial muestra cada corte por separado: no suma plantillas ni porcentajes entre fechas. El conjunto comparable mantiene las mismas compañías con datos válidos en todos los cortes seleccionados. Solo hay desglose mensual confirmado de bajas para julio y agosto de 2024 y 2025. Consulta [el método y validación](docs/flexible-comparison.md).
+
+## Lectura para dirección
+
+El inicio, el reporte y las comparaciones incluyen una lectura con **qué pasó**, **para qué sirve** y **qué preguntar a RH**, calculada con la selección activa. El resumen conserva fechas, unidades, empresas con datos y la distinción entre cero y ausencia de información. Si no hay empresas comparables suficientes, solicita completar datos y no anuncia una tendencia.
+
+La barra superior ofrece **Entender los datos**, una guía buscable de términos como bajas, plantilla, mediana, puntos porcentuales y mercado. Las vistas operativas utilizan títulos cotidianos; las fórmulas y el análisis detallado siguen disponibles al desplegarlos. Esta lectura se construye con reglas explícitas sobre las métricas auditadas; no inventa causas, predicciones ni impactos económicos.

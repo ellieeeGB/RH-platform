@@ -60,7 +60,7 @@ export default function TalentAcquisitionPage() {
     {
       label: "Vacantes próximas",
       value: int(scope?.vacancies.total),
-      note: isMarket ? `${pct(metrics.hiringPressurePct)} del headcount` : `Mercado: ${int(market.vacancies.total)}`,
+      note: isMarket ? `${pct(metrics.hiringPressurePct)} del personal al cierre` : `Mercado: ${int(market.vacancies.total)}`,
       icon: BriefcaseBusiness,
     },
     {
@@ -87,7 +87,7 @@ export default function TalentAcquisitionPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Talent Acquisition"
-        title="Reclutamiento y cobertura"
+        title="Contratación y puestos pendientes"
         description={isMarket
           ? "Demanda, velocidad de contratación y calidad de candidatos para el periodo seleccionado."
           : `${companyLabel}: cobertura de vacantes y fricción de selección comparadas con el mercado del mismo bimestre.`}
@@ -106,15 +106,15 @@ export default function TalentAcquisitionPage() {
 
       {!isMarket && (
         <section className="mt-4 grid gap-4 md:grid-cols-3">
-          <article className="panel p-5"><div className="metric-label">Vacantes / HC</div><div className="mt-2 text-2xl font-black text-[#07182d]">{pct(metrics.hiringPressurePct)}</div><div className="mt-1 text-xs text-slate-500">mercado: {pct(marketMetrics.hiringPressurePct)}</div></article>
-          <article className="panel p-5"><div className="metric-label">TTF operativo</div><div className="mt-2 text-2xl font-black text-[#07182d]">{scope?.timeToFill.operational == null ? "—" : `${num(scope.timeToFill.operational, 0)} días`}</div><div className="mt-1 text-xs text-slate-500">mercado: {num(market.timeToFill.operational, 0)} días</div></article>
-          <article className="panel p-5"><div className="metric-label">TTF administrativo</div><div className="mt-2 text-2xl font-black text-[#07182d]">{scope?.timeToFill.administrative == null ? "—" : `${num(scope.timeToFill.administrative, 0)} días`}</div><div className="mt-1 text-xs text-slate-500">mercado: {num(market.timeToFill.administrative, 0)} días</div></article>
+          <article className="panel p-5"><div className="metric-label">Puestos pendientes por cada 100 empleados</div><div className="mt-2 text-2xl font-black text-[#07182d]">{pct(metrics.hiringPressurePct)}</div><div className="mt-1 text-xs text-slate-500">mercado: {pct(marketMetrics.hiringPressurePct)}</div></article>
+          <article className="panel p-5"><div className="metric-label">Días para cubrir puestos operativos</div><div className="mt-2 text-2xl font-black text-[#07182d]">{scope?.timeToFill.operational == null ? "—" : `${num(scope.timeToFill.operational, 0)} días`}</div><div className="mt-1 text-xs text-slate-500">mercado: {num(market.timeToFill.operational, 0)} días</div></article>
+          <article className="panel p-5"><div className="metric-label">Días para cubrir puestos administrativos</div><div className="mt-2 text-2xl font-black text-[#07182d]">{scope?.timeToFill.administrative == null ? "—" : `${num(scope.timeToFill.administrative, 0)} días`}</div><div className="mt-1 text-xs text-slate-500">mercado: {num(market.timeToFill.administrative, 0)} días</div></article>
         </section>
       )}
 
       <section className="mt-4 panel overflow-hidden">
         <div className="border-b border-slate-100 p-5 md:p-6">
-          <div className="eyebrow">Fricción de selección</div>
+          <div className="eyebrow">Qué dificulta encontrar candidatos</div>
           <h2 className="mt-1 text-lg font-extrabold text-slate-950">Motivos de rechazo</h2>
           <p className="mt-2 text-xs leading-5 text-slate-500">{isMarket ? "Mediana del mercado para el bimestre seleccionado." : `${companyLabel} frente a la mediana de mercado del mismo periodo.`} Los motivos no forman un funnel y no deben sumarse entre sí.</p>
         </div>

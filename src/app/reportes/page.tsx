@@ -13,6 +13,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { DashboardFrame } from "@/components/dashboard-frame";
+import { ExecutiveBrief } from "@/components/executive-brief";
 import { useFilters } from "@/components/filter-context";
 import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 
@@ -57,14 +58,14 @@ export default function ReportsPage() {
               <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300">Plantilla, compensación, contratación, rotación, relaciones laborales, beneficios y demanda futura en un solo corte.</p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <Link href="/signals" className="rounded-full bg-cyan-300 px-5 py-3 text-xs font-black text-[#07182d]">Ver señales clave</Link>
-                <Link href="/benchmark" className="rounded-full border border-white/15 px-5 py-3 text-xs font-black text-white">Abrir benchmark</Link>
+                <Link href="/benchmark" className="rounded-full border border-white/15 px-5 py-3 text-xs font-black text-white">Comparar con otras empresas</Link>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-px bg-white/10">
             {[
-              [isMarket ? "Empresas" : "Headcount", isMarket ? "40" : int(scope?.headcount.total), isMarket ? "participantes" : companyLabel],
+              [isMarket ? "Empresas" : "Empleados", isMarket ? "40" : int(scope?.headcount.total), isMarket ? "participantes" : companyLabel],
               ["Contrataciones", int(scope?.hires), "en el bimestre"],
               ["Bajas", int(scope?.exits), "en el bimestre"],
               ["Vacantes", int(scope?.vacancies.total), "próximas a cubrir"],
@@ -79,6 +80,7 @@ export default function ReportsPage() {
         </div>
       </section>
 
+      <ExecutiveBrief/>
       <section className="mt-5 grid gap-4 xl:grid-cols-[.72fr_1.28fr]">
         <aside className="panel p-5 md:p-6">
           <div className="eyebrow">Índice</div>
@@ -98,10 +100,10 @@ export default function ReportsPage() {
           <div className="eyebrow">Resumen ejecutivo</div>
           <h2 className="mt-2 max-w-4xl text-3xl font-black tracking-[-.04em] text-[#07182d]">{isMarket ? "Panorama del mercado en el bimestre seleccionado." : `${companyLabel} frente a las referencias del mercado.`}</h2>
           <div className="mt-7 grid gap-3 md:grid-cols-2">
-            <div className="rounded-2xl bg-cyan-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-cyan-700">Movimiento de plantilla</div><div className="mt-2 text-3xl font-black text-cyan-950">{pct(metrics.movementLoadPct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-cyan-900/70">Altas + bajas respecto al headcount del corte.</p></div>
-            <div className="rounded-2xl bg-violet-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-violet-700">Presión de contratación</div><div className="mt-2 text-3xl font-black text-violet-950">{pct(metrics.hiringPressurePct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-violet-900/70">Vacantes próximas respecto a la plantilla.</p></div>
+            <div className="rounded-2xl bg-cyan-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-cyan-700">Contrataciones y salidas</div><div className="mt-2 text-3xl font-black text-cyan-950">{pct(metrics.movementLoadPct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-cyan-900/70">Contrataciones y salidas registradas por cada 100 empleados al cierre.</p></div>
+            <div className="rounded-2xl bg-violet-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-violet-700">Puestos pendientes en relación con el personal</div><div className="mt-2 text-3xl font-black text-violet-950">{pct(metrics.hiringPressurePct)}</div><p className="mb-0 mt-2 text-xs leading-5 text-violet-900/70">Vacantes próximas respecto a la plantilla.</p></div>
             <div className="rounded-2xl bg-emerald-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-emerald-700">Salario de ingreso</div><div className="mt-2 text-3xl font-black text-emerald-950">{money(salary.entry)}</div><p className="mb-0 mt-2 text-xs leading-5 text-emerald-900/70">{isMarket ? `Mediana diaria · ${salary.n} empresas con bandas válidas.` : salaryGap == null ? "Sin comparación disponible." : `${salaryGap >= 0 ? "+" : ""}${salaryGap.toFixed(1)}% frente a ${salary.n} empresas, excluyendo la propia.`}</p></div>
-            <div className="rounded-2xl bg-amber-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-amber-700">Cobertura técnica</div><div className="mt-2 text-3xl font-black text-amber-950">{scope?.timeToFill.technical == null ? "—" : `${scope.timeToFill.technical} días`}</div><p className="mb-0 mt-2 text-xs leading-5 text-amber-900/70">{isMarket ? "Mediana de tiempo para cubrir puestos técnicos." : ttfGap == null ? "Sin comparación disponible." : `${ttfGap >= 0 ? "+" : ""}${ttfGap.toFixed(0)} días frente al mercado.`}</p></div>
+            <div className="rounded-2xl bg-amber-50 p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-amber-700">Días para cubrir puestos técnicos</div><div className="mt-2 text-3xl font-black text-amber-950">{scope?.timeToFill.technical == null ? "—" : `${scope.timeToFill.technical} días`}</div><p className="mb-0 mt-2 text-xs leading-5 text-amber-900/70">{isMarket ? "Valor central de los plazos reportados para cubrir puestos técnicos." : ttfGap == null ? "Sin comparación disponible." : `${ttfGap >= 0 ? "+" : ""}${ttfGap.toFixed(0)} días frente al mercado.`}</p></div>
           </div>
         </article>
       </section>

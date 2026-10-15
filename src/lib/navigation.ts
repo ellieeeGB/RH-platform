@@ -48,22 +48,22 @@ export const navigation: NavigationGroup[] = [
   {
     label: "Dashboard RH",
     items: [
-      { label: "Contexto y muestra", icon: Building2, href: "/contexto" },
+      { label: "Personas y empresas del estudio", icon: Building2, href: "/contexto" },
       { label: "Personal y salarios", icon: BadgeDollarSign, href: "/salarios" },
       { label: "Beneficios", icon: Gift, href: "/beneficios" },
-      { label: "Indicadores", icon: CircleGauge, href: "/indicadores" },
-      { label: "Tabulador", icon: Table2, href: "/tabulador" },
+      { label: "Indicadores principales", icon: CircleGauge, href: "/indicadores" },
+      { label: "Sueldos por puesto", icon: Table2, href: "/tabulador" },
     ],
   },
   {
     label: "People Intelligence",
     items: [
       { label: "Reclutamiento", icon: BriefcaseBusiness, href: "/talent-acquisition" },
-      { label: "Rotación y retención", icon: UsersRound, href: "/retencion" },
-      { label: "Planeación de plantilla", icon: BarChart3, href: "/workforce-planning" },
+      { label: "Salidas y permanencia", icon: UsersRound, href: "/retencion" },
+      { label: "Puestos por cubrir", icon: BarChart3, href: "/workforce-planning" },
       { label: "Relaciones laborales", icon: Handshake, href: "/relaciones-laborales" },
       { label: "Ausentismo y riesgo", icon: HeartPulse, href: "/labor-risk" },
-      { label: "Benchmark", icon: Activity, href: "/benchmark" },
+      { label: "Comparación con otras empresas", icon: Activity, href: "/benchmark" },
       { label: "Simulador", icon: ClipboardCheck, href: "/what-if" },
       { label: "Asistente de análisis", icon: Sparkles, href: "/copilot" },
     ],
