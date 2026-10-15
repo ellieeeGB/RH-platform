@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { GitCompareArrows, Sparkles, Menu } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { FilterPicker } from "./filter-picker";
+import { ReadingHelp } from "./reading-help";
 
 import { MONTH_PERIODS } from "@/lib/company-detail";
 
@@ -29,6 +30,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
           </>}
           {!hasFilters && <span className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">{pathname === "/data-atlas" ? "Cobertura del estudio" : "Vista de mercado · Jul–Ago 25"}</span>}
           {pathname !== "/comparar" && <Link href="/comparar" className="flex items-center gap-2 rounded-xl bg-cyan-50 px-3 py-2.5 text-xs font-bold text-cyan-900"><GitCompareArrows size={15}/> Comparar</Link>}
+          <ReadingHelp />
           <Link href="/copilot" className="hidden items-center gap-2 rounded-xl bg-[#0b2140] px-3.5 py-2.5 text-xs font-black text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 md:flex">
             <Sparkles size={14} className="text-cyan-300" /> Asistente
           </Link>

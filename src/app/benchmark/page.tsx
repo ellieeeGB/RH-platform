@@ -44,13 +44,13 @@ export default function BenchmarkStudioPage() {
     </section>
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <KpiCard label="Empresas comparables" value={String(peers.length)} changeLabel={period} icon={Building2}/>
-      <KpiCard label="Ingreso diario · mediana" value={money(salary[0].median)} changeLabel={`${salary[0].n} respuestas válidas · MXN/día`} icon={Scale}/>
-      <KpiCard label="Cobertura técnica · mediana" value={number(coverage.median," días")} changeLabel={`${coverage.n} respuestas con plazo exacto`} icon={Timer}/>
+      <KpiCard label="Sueldo diario de entrada · valor central" value={money(salary[0].median)} changeLabel={`${salary[0].n} respuestas válidas · MXN/día`} icon={Scale}/>
+      <KpiCard label="Días para cubrir puestos técnicos" value={number(coverage.median," días")} changeLabel={`${coverage.n} respuestas con plazo exacto`} icon={Timer}/>
       <KpiCard label="Candidatos adecuados" value={number(candidates.median," de cada 10")} changeLabel={`${candidates.n} respuestas válidas · mediana`} icon={UsersRound}/>
     </section>
     <section className="panel mt-5 p-5 md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><div className="eyebrow">Salario diario · MXN</div><h2 className="mt-1 text-xl font-extrabold">¿Dónde queda tu salario frente al grupo?</h2><p className="mt-2 text-sm text-slate-600">La franja reúne al 50% central de las respuestas; la línea marca la mediana.</p></div>
+        <div><div className="eyebrow">Salario diario · MXN</div><h2 className="mt-1 text-xl font-extrabold">¿Dónde queda tu salario frente al grupo?</h2><p className="mt-2 text-sm text-slate-600">La franja contiene la mitad central de los sueldos reportados. La línea indica el valor central al ordenar las respuestas (mediana).</p></div>
         <div className="flex flex-wrap gap-3 text-xs font-semibold text-slate-700"><span>━ Grupo (Q1–Q3)</span>{!isMarket && <span className="text-violet-700">● {companyLabel}</span>}</div>
       </div>
       {salary[0].median == null ? <div className="my-5 rounded-2xl bg-amber-50 p-6 text-amber-950"><h3 className="font-bold">Faltan respuestas para esta comparación</h3><p className="mb-0 mt-2 text-sm">Hay {salary[0].n} empresas con bandas salariales completas y ordenadas. Amplía el grupo o cambia de bimestre.</p></div> : <div className="mt-6 space-y-6">
@@ -66,7 +66,7 @@ export default function BenchmarkStudioPage() {
         </div>)}
       </div>}
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full min-w-[620px] text-left text-sm"><caption className="sr-only">Bandas salariales del grupo y empresa seleccionada, en pesos diarios</caption><thead className="bg-slate-50 text-slate-600"><tr>{["Banda","Q1","Mediana","Q3", "Tu empresa", "Brecha vs. mediana"].map(label=><th key={label} className="px-4 py-3 font-semibold">{label}</th>)}</tr></thead>
+        <table className="w-full min-w-[620px] text-left text-sm"><caption className="sr-only">Bandas salariales del grupo y empresa seleccionada, en pesos diarios</caption><thead className="bg-slate-50 text-slate-600"><tr>{["Banda","Inicio de la mitad central (Q1)","Valor central (mediana)","Fin de la mitad central (Q3)", "Tu empresa", "Brecha vs. mediana"].map(label=><th key={label} className="px-4 py-3 font-semibold">{label}</th>)}</tr></thead>
           <tbody>{salary.map(row=><tr key={row.key} className="border-t border-slate-100"><th className="px-4 py-3 font-semibold">{row.label}</th><td className="px-4 py-3">{money(row.q1)}</td><td className="px-4 py-3 font-bold">{money(row.median)}</td><td className="px-4 py-3">{money(row.q3)}</td><td className="px-4 py-3 text-violet-700">{money(row.own)}</td><td className="px-4 py-3">{row.own != null && row.median != null ? number((row.own/row.median-1)*100,"%") : "—"}</td></tr>)}</tbody>
         </table>
       </div>

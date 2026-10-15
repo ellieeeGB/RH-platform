@@ -29,18 +29,18 @@ export default function IndicatorsPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Indicadores de talento"
-        title="Indicadores / KPI"
+        title="Indicadores principales de personal"
         description={isMarket
-          ? "Velocidad de contratación, calidad de candidatos y presión de vacantes para el periodo seleccionado."
+          ? "Cuánto tarda contratar, cuántos candidatos cumplen lo requerido y qué puestos faltan por cubrir."
           : `${companyLabel}: indicadores operativos comparados con la mediana del mercado en ${period}.`}
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          ["TTF operativo", days(scope?.timeToFill.operational), isMarket ? "mediana del mercado" : `mercado: ${days(market.timeToFill.operational)}`, Clock3],
-          ["TTF técnico", days(scope?.timeToFill.technical), isMarket ? "mediana del mercado" : `mercado: ${days(market.timeToFill.technical)}`, BriefcaseBusiness],
+          ["Días para cubrir puestos operativos", days(scope?.timeToFill.operational), isMarket ? "mediana del mercado" : `mercado: ${days(market.timeToFill.operational)}`, Clock3],
+          ["Días para cubrir puestos técnicos", days(scope?.timeToFill.technical), isMarket ? "mediana del mercado" : `mercado: ${days(market.timeToFill.technical)}`, BriefcaseBusiness],
           ["Candidatos adecuados", scope?.acceptedPer10 == null ? "—" : `${scope.acceptedPer10}/10`, isMarket ? "mediana de respuestas" : `mercado: ${market.acceptedPer10 ?? "—"}/10`, UserCheck],
-          ["Vacantes próximas", int(scope?.vacancies.total), metrics.hiringPressurePct == null ? "sin base suficiente" : `${pct(metrics.hiringPressurePct)} del headcount`, Activity],
+          ["Vacantes próximas", int(scope?.vacancies.total), metrics.hiringPressurePct == null ? "sin base suficiente" : `${pct(metrics.hiringPressurePct)} del personal al cierre`, Activity],
         ].map(([label, value, note, Icon]) => (
           <article key={String(label)} className="panel p-5">
             <div className="flex items-center justify-between"><div className="metric-label">{String(label)}</div><Icon size={18} className="text-cyan-700" /></div>

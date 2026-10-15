@@ -26,8 +26,8 @@ export default function LaborRiskPage() {
     .reduce((sum, value) => sum + value, 0);
 
   const cards = [
-    { label: "Faltas / 100 HC", value: pct(metrics.absenceEventsPer100), note: absenceChange == null ? `Mercado: ${pct(marketMetrics.absenceEventsPer100)}` : `${absenceChange > 0 ? "+" : ""}${absenceChange.toFixed(1)}% vs. bimestre anterior`, icon: Activity },
-    { label: "Incapacidades / 100 HC", value: pct(metrics.incapacityCasesPer100), note: incapacityChange == null ? `Mercado: ${pct(marketMetrics.incapacityCasesPer100)}` : `${incapacityChange > 0 ? "+" : ""}${incapacityChange.toFixed(1)}% vs. bimestre anterior`, icon: HeartPulse },
+    { label: "Ausencias por cada 100 empleados", value: pct(metrics.absenceEventsPer100), note: absenceChange == null ? `Mercado: ${pct(marketMetrics.absenceEventsPer100)}` : `${absenceChange > 0 ? "+" : ""}${absenceChange.toFixed(1)}% vs. bimestre anterior`, icon: Activity },
+    { label: "Casos de incapacidad por cada 100 empleados", value: pct(metrics.incapacityCasesPer100), note: incapacityChange == null ? `Mercado: ${pct(marketMetrics.incapacityCasesPer100)}` : `${incapacityChange > 0 ? "+" : ""}${incapacityChange.toFixed(1)}% vs. bimestre anterior`, icon: HeartPulse },
     { label: "Eventos de falta", value: int(scope?.attendance.absences), note: isMarket ? "volumen agregado reportado" : `Mercado: ${int(market.attendance.absences)}`, icon: AlertTriangle },
     { label: "Casos de incapacidad", value: int(scope?.attendance.incapacityCases), note: isMarket ? "casos agregados reportados" : `Mercado: ${int(market.attendance.incapacityCases)}`, icon: ShieldCheck },
   ];
@@ -38,8 +38,8 @@ export default function LaborRiskPage() {
         eyebrow="Asistencia y salud laboral"
         title="Ausentismo e incapacidades"
         description={isMarket
-          ? "Eventos de falta e incapacidad normalizados por tamaño de plantilla para el periodo seleccionado."
-          : `${companyLabel}: exposición de asistencia comparada con el mercado del mismo bimestre. Los valores son eventos/casos, no personas únicas.`}
+          ? "Ausencias e incapacidades en relación con el número de empleados. Una persona puede registrar varios eventos."
+          : `${companyLabel}: ausencias e incapacidades frente a las empresas del mismo bimestre. Los registros pueden incluir varios eventos de una persona.`}
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -74,11 +74,11 @@ export default function LaborRiskPage() {
 
         <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft">
           <div className="eyebrow !text-cyan-300">Lectura ejecutiva</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">{isMarket ? "La tasa normalizada permite comparar periodos sin confundir tamaño de plantilla con exposición." : `${companyLabel} puede compararse sin que el tamaño de plantilla distorsione la lectura.`}</h2>
+          <h2 className="mt-4 text-2xl font-black leading-tight">{isMarket ? "Por cada 100 empleados, ¿cuántas ausencias e incapacidades se reportaron?" : `${companyLabel} puede compararse sin que el tamaño de plantilla distorsione la lectura.`}</h2>
           <div className="mt-6 space-y-3 text-sm">
-            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Faltas / 100 HC</div><div className="mt-1 flex items-end justify-between gap-3"><strong className="text-2xl">{pct(metrics.absenceEventsPer100)}</strong>{!isMarket && <span className="text-xs text-cyan-200">mercado {pct(marketMetrics.absenceEventsPer100)}</span>}</div></div>
-            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Incapacidades / 100 HC</div><div className="mt-1 flex items-end justify-between gap-3"><strong className="text-2xl">{pct(metrics.incapacityCasesPer100)}</strong>{!isMarket && <span className="text-xs text-cyan-200">mercado {pct(marketMetrics.incapacityCasesPer100)}</span>}</div></div>
-            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Capacitación / persona</div><div className="mt-1 text-2xl font-black">{metrics.trainingHoursPerHead == null ? "—" : `${metrics.trainingHoursPerHead.toFixed(1)} h`}</div></div>
+            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Ausencias por cada 100 empleados</div><div className="mt-1 flex items-end justify-between gap-3"><strong className="text-2xl">{pct(metrics.absenceEventsPer100)}</strong>{!isMarket && <span className="text-xs text-cyan-200">mercado {pct(marketMetrics.absenceEventsPer100)}</span>}</div></div>
+            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Casos de incapacidad por cada 100 empleados</div><div className="mt-1 flex items-end justify-between gap-3"><strong className="text-2xl">{pct(metrics.incapacityCasesPer100)}</strong>{!isMarket && <span className="text-xs text-cyan-200">mercado {pct(marketMetrics.incapacityCasesPer100)}</span>}</div></div>
+            <div className="rounded-2xl bg-white/5 p-4"><div className="text-xs text-slate-400">Horas de capacitación por empleado</div><div className="mt-1 text-2xl font-black">{metrics.trainingHoursPerHead == null ? "—" : `${metrics.trainingHoursPerHead.toFixed(1)} h`}</div></div>
           </div>
           <p className="mb-0 mt-5 text-[11px] leading-5 text-slate-400">Estos indicadores describen exposición operativa. Sin personas únicas, días perdidos y diagnóstico específico no se interpretan como frecuencia o severidad médica.</p>
         </article>

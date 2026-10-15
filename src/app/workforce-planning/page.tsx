@@ -23,9 +23,9 @@ export default function WorkforcePlanningPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Planeación de plantilla"
-        title="Workforce Planning"
+        title="Puestos por cubrir"
         description={isMarket
-          ? "Vacantes próximas y presión de contratación para anticipar capacidad y prioridades de talento."
+          ? "Cuántos puestos se necesitan cubrir y cómo priorizar su contratación."
           : `${companyLabel}: demanda futura comparada con el mercado en ${period}.`}
       />
 
@@ -34,7 +34,7 @@ export default function WorkforcePlanningPage() {
           ["Vacantes próximas", int(scope?.vacancies.total), "total del corte", BriefcaseBusiness],
           ["Operativas", int(scope?.vacancies.operational), `${pct(opShare)} del total`, BarChart3],
           ["Administrativas", int(scope?.vacancies.administrative), `${pct(adminShare)} del total`, GraduationCap],
-          ["Presión de contratación", pct(metrics.hiringPressurePct), isMarket ? "vacantes / headcount" : `mercado: ${pct(marketPressure)}`, TriangleAlert],
+          ["Puestos pendientes por cada 100 empleados", pct(metrics.hiringPressurePct), isMarket ? "puestos pendientes en relación con el personal" : `mercado: ${pct(marketPressure)}`, TriangleAlert],
         ].map(([label, value, note, Icon]) => (
           <article key={String(label)} className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">{String(label)}</div><Icon size={18} className="text-cyan-700" /></div><div className="mt-3 text-3xl font-black text-[#07182d]">{String(value)}</div><div className="mt-2 text-xs text-slate-500">{String(note)}</div></article>
         ))}
@@ -45,7 +45,7 @@ export default function WorkforcePlanningPage() {
           {[
             ["Vacantes empresa", int(scope?.vacancies.total)],
             ["Vacantes mercado", int(market.vacancies.total)],
-            ["Presión relativa", metrics.hiringPressurePct == null || marketPressure == null || marketPressure === 0 ? "—" : `${(metrics.hiringPressurePct / marketPressure).toFixed(2)}×`],
+            ["Relación con las empresas del estudio", metrics.hiringPressurePct == null || marketPressure == null || marketPressure === 0 ? "—" : `${(metrics.hiringPressurePct / marketPressure).toFixed(2)}×`],
           ].map(([label, value]) => <div key={label} className="rounded-[24px] border border-slate-200 bg-white p-5"><div className="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">{label}</div><div className="mt-2 text-3xl font-black text-[#07182d]">{value}</div></div>)}
         </section>
       )}
@@ -58,7 +58,7 @@ export default function WorkforcePlanningPage() {
 
         <article className="overflow-hidden rounded-3xl bg-[#07182d] p-6 text-white shadow-soft">
           <div className="eyebrow !text-cyan-300">Lectura de capacidad</div>
-          <h2 className="mt-4 text-2xl font-black leading-tight">{metrics.hiringPressurePct == null ? "No hay suficiente información para estimar la presión de contratación." : `Las vacantes representan ${pct(metrics.hiringPressurePct)} del headcount seleccionado.`}</h2>
+          <h2 className="mt-4 text-2xl font-black leading-tight">{metrics.hiringPressurePct == null ? "No hay suficiente información para estimar la presión de contratación." : `Las vacantes representan ${pct(metrics.hiringPressurePct)} del personal registrado al cierre.`}</h2>
           <p className="mt-4 text-sm leading-6 text-slate-300">La cantidad por sí sola no define el riesgo: conviene cruzarla con tiempo de cobertura, rotación y salario para identificar posiciones realmente críticas.</p>
           <div className="mt-6 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-white/[.06] p-4"><div className="text-2xl font-black">{int(scope?.vacancies.operational)}</div><div className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">operativas</div></div><div className="rounded-2xl bg-white/[.06] p-4"><div className="text-2xl font-black">{int(scope?.vacancies.administrative)}</div><div className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">administrativas</div></div></div>
         </article>
@@ -66,7 +66,7 @@ export default function WorkforcePlanningPage() {
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.25fr_.75fr]">
         <article className="panel p-5 md:p-6">
-          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Hotspots de mercado</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Puesto × escolaridad</h2><p className="mt-2 text-xs leading-5 text-slate-400">Detalle estructurado del último corte disponible para identificar concentraciones de demanda.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Jul–Ago 25</span></div>
+          <div className="flex items-start justify-between gap-4"><div><div className="eyebrow">Dónde se concentra la necesidad de contratar</div><h2 className="mt-1 text-lg font-extrabold text-slate-950">Puesto × escolaridad</h2><p className="mt-2 text-xs leading-5 text-slate-400">Detalle estructurado del último corte disponible para identificar concentraciones de demanda.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-500">Jul–Ago 25</span></div>
           <TalentHotspotsChart />
         </article>
 

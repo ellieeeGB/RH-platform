@@ -28,7 +28,7 @@ export default function ContextPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Contexto del estudio"
-        title="Contexto y Muestra"
+        title="Personas y empresas del estudio"
         description={isMarket
           ? "Tamaño y composición de la plantilla del mercado en el periodo seleccionado."
           : `${companyLabel}: estructura de plantilla y posición relativa frente a las 40 empresas participantes.`}
@@ -38,7 +38,7 @@ export default function ContextPage() {
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Headcount total</div><UsersRound size={18} className="text-cyan-700" /></div><div className="mt-3 text-4xl font-black text-[#07182d]">{int(hc)}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? "plantilla agregada" : companyLabel}</div></article>
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Personal operativo</div><Layers3 size={18} className="text-cyan-700" /></div><div className="mt-3 text-4xl font-black text-[#07182d]">{int(scope?.headcount.operational)}</div><div className="mt-2 text-xs text-slate-500">{pct(operationalShare)} de la plantilla</div></article>
         <article className="panel p-5"><div className="flex items-center justify-between"><div className="metric-label">Personal administrativo</div><Building2 size={18} className="text-violet-700" /></div><div className="mt-3 text-4xl font-black text-[#07182d]">{int(scope?.headcount.administrative)}</div><div className="mt-2 text-xs text-slate-500">{pct(adminShare)} de la plantilla</div></article>
-        <article className="panel p-5"><div className="metric-label">{isMarket ? "Empresas participantes" : "Peso en la muestra"}</div><div className="mt-3 text-4xl font-black text-[#07182d]">{isMarket ? "40" : pct(marketShare)}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? "mismo panel de compañías" : "del headcount agregado"}</div></article>
+        <article className="panel p-5"><div className="metric-label">{isMarket ? "Empresas participantes" : "Peso en la muestra"}</div><div className="mt-3 text-4xl font-black text-[#07182d]">{isMarket ? "40" : pct(marketShare)}</div><div className="mt-2 text-xs text-slate-500">{isMarket ? "empresas que participan en el estudio" : "del personal de todas las empresas"}</div></article>
       </section>
 
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.08fr_.92fr]">
@@ -71,16 +71,16 @@ export default function ContextPage() {
               </div>
             ))}
           </div>
-          {!isMarket && marketShare != null && <p className="mt-6 text-sm leading-6 text-slate-300">La empresa representa aproximadamente <strong className="text-white">{pct(marketShare)}</strong> del headcount total del panel en {period}.</p>}
+          {!isMarket && marketShare != null && <p className="mt-6 text-sm leading-6 text-slate-300">La empresa representa aproximadamente <strong className="text-white">{pct(marketShare)}</strong> del personal total del estudio en {period}.</p>}
         </article>
       </section>
 
       <section className="mt-4 panel p-5 md:p-6">
         <div className="eyebrow">Comparación de escala</div>
-        <h2 className="mt-1 text-lg font-extrabold text-slate-950">{isMarket ? "Mercado agregado" : `${companyLabel} contra el mercado`}</h2>
+        <h2 className="mt-1 text-lg font-extrabold text-slate-950">{isMarket ? "Total de las empresas participantes" : `${companyLabel} contra el mercado`}</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {[
-            ["Headcount", hc, market.headcount.total],
+            ["Número de empleados", hc, market.headcount.total],
             ["Operativo", scope?.headcount.operational ?? null, market.headcount.operational],
             ["Administrativo", scope?.headcount.administrative ?? null, market.headcount.administrative],
           ].map(([label, own, total]) => (
