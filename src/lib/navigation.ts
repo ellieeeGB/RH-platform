@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
+  GitCompareArrows,
   BadgeDollarSign,
   BarChart3,
   BriefcaseBusiness,
@@ -37,6 +38,7 @@ export const navigation: NavigationGroup[] = [
     label: "Resumen",
     items: [
       { label: "Inicio", icon: LayoutDashboard, href: "/" },
+      { label: "Comparar compañías y periodos", icon: GitCompareArrows, href: "/comparar" },
       { label: "Agenda de consultoría", icon: ClipboardCheck, href: "/agenda" },
       { label: "Estudio de decisiones", icon: Orbit, href: "/decisiones" },
       { label: "Reporte bimestral", icon: FileText, href: "/reportes" },
