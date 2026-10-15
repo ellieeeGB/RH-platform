@@ -41,6 +41,7 @@ Mantener los dashboards operativos y de benchmarking que ya utiliza el negocio �
 15. Asistente de análisis guiado
 16. Estudio de decisiones y bitácora
 17. Agenda de consultoría: persistencia, recuperación de cobertura y sesión imprimible
+18. Comparar compañías y periodos: selección múltiple, historial, bajas mensuales y CSV
 
 ## Datos
 
@@ -84,3 +85,9 @@ La bitácora se guarda en localStorage de este navegador; su descarga JSON inclu
 Consulta [la revisión de consultoría](docs/consulting-review-2026-10-14.md). `npm run build:static` verifica la edición y genera `out/` con todas las rutas de la plataforma. CI valida esta variante. `npm run build` conserva la compilación habitual de Next.js.
 
 Los porcentajes de rechazo fuera de rango se conservan como evidencia de revisión y se excluyen de las cifras analíticas, sin corregirlos por suposición. Los filtros y acciones de la edición alojada anterior se recuperan desde el navegador del propietario.
+
+## Compañías y periodos
+
+Los controles superiores permiten elegir una, dos, varias o todas las compañías. Puedes consultar un bimestre, ver los siete juntos, comparar bimestres específicos o comparar meses con bajas confirmadas. La selección múltiple abre **Comparar compañías y periodos** (`/comparar`), con gráfica, tabla y descarga CSV; cada cifra abre el detalle de esa compañía y fecha. Las vistas de detalle mantienen su alcance individual explícito y la comparación queda guardada para volver a ella.
+
+El historial muestra cada corte por separado: no suma plantillas ni porcentajes entre fechas. El conjunto comparable mantiene las mismas compañías con datos válidos en todos los cortes seleccionados. Solo hay desglose mensual confirmado de bajas para julio y agosto de 2024 y 2025. Consulta [el método y validación](docs/flexible-comparison.md).
