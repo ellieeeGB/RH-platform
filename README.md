@@ -92,8 +92,10 @@ Los controles superiores permiten elegir una, dos, varias o todas las compañía
 
 El historial muestra cada corte por separado: no suma plantillas ni porcentajes entre fechas. El conjunto comparable mantiene las mismas compañías con datos válidos en todos los cortes seleccionados. Solo hay desglose mensual confirmado de bajas para julio y agosto de 2024 y 2025. Consulta [el método y validación](docs/flexible-comparison.md).
 
-## Lectura para dirección
+## Resultados e interpretación
 
-El inicio, el reporte y las comparaciones incluyen una lectura con **qué pasó**, **para qué sirve** y **qué preguntar a RH**, calculada con la selección activa. El resumen conserva fechas, unidades, empresas con datos y la distinción entre cero y ausencia de información. Si no hay empresas comparables suficientes, solicita completar datos y no anuncia una tendencia.
+El inicio, el reporte y las comparaciones incluyen un **resultado del periodo** con **interpretación y seguimiento** desplegables, calculada con la selección activa. El resumen conserva fechas, unidades, empresas con datos y la distinción entre cero y ausencia de información. Si no hay empresas comparables suficientes, solicita completar datos y no anuncia una tendencia.
 
-La barra superior ofrece **Entender los datos**, una guía buscable de términos como bajas, plantilla, mediana, puntos porcentuales y mercado. Las vistas operativas utilizan títulos cotidianos; las fórmulas y el análisis detallado siguen disponibles al desplegarlos. Esta lectura se construye con reglas explícitas sobre las métricas auditadas; no inventa causas, predicciones ni impactos económicos.
+La barra superior ofrece **Guía de indicadores**, una guía buscable de términos como bajas, plantilla, mediana, puntos porcentuales y mercado. Las vistas operativas utilizan títulos descriptivos; las fórmulas y el análisis detallado siguen disponibles al desplegarlos. Esta lectura se construye con reglas explícitas sobre las métricas auditadas; no inventa causas, predicciones ni impactos económicos.
+
+La navegación normaliza las rutas con o sin barra final del export estático. La sección activa queda resaltada en el menú y nombrada en la barra superior. La agenda muestra primero tendencias y alcance; las solicitudes detalladas se despliegan bajo Información pendiente. Al imprimir se abren los detalles y después se restaura su estado.

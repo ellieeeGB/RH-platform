@@ -10,15 +10,18 @@ import { executiveReading } from "@/lib/executive-reading";
 
 export function DecisionReading({ result, minimum = 1 }: { result: ReturnType<typeof buildComparison>; minimum?: number }) {
   const reading = executiveReading(result, minimum);
-  return <section className="executive-reading my-5 p-5 md:p-6" aria-label="Lectura para dirección">
-    <div className="flex items-center gap-2 text-xs font-bold text-cyan-800"><MessageSquareText size={17}/> Lectura para dirección</div>
+  return <section className="executive-reading my-5 p-5 md:p-6" aria-label="Resultado del periodo">
+    <div className="flex items-center gap-2 text-xs font-bold text-cyan-800"><MessageSquareText size={17}/> Resultado del periodo</div>
     <h2 className="mt-3 max-w-4xl text-xl font-black leading-snug md:text-2xl">{reading.title}</h2>
-    <div className="mt-5 grid gap-5 lg:grid-cols-3">
-      <div><h3 className="text-xs font-bold uppercase tracking-wide text-cyan-800">Qué pasó</h3><p className="mt-2 text-sm leading-6 text-slate-700">{reading.observation}</p></div>
-      <div><h3 className="text-xs font-bold uppercase tracking-wide text-cyan-800">Para qué sirve</h3><p className="mt-2 text-sm leading-6 text-slate-700">{reading.meaning}</p></div>
-      <div className="rounded-xl border border-cyan-200 bg-white/80 p-4 lg:-mt-1"><h3 className="text-xs font-bold uppercase tracking-wide text-cyan-800">Pregunta para RH</h3><p className="mt-2 text-sm font-semibold leading-6">{reading.question}</p></div>
-    </div>
-    <p className="mt-4 border-t border-cyan-100 pt-3 text-xs leading-5 text-slate-600">{reading.scope}</p>
+    <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-700">{reading.observation}</p>
+    <p className="mt-2 text-xs leading-5 text-slate-600">{reading.scope}</p>
+    <details className="mt-4 border-t border-cyan-100 pt-3">
+      <summary className="cursor-pointer text-xs font-bold text-cyan-900">Interpretación y seguimiento</summary>
+      <div className="mt-4 grid gap-5 md:grid-cols-2">
+        <div><h3 className="text-xs font-bold text-cyan-800">Interpretación</h3><p className="mt-2 text-sm leading-6 text-slate-700">{reading.meaning}</p></div>
+        <div><h3 className="text-xs font-bold text-cyan-800">Seguimiento sugerido</h3><p className="mt-2 text-sm leading-6 text-slate-700">{reading.question}</p></div>
+      </div>
+    </details>
   </section>;
 }
 

@@ -1,6 +1,7 @@
 "use client";
+import { normalizePathname } from "@/lib/route-path";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Building2, CalendarDays, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
@@ -12,8 +13,22 @@ const ACTIVE_FILTER_ROUTES = new Set(["/copilot", "/signals", "/data-quality", "
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
   const menu = useRef<HTMLDialogElement>(null);
-  const pathname = usePathname();
+  const pathname = normalizePathname(usePathname());
   const { month, monthLabel, period } = useFilters();
+  useEffect(() => {
+    let closed: HTMLDetailsElement[] = [];
+    const expandForPrint = () => {
+      closed = Array.from(document.querySelectorAll<HTMLDetailsElement>("main details:not([open])"));
+      closed.forEach(detail => { detail.open = true; });
+    };
+    const restoreAfterPrint = () => { closed.forEach(detail => { detail.open = false; }); closed = []; };
+    window.addEventListener("beforeprint", expandForPrint);
+    window.addEventListener("afterprint", restoreAfterPrint);
+    return () => {
+      window.removeEventListener("beforeprint", expandForPrint);
+      window.removeEventListener("afterprint", restoreAfterPrint);
+    };
+  }, []);
   return (
     <div className="min-h-screen bg-[#f7f9fc] lg:flex">
       <a href="#main-content" className="skip-link">Saltar al contenido</a>
@@ -40,7 +55,7 @@ export function PageHeader({
   description: string;
   scopeMode?: "active" | "marketLatest" | "none";
 }) {
-  const pathname = usePathname();
+  const pathname = normalizePathname(usePathname());
   const { period, companyLabel, isMarket } = useFilters();
   const latestPeriod = PERIODS.at(-1) ?? "Último corte";
   const effectiveScopeMode = scopeMode ?? (pathname === "/data-atlas" ? "none" : pathname === "/decisiones" || ACTIVE_FILTER_ROUTES.has(pathname) ? "active" : "marketLatest");

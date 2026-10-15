@@ -25,7 +25,7 @@ export default function BenchmarkStudioPage() {
   const maximum = Math.max(1, ...salary.flatMap(row => [row.q3 ?? 0, row.own ?? 0]));
 
   return <DashboardFrame>
-    <PageHeader eyebrow="Comparación de mercado" title="Tu empresa, en contexto" scopeMode="active" description="Compara salarios y contratación con empresas del mismo bimestre. Elige una empresa en la barra superior para ver su posición frente al grupo." />
+    <PageHeader eyebrow="Comparación de mercado" title="Comparación con el mercado" scopeMode="active" description="Compara salarios y contratación con empresas del mismo bimestre. Elige una empresa en la barra superior para ver su posición frente al grupo." />
     <section aria-label="Grupo de comparación" className="panel mb-5 p-5">
       <div className="flex flex-wrap items-end gap-4">
         <label className="flex min-w-0 flex-1 flex-col gap-2 text-sm font-semibold text-slate-700">Tamaño de plantilla
@@ -50,7 +50,7 @@ export default function BenchmarkStudioPage() {
     </section>
     <section className="panel mt-5 p-5 md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><div className="eyebrow">Salario diario · MXN</div><h2 className="mt-1 text-xl font-extrabold">¿Dónde queda tu salario frente al grupo?</h2><p className="mt-2 text-sm text-slate-600">La franja contiene la mitad central de los sueldos reportados. La línea indica el valor central al ordenar las respuestas (mediana).</p></div>
+        <div><div className="eyebrow">Salario diario · MXN</div><h2 className="mt-1 text-xl font-extrabold">Posición salarial frente al grupo</h2><p className="mt-2 text-sm text-slate-600">La franja contiene la mitad central de los sueldos reportados. La línea indica el valor central al ordenar las respuestas (mediana).</p></div>
         <div className="flex flex-wrap gap-3 text-xs font-semibold text-slate-700"><span>━ Grupo (Q1–Q3)</span>{!isMarket && <span className="text-violet-700">● {companyLabel}</span>}</div>
       </div>
       {salary[0].median == null ? <div className="my-5 rounded-2xl bg-amber-50 p-6 text-amber-950"><h3 className="font-bold">Faltan respuestas para esta comparación</h3><p className="mb-0 mt-2 text-sm">Hay {salary[0].n} empresas con bandas salariales completas y ordenadas. Amplía el grupo o cambia de bimestre.</p></div> : <div className="mt-6 space-y-6">
@@ -66,7 +66,7 @@ export default function BenchmarkStudioPage() {
         </div>)}
       </div>}
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full min-w-[620px] text-left text-sm"><caption className="sr-only">Bandas salariales del grupo y empresa seleccionada, en pesos diarios</caption><thead className="bg-slate-50 text-slate-600"><tr>{["Banda","Inicio de la mitad central (Q1)","Valor central (mediana)","Fin de la mitad central (Q3)", "Tu empresa", "Brecha vs. mediana"].map(label=><th key={label} className="px-4 py-3 font-semibold">{label}</th>)}</tr></thead>
+        <table className="w-full min-w-[620px] text-left text-sm"><caption className="sr-only">Bandas salariales del grupo y empresa seleccionada, en pesos diarios</caption><thead className="bg-slate-50 text-slate-600"><tr>{["Banda","Inicio de la mitad central (Q1)","Valor central (mediana)","Fin de la mitad central (Q3)", "Empresa seleccionada", "Brecha vs. mediana"].map(label=><th key={label} className="px-4 py-3 font-semibold">{label}</th>)}</tr></thead>
           <tbody>{salary.map(row=><tr key={row.key} className="border-t border-slate-100"><th className="px-4 py-3 font-semibold">{row.label}</th><td className="px-4 py-3">{money(row.q1)}</td><td className="px-4 py-3 font-bold">{money(row.median)}</td><td className="px-4 py-3">{money(row.q3)}</td><td className="px-4 py-3 text-violet-700">{money(row.own)}</td><td className="px-4 py-3">{row.own != null && row.median != null ? number((row.own/row.median-1)*100,"%") : "—"}</td></tr>)}</tbody>
         </table>
       </div>
