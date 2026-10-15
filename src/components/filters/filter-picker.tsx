@@ -4,7 +4,7 @@ import { normalizePathname } from "@/lib/route-path";
 import { useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Building2, CalendarDays, Check, ChevronDown, Search, X } from "lucide-react";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { COMPANIES, MARKET_SCOPE, PERIODS } from "@/lib/company-panel";
 import { AVAILABLE_MONTHS, COMPARISON_MONTHS, companySelectionLabel, needsComparison, normalizeSelection, selectionCuts, singleSelection, timeSelectionLabel, type ComparisonSelection, type TimeMode } from "@/lib/comparison-selection";
 

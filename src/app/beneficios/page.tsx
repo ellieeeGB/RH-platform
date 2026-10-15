@@ -1,9 +1,9 @@
 "use client";
 
 import { Bus, Gift, ShieldCheck, Soup, WalletCards } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { BenefitPrevalenceChart, BenefitUsageChart } from "@/components/workforce-rewards-charts";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { BenefitPrevalenceChart, BenefitUsageChart } from "@/components/charts/workforce-rewards-charts";
 import { getMarketExtendedStats, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 import { totalRewardsData } from "@/lib/workforce-rewards-data";
 import { rewardsEconomics, vendorEcosystem } from "@/lib/extended-intelligence";

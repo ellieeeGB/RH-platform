@@ -1,8 +1,8 @@
 "use client";
 
 import { Building2, Layers3, UsersRound } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 
 const int = (value: number | null | undefined) => value == null ? "—" : new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(value);

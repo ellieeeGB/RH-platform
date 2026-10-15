@@ -12,9 +12,10 @@ import {
   TrendingDown,
   UsersRound,
 } from "lucide-react";
-import { DashboardFrame } from "@/components/dashboard-frame";
-import { ExecutiveBrief } from "@/components/executive-brief";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame } from "@/components/layout/dashboard-frame";
+import { ReportActions } from "@/components/analysis/report-actions";
+import { ExecutiveBrief } from "@/components/analysis/executive-brief";
+import { useFilters } from "@/components/filters/filter-context";
 import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 
 import { salaryReference } from "@/lib/benchmark-comparison";
@@ -47,6 +48,7 @@ export default function ReportsPage() {
 
   return (
     <DashboardFrame>
+      <ReportActions />
       <section className="overflow-hidden rounded-[36px] bg-[#07182d] text-white shadow-[0_30px_90px_rgba(7,24,45,.14)]">
         <div className="grid min-h-[430px] lg:grid-cols-[1.15fr_.85fr]">
           <div className="relative p-7 md:p-10 xl:p-14">

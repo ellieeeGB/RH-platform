@@ -1,11 +1,11 @@
 "use client";
 
 import { BriefcaseBusiness, Clock3, Radar, UserCheck } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
 import { getDetails } from "@/lib/company-detail";
-import { useFilters } from "@/components/filter-context";
-import { RecruitmentSourcesChart, TimeToFillChart } from "@/components/classic-charts";
-import { HiringPressureChart } from "@/components/charts";
+import { useFilters } from "@/components/filters/filter-context";
+import { RecruitmentSourcesChart, TimeToFillChart } from "@/components/charts/recruitment-charts";
+import { HiringPressureChart } from "@/components/charts/hiring-pressure-chart";
 import {
   deriveScopeMetrics,
   getMarketSnapshot,

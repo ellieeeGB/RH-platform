@@ -1,9 +1,9 @@
 "use client";
 
 import { BarChart3, BriefcaseBusiness, GraduationCap, TriangleAlert } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { TalentHotspotsChart, VacancyTrendChart, VacancyTotalTrendLine } from "@/components/workforce-rewards-charts";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { TalentHotspotsChart, VacancyTrendChart, VacancyTotalTrendLine } from "@/components/charts/workforce-rewards-charts";
 import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 import { workforcePlanningData } from "@/lib/workforce-rewards-data";
 

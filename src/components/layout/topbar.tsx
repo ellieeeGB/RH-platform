@@ -4,9 +4,9 @@ import { normalizePathname } from "@/lib/route-path";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GitCompareArrows, Sparkles, Menu } from "lucide-react";
-import { useFilters } from "@/components/filter-context";
-import { FilterPicker } from "./filter-picker";
-import { ReadingHelp } from "./reading-help";
+import { useFilters } from "@/components/filters/filter-context";
+import { FilterPicker } from "@/components/filters/filter-picker";
+import { ReadingHelp } from "@/components/ui/reading-help";
 import { navigation } from "@/lib/navigation";
 
 import { MONTH_PERIODS } from "@/lib/company-detail";

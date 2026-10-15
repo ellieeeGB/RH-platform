@@ -1,6 +1,5 @@
 import extendedData from "../../data/processed/extended-intelligence.json";
 
-export const extendedIntelligence = extendedData;
 export const laborRelations = extendedData.laborRelations;
 export const talentMarket = extendedData.talentMarket;
 export const rewardsEconomics = extendedData.rewardsEconomics;

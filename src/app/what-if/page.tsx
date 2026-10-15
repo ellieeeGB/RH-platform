@@ -1,5 +1,5 @@
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { WhatIfLab } from "@/components/what-if-lab";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { WhatIfLab } from "@/components/analysis/what-if-lab";
 
 export default function WhatIfPage() {
   return (

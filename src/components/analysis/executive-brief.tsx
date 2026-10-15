@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, MessageSquareText } from "lucide-react";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { getPreviousPeriod } from "@/lib/company-panel";
 import { singleSelection } from "@/lib/comparison-selection";
 import { buildComparison, COMPARISON_METRICS, type ComparisonMetric } from "@/lib/selection-comparison";

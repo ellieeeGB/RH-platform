@@ -3,11 +3,11 @@
 import { useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDownToLine, ArrowUpRight, Building2, CalendarDays, GitCompareArrows } from "lucide-react";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { companySelectionLabel, timeSelectionLabel } from "@/lib/comparison-selection";
 import { buildComparison, COMPARISON_METRICS, comparisonCsvRows, type ComparisonMetric } from "@/lib/selection-comparison";
 import { downloadCsv } from "@/lib/company-detail";
-import { DecisionReading } from "./executive-brief";
+import { DecisionReading } from "@/components/analysis/executive-brief";
 import { EXECUTIVE_METRICS } from "@/lib/executive-reading";
 
 const colors = ["#087e8b", "#7555b7", "#b25927", "#2563ab", "#a53d68", "#386a46"];

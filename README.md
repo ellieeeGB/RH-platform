@@ -1,101 +1,93 @@
-# RH Platform — People Intelligence
+# RH Platform · People Intelligence
 
-Plataforma moderna de People Analytics para transformar reportes bimestrales de RH en decisiones accionables.
+Dashboard de consultoría de Recursos Humanos para el proyecto de Catch Consulting. Convierte una encuesta histórica en comparaciones entre empresas, indicadores con cobertura visible y seguimiento de decisiones.
 
-## Visión
+**Datos incluidos:** 40 compañías codificadas, 7 bimestres entre julio–agosto de 2024 y julio–agosto de 2025, y 280 registros empresa-periodo. Es un estudio histórico: no contiene información en tiempo real.
 
-Mantener los dashboards operativos y de benchmarking que ya utiliza el negocio —contexto y muestra, personal y salarios, beneficios, indicadores, tabulador y KPIs— y añadir una capa de inteligencia con tendencias históricas, alertas, calidad de datos, escenarios What‑If y un copiloto de IA con trazabilidad.
+## Qué puedes hacer
 
-## Principios
+- Consultar personal, salarios, contratación, bajas, beneficios, vacantes y relaciones laborales.
+- Comparar una, varias o todas las compañías y seleccionar bimestres, historial o meses con datos confirmados.
+- Explorar cambios con las mismas empresas, aportaciones individuales y sensibilidad de los resultados.
+- Revisar datos faltantes, valores por confirmar y solicitudes de información prioritarias.
+- Registrar hipótesis con evidencia y consultar escenarios aritméticos de contratación y compensación.
+- Descargar comparaciones, evidencia y seguimientos; imprimir reportes y agendas.
 
-- **Decisiones antes que gráficas:** cada dashboard debe responder qué pasó, por qué importa y qué acción conviene evaluar.
-- **KPIs verificables:** las fórmulas viven en una capa de métricas reusable, no embebidas en componentes visuales.
-- **Alcance explícito:** Excel crudo fuera del repositorio; panel analítico por códigos incluido en el cliente. Los permisos por organización requieren una capa de servidor.
-- **IA con evidencia:** cualquier explicación futura deberá citar métricas calculadas y respetar permisos por organización.
-- **Diseño modular:** dashboards clásicos + módulos de People Intelligence.
+## Ejecutarlo en tu computadora
 
-## Stack inicial
+Necesitas **Node.js 24** y npm. La versión está declarada en [.nvmrc](.nvmrc); si utilizas nvm, ejecuta `nvm install` y `nvm use` dentro del proyecto.
 
-- Next.js + React + TypeScript
-- Tailwind CSS
-- Recharts
-- Lucide Icons
-- Python/FastAPI + PostgreSQL planeados para la capa de datos y analítica
-
-## Módulos del producto
-
-1. Executive Pulse
-2. Contexto y Muestra
-3. Personal y Salarios
-4. Beneficios
-5. Indicadores / KPIs
-6. Tabulador
-7. Talent Acquisition
-8. Retención y Rotación
-9. Compensation Intelligence
-10. Workforce Planning
-11. Labor Relations & Risk
-12. Benchmark Studio
-13. Data Quality Center
-14. What‑If / Workforce Digital Twin
-15. Asistente de análisis guiado
-16. Estudio de decisiones y bitácora
-17. Agenda de consultoría: persistencia, recuperación de cobertura y sesión imprimible
-18. Comparar compañías y periodos: selección múltiple, historial, bajas mensuales y CSV
-
-## Datos
-
-La base histórica original **no debe subirse a este repositorio público**. Los archivos `.xlsx/.xls/.csv` dentro de `data/raw/` están excluidos por `.gitignore`.
-
-## Estado
-
-Proyecto en construcción para la competencia de dashboard dinámico de RH.
-
-## Ejecutar la revisión auditada
-
-La base auditada se integró en el PR #15. El menú incluye **Agenda de consultoría** y **Estudio de decisiones**: mapa entre pares, descomposición de tasas y bitácora de hipótesis. Si no aparece, actualiza tu copia local.
-
-```sh
-git clone https://github.com/ellieeeGB/RH-platform.git RH-platform-audit
-cd RH-platform-audit
+```bash
+git clone --branch develop https://github.com/ellieeeGB/RH-platform.git
+cd RH-platform
 npm ci
 npm run dev
 ```
 
-Abre la dirección local que imprime Next.js, normalmente `http://localhost:3000`. Para detenerla, `Ctrl+C`. Los datos procesados ya están incluidos: no necesitas el Excel para explorar. `predev` verifica los archivos y el código de extracción contra el manifiesto de la edición.
+Abre `http://localhost:3000` o el puerto que indique la terminal. Detén el servidor con `Ctrl+C`. No necesitas el Excel ni credenciales de API: la edición procesada está incluida. `predev` verifica su integridad antes de arrancar.
 
-## Actualizar datos y verificar
+Para actualizar una copia existente, guarda primero tus cambios y ejecuta:
 
-```sh
-npm run data:extract -- "/ruta/BASE HISTORICA.xlsx"
-npm run data:verify
-npm test
-npm run typecheck
-npm run build
+```bash
+git switch develop
+git pull --ff-only origin develop
+npm ci
 ```
 
-No ejecutes extractores individuales sobre `data/processed`: producirían archivos sin renovar el manifiesto. La extracción completa incluye el tabulador y espera las siete hojas y 40 compañías del estudio. Una nueva estructura requiere actualizar el contrato. Si se interrumpe una extracción, confirma que ya no siga ejecutándose antes de retirar su bloqueo `data/.data-pipeline.lock`.
+## Estructura
 
-Consulta [la auditoría](docs/repository-review.md) y [el estudio de decisiones](docs/decision-study.md) para ver métodos y límites. El Site privado usa la exportación de esta aplicación; actualizar GitHub requiere publicar también esa exportación. El asistente actual responde mediante reglas y datos calculados; no está conectado a un modelo generativo.
+| Carpeta | Responsabilidad |
+| --- | --- |
+| [`src/app`](src/app) | Páginas, rutas HTTP, layout raíz y estilos globales de Next.js. |
+| [`src/components/layout`](src/components/layout) | Marco de navegación, menú lateral, barra superior y encabezados. |
+| [`src/components/filters`](src/components/filters) | Selección de compañías y periodos; persistencia de filtros. |
+| [`src/components/charts`](src/components/charts) | Gráficas de los módulos operativos. |
+| [`src/components/analysis`](src/components/analysis) | Comparaciones, lecturas, agenda, asistente, simulador y seguimientos. |
+| [`src/components/ui`](src/components/ui) | Tarjetas de indicadores y guía de lectura. |
+| [`src/lib`](src/lib) | Acceso al panel, reglas estadísticas, comparaciones y lógica del producto. |
+| [`scripts`](scripts) | Extracción, contratos, verificación y compilación estática. |
+| [`data/processed`](data/processed) | Edición analítica validada y manifiesto de integridad. |
+| [`tests`](tests) | Pruebas de cálculos, cohortes, calidad, navegación y pipeline. |
+| [`docs`](docs) | Guías vigentes, métodos y auditorías históricas identificadas. |
 
-La bitácora se guarda en localStorage de este navegador; su descarga JSON incluye evidencia y seguimiento. No se comparte entre usuarios ni sincroniza con una base de datos. Los JSON analíticos por compañía se distribuyen con el cliente web: los umbrales de muestra son criterios estadísticos de presentación, no un sistema de autorización.
+No hay backend Python, PostgreSQL ni modelo generativo conectado. La aplicación usa Next.js, React, TypeScript, Tailwind, Recharts y ExcelJS. Las dependencias reproducibles están en `package-lock.json`.
 
-## Agenda y publicación estática
+## Comandos principales
 
-Consulta [la revisión de consultoría](docs/consulting-review-2026-10-14.md). `npm run build:static` verifica la edición y genera `out/` con todas las rutas de la plataforma. CI valida esta variante. `npm run build` conserva la compilación habitual de Next.js.
+| Comando | Resultado |
+| --- | --- |
+| `npm run dev` | Desarrollo local, con verificación previa de datos. |
+| `npm run check` | Imports y documentación, integridad de datos, tipos y pruebas. |
+| `npm run verify` | Todo lo anterior y compilación estática de producción. |
+| `npm run build:static` | Verifica datos y genera `out/`. |
+| `npm run build` | Compila para ejecución con servidor Next.js. |
+| `npm start` | Ejecuta el resultado de `npm run build`; no sirve `out/`. |
+| `npm run data:extract -- "/ruta/BASE.xlsx"` | Regenera la edición completa desde el Excel autorizado. |
+| `npm run data:verify` | Comprueba firma del código, archivos y coherencia de la edición. |
 
-Los porcentajes de rechazo fuera de rango se conservan como evidencia de revisión y se excluyen de las cifras analíticas, sin corregirlos por suposición. Los filtros y acciones de la edición alojada anterior se recuperan desde el navegador del propietario.
+## Entender y estudiar el proyecto
 
-## Compañías y periodos
+Empieza por la [guía de estudio](docs/study-guide.md). Después consulta:
 
-Los controles superiores permiten elegir una, dos, varias o todas las compañías. Puedes consultar un bimestre, ver los siete juntos, comparar bimestres específicos o comparar meses con bajas confirmadas. La selección múltiple abre **Comparar compañías y periodos** (`/comparar`), con gráfica, tabla y descarga CSV; cada cifra abre el detalle de esa compañía y fecha. Las vistas de detalle mantienen su alcance individual explícito y la comparación queda guardada para volver a ella.
+1. [Arquitectura real](docs/architecture.md): cómo se conectan interfaz, datos y cálculos.
+2. [Pipeline de datos](docs/pipeline.md): entrada, seis extractores, validación y recuperación ante fallos.
+3. [Registro de métricas](docs/metric-registry.md): fórmulas implementadas, unidades y límites.
+4. [Desarrollo, ramas y CI](CONTRIBUTING.md): cómo proponer y verificar cambios.
+5. [Índice completo de documentación](docs/README.md).
 
-El historial muestra cada corte por separado: no suma plantillas ni porcentajes entre fechas. El conjunto comparable mantiene las mismas compañías con datos válidos en todos los cortes seleccionados. Solo hay desglose mensual confirmado de bajas para julio y agosto de 2024 y 2025. Consulta [el método y validación](docs/flexible-comparison.md).
+## Ramas y publicación
 
-## Resultados e interpretación
+`develop` integra el trabajo en desarrollo; `main` conserva las versiones promovidas. Los cambios se proponen mediante PR a `develop` y se validan antes de promoverlos a `main`. La limpieza de esta entrega se integra en `develop`.
 
-El inicio, el reporte y las comparaciones incluyen un **resultado del periodo** con **interpretación y seguimiento** desplegables, calculada con la selección activa. El resumen conserva fechas, unidades, empresas con datos y la distinción entre cero y ausencia de información. Si no hay empresas comparables suficientes, solicita completar datos y no anuncia una tendencia.
+La CI verifica el código; **no publica el sitio automáticamente**. La publicación privada usa una exportación de esta misma aplicación y una fuente de despliegue separada. Consulta el [procedimiento de publicación](docs/deployment.md).
 
-La barra superior ofrece **Guía de indicadores**, una guía buscable de términos como bajas, plantilla, mediana, puntos porcentuales y mercado. Las vistas operativas utilizan títulos descriptivos; las fórmulas y el análisis detallado siguen disponibles al desplegarlos. Esta lectura se construye con reglas explícitas sobre las métricas auditadas; no inventa causas, predicciones ni impactos económicos.
+## Alcance y límites
 
-La navegación normaliza las rutas con o sin barra final del export estático. La sección activa queda resaltada en el menú y nombrada en la barra superior. La agenda muestra primero tendencias y alcance; las solicitudes detalladas se despliegan bajo Información pendiente. Al imprimir se abren los detalles y después se restaura su estado.
+- Los códigos de empresa reducen identificación directa, pero los JSON por compañía se entregan al navegador. No hay aislamiento de datos por cliente u organización dentro de la aplicación.
+- El Excel crudo queda fuera de Git. No se deben subir contactos, credenciales ni respuestas identificables adicionales.
+- La bitácora y los filtros se guardan en el navegador; no se sincronizan entre personas. Descarga los seguimientos que quieras conservar.
+- El asistente usa reglas y cálculos verificables. Los escenarios no son pronósticos ni estimaciones causales.
+- Los faltantes no se convierten en cero. Las comparaciones longitudinales mantienen un grupo fijo; cada gráfica declara su alcance.
+- El desglose mensual de bajas está confirmado solo para julio y agosto de 2024 y de 2025.
+
+La revisión visual en navegador es una comprobación adicional: la compilación y las pruebas de datos no la sustituyen.

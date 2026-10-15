@@ -4,9 +4,9 @@ import { normalizePathname } from "@/lib/route-path";
 import { useEffect, useRef } from "react";
 import { Building2, CalendarDays, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { Sidebar } from "@/components/sidebar";
-import { Topbar } from "@/components/topbar";
-import { useFilters } from "@/components/filter-context";
+import { Sidebar } from "@/components/layout/sidebar";
+import { Topbar } from "@/components/layout/topbar";
+import { useFilters } from "@/components/filters/filter-context";
 import { PERIODS } from "@/lib/company-panel";
 
 const ACTIVE_FILTER_ROUTES = new Set(["/copilot", "/signals", "/data-quality", "/benchmark","/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning", "/beneficios", "/talent-acquisition", "/relaciones-laborales", "/labor-risk", "/tabulador"]);

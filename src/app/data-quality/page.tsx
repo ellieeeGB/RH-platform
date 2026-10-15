@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { AlertTriangle, CheckCircle2, CircleDashed, Database } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { qualityReport } from "@/lib/data-quality";
 import manifest from "../../../data/processed/pipeline-manifest.json";
 

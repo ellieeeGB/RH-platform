@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ArrowUpRight, ListChecks } from "lucide-react";
-import { useFilters } from "./filter-context";
+import { useFilters } from "@/components/filters/filter-context";
 import { consultingTrajectories, scopedRecoveryPlan } from "@/lib/consulting-agenda";
 
 export function AgendaPreview() {

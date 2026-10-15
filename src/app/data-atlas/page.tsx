@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Building2, CalendarDays, Layers3, ShieldCheck } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
 
 const domains = [
   { title: "Empresa y ubicación", detail: "Ubicación, industria, capital, antigüedad, procesos y contexto automotriz.", route: "/contexto" },

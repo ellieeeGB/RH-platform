@@ -3,14 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookmarkPlus, Check, Download, Focus, GitCompareArrows, NotebookPen, Orbit, Trash2 } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { decisionStudy, contrastPeers, type TalentPoint } from "@/lib/decision-intelligence";
 import { distribution, type PeerSize, type PeerUnion } from "@/lib/benchmark-comparison";
-import { MARKET_SCOPE } from "@/lib/company-panel";
 import { readDecisionNotes, type DecisionNote } from "@/lib/decision-journal";
 import manifest from "../../../data/processed/pipeline-manifest.json";
-import { PreviousActions } from "@/components/previous-actions";
+import { PreviousActions } from "@/components/analysis/previous-actions";
 
 const fmt = (n: number | null, digits = 1) => n === null ? "—" : new Intl.NumberFormat("es-MX", {maximumFractionDigits: digits}).format(n);
 const money = (n: number | null) => n === null ? "—" : `$${fmt(n, 2)}`;

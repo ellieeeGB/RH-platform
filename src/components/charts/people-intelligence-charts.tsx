@@ -84,24 +84,6 @@ export function ExitReasonsChart() {
   );
 }
 
-export function SalaryDistributionChart() {
-  return (
-    <div className="h-[315px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={compensationData.bands} margin={{ top: 8, right: 8, left: -2, bottom: 0 }}>
-          <CartesianGrid stroke="#eef2f6" vertical={false} />
-          <XAxis dataKey="band" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "#7b8798", fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip contentStyle={tooltipStyle} formatter={(value) => [`$${Number(value).toLocaleString("es-MX", { maximumFractionDigits: 2 })}`, ""]} />
-          <Bar dataKey="q1" name="Q1" fill="#cbd5e1" radius={[6, 6, 2, 2]} />
-          <Bar dataKey="median" name="Mediana" fill="#0ea5b7" radius={[6, 6, 2, 2]} />
-          <Bar dataKey="q3" name="Q3" fill="#163c67" radius={[6, 6, 2, 2]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
 export function SalaryEntryTrendChart({ data = compensationData.entryMedianTrend }: { data?: Array<{period: string; value: number | null}> }) {
   return (
     <div className="h-[250px] w-full">

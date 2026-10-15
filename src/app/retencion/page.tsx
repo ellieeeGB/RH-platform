@@ -1,10 +1,10 @@
 "use client";
 
 import { CalendarClock, DoorOpen, UserMinus, UsersRound } from "lucide-react";
-import { DashboardFrame, PageHeader } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
-import { ExitAgeChart, ExitReasonsChart, ExitTenureChart, TurnoverTrendChart } from "@/components/people-intelligence-charts";
-import { deriveScopeMetrics, getMarketSnapshot, getPreviousPeriod, getScopeSnapshot } from "@/lib/company-panel";
+import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
+import { ExitAgeChart, ExitReasonsChart, ExitTenureChart, TurnoverTrendChart } from "@/components/charts/people-intelligence-charts";
+import { deriveScopeMetrics, getMarketSnapshot, getScopeSnapshot } from "@/lib/company-panel";
 import { monthlyExitSummary } from "@/lib/company-detail";
 import { retentionData } from "@/lib/people-intelligence-data";
 
@@ -15,9 +15,6 @@ export default function RetentionPage() {
   const { period, company, companyLabel, isMarket, month, monthLabel } = useFilters();
   const scope = getScopeSnapshot(company, period);
   const market = getMarketSnapshot(period);
-  const previousPeriod = getPreviousPeriod(period);
-  const previousScope = previousPeriod ? getScopeSnapshot(company, previousPeriod) : null;
-  const previousMarket = previousPeriod ? getMarketSnapshot(previousPeriod) : null;
   const metrics = deriveScopeMetrics(scope);
   const monthly = monthlyExitSummary(company, period, month);
   const turnoverPct = month === "all" ? metrics.turnoverPct : monthly.rate;

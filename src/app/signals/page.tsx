@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, ArrowRight, Download, Fingerprint, Layers3, ScanLine, Sparkles } from "lucide-react";
-import { DashboardFrame } from "@/components/dashboard-frame";
-import { useFilters } from "@/components/filter-context";
+import { DashboardFrame } from "@/components/layout/dashboard-frame";
+import { useFilters } from "@/components/filters/filter-context";
 import { analyzeSignal, signalCoverage, signalMetrics, type SignalMetric } from "@/lib/signal-analysis";
 import { qualityReport } from "@/lib/data-quality";
 import manifest from "../../../data/processed/pipeline-manifest.json";
