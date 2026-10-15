@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { navigation } from "@/lib/navigation";
+import { normalizePathname } from "@/lib/route-path";
 
 function CatchMark() {
   return (
@@ -19,7 +20,7 @@ function CatchMark() {
 }
 
 export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
-  const pathname = usePathname();
+  const pathname = normalizePathname(usePathname());
   const [query, setQuery] = useState("");
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const groups = navigation.map(group => ({...group, items: group.items.filter(item => normalize(item.label).includes(normalize(query.trim())))})).filter(group => group.items.length);
@@ -63,14 +64,14 @@ export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNa
                 const active = item.href ? pathname === item.href : false;
                 const className = `group relative flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12.5px] font-semibold transition duration-200 ${
                   active
-                    ? "bg-white/[0.11] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,.08)]"
+                    ? "bg-cyan-100 text-[#061529] shadow-sm"
                     : "text-slate-300 hover:bg-white/[0.055] hover:text-white"
                 }`;
 
                 return (
                   <Link key={item.label} href={item.href ?? "#"} onClick={onNavigate} aria-current={active ? "page" : undefined} className={className}>
-                    {active && <span className="absolute left-0 h-5 w-0.5 rounded-full bg-cyan-300" />}
-                    <Icon size={16} strokeWidth={1.8} className={active ? "text-cyan-300" : "text-slate-500 group-hover:text-cyan-300"} />
+                    {active && <span className="absolute left-0 h-5 w-1 rounded-full bg-cyan-600" />}
+                    <Icon size={16} strokeWidth={active ? 2.4 : 1.8} className={active ? "text-cyan-900" : "text-slate-500 group-hover:text-cyan-300"} />
                     <span className="flex-1">{item.label}</span>
                   </Link>
                 );

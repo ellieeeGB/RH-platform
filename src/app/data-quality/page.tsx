@@ -12,7 +12,7 @@ export default function DataQualityPage() {
   const [view,setView] = useState("review");
   const checks = report.checks.filter(c => view === "all" || c.state === view);
   return <DashboardFrame>
-    <PageHeader eyebrow="Evidencia verificable" title="Conoce los límites de cada dato" description="Distingue lo que concilia, lo que falta y lo que requiere confirmación. Las comprobaciones cambian con el periodo y la empresa seleccionados." scopeMode="active"/>
+    <PageHeader eyebrow="Evidencia verificable" title="Calidad y alcance de la información" description="Distingue lo que concilia, lo que falta y lo que requiere confirmación. Las comprobaciones cambian con el periodo y la empresa seleccionados." scopeMode="active"/>
     <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[
       {label:"Comprobaciones consistentes",value:report.pass,note:"Dentro de las reglas evaluadas",Icon:CheckCircle2,color:"text-cyan-700"},
       {label:"Requieren revisión",value:report.review,note:"Diferencias o valores fuera de rango",Icon:AlertTriangle,color:"text-rose-700"},

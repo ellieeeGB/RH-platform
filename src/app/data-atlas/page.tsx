@@ -30,8 +30,8 @@ export default function DataAtlasPage() {
     <DashboardFrame>
       <PageHeader
         eyebrow="Cobertura del estudio"
-        title="Todo lo que puedes consultar"
-        description="El estudio de Catch abarca mucho más que salarios. Desde aquí puedes identificar rápidamente qué tema necesitas analizar y abrir el módulo correspondiente."
+        title="Cobertura del estudio"
+        description="Temas disponibles y acceso a los análisis del estudio de Catch Consulting."
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -50,26 +50,8 @@ export default function DataAtlasPage() {
         ))}
       </section>
 
-      <section className="mt-5 overflow-hidden rounded-[32px] bg-[#07182d] p-7 text-white md:p-9">
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
-          <div>
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-cyan-300">Una sola fuente para decisiones de RH</div>
-            <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] md:text-5xl">Busca por tema, no por archivo o por número de gráfica.</h2>
-            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300">Selecciona el bimestre y la empresa en la parte superior; después entra al tema que necesitas. Las vistas comparan el resultado seleccionado con el mercado cuando existe información suficiente.</p>
-          </div>
-          <div className="rounded-[26px] border border-white/10 bg-white/[.06] p-6">
-            <div className="text-sm font-black">Cómo usar esta sección</div>
-            <div className="mt-5 space-y-4 text-sm text-slate-300">
-              <div><strong className="text-white">1.</strong> Elige periodo y empresa.</div>
-              <div><strong className="text-white">2.</strong> Abre el tema que quieres revisar.</div>
-              <div><strong className="text-white">3.</strong> Usa el benchmark para interpretar la posición.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="mt-5">
-        <div className="mb-5"><div className="eyebrow">Áreas disponibles</div><h2 className="mt-1 text-2xl font-black text-[#07182d]">Cobertura del estudio</h2></div>
+        <div className="mb-5"><div className="eyebrow">Áreas disponibles</div><h2 className="mt-1 text-2xl font-black text-[#07182d]">Catálogo de análisis</h2><p className="mt-2 text-sm leading-6 text-slate-500">Abre un tema para seleccionar la empresa y el periodo de consulta.</p></div>
         <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {domains.map((domain) => (
             <Link key={domain.title} href={domain.route} className="group rounded-[24px] border border-slate-200/80 bg-white p-5 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_16px_40px_rgba(7,24,45,.07)]">

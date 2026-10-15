@@ -1,4 +1,5 @@
 "use client";
+import { normalizePathname } from "@/lib/route-path";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -6,11 +7,13 @@ import { GitCompareArrows, Sparkles, Menu } from "lucide-react";
 import { useFilters } from "@/components/filter-context";
 import { FilterPicker } from "./filter-picker";
 import { ReadingHelp } from "./reading-help";
+import { navigation } from "@/lib/navigation";
 
 import { MONTH_PERIODS } from "@/lib/company-detail";
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
-  const pathname = (usePathname() ?? "").replace(/\/$/, "") || "/";
+  const pathname = normalizePathname(usePathname());
+  const currentSection = navigation.flatMap(group => group.items).find(item => item.href === pathname)?.label ?? "People Intelligence";
   const hasFilters = !["/data-atlas", "/what-if"].includes(pathname);
   const { month, setMonth } = useFilters();
 
@@ -18,9 +21,9 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
     <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-[#f7f9fc]/92 backdrop-blur-2xl">
       <div className="flex min-h-[72px] flex-wrap items-center gap-3 px-5 py-2 md:px-7">
         <button type="button" aria-label="Abrir navegación" aria-controls="mobile-navigation" onClick={onOpenMenu} className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-800 lg:hidden"><Menu size={21} /></button>
-        <div className="hidden min-w-0 flex-1 xl:block">
+        <div className="min-w-0 flex-1 basis-40">
           <div className="text-[10px] font-black uppercase tracking-[.18em] text-cyan-700">Catch Consulting</div>
-          <div className="mt-0.5 text-sm font-black text-[#07182d]">Dashboard de Recursos Humanos</div>
+          <div className="mt-0.5 text-sm font-black text-[#07182d]">{currentSection}</div>
         </div>
 
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
