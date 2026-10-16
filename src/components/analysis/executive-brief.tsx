@@ -1,8 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, MessageSquareText } from "lucide-react";
-import { DataQuality } from "@/components/ui/data-visuals";
+import { ArrowUpRight, MessageSquareText } from "lucide-react";
+import { DataQuality, PeriodSlope } from "@/components/ui/data-visuals";
 import { useFilters } from "@/components/filters/filter-context";
 import { getPreviousPeriod } from "@/lib/company-panel";
 import { singleSelection } from "@/lib/comparison-selection";
@@ -12,27 +12,17 @@ import { executiveReading, EXECUTIVE_METRICS } from "@/lib/executive-reading";
 export function DecisionReading({ result, minimum = 1 }: { result: ReturnType<typeof buildComparison>; minimum?: number }) {
   const reading = executiveReading(result, minimum);
   const endpoints = reading.canCompare ? [result.points[0], result.points.at(-1)!] : [];
-  const format = (value: number) => value.toLocaleString("es-MX", { maximumFractionDigits: 2 });
-  const peak = Math.max(1, ...endpoints.map(point => point.fixed.value!));
+  const directional = ["turnover", "exits", "monthlyExits", "vacancies", "vacancyRate", "absenceRate", "timeToFill"].includes(result.metric);
+  const tone = !reading.canCompare || !directional || Math.abs(result.delta ?? 0) < 1e-9 ? "neutral" : result.delta! < 0 ? "good" : ["vacancies", "vacancyRate"].includes(result.metric) ? "attention" : "alert";
   return <section className="executive-reading my-5 p-5 md:p-6" aria-label="Hallazgo del periodo">
     <div className={endpoints.length ? "reading-layout" : ""}>
     <div>
     <div className="flex items-center gap-2 text-xs font-bold text-cyan-800"><MessageSquareText size={17}/> Hallazgo del periodo</div>
-    <h2 className="mt-3 max-w-4xl text-xl font-black leading-snug md:text-2xl">{reading.canCompare ? `${EXECUTIVE_METRICS[result.metric].label}: ${format(endpoints[0].fixed.value!)} → ${format(endpoints[1].fixed.value!)}` : reading.title}</h2>
+    <h2 className="mt-3 max-w-4xl text-xl font-black leading-snug md:text-2xl">{reading.title}</h2>
     <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-700">{reading.observation}</p>
     <DataQuality different={result.common.length !== result.points.at(-1)?.available.n}><p>{reading.scope}</p><p>El total del corte usa las respuestas disponibles; el cambio mantiene las mismas empresas. Por eso las cifras pueden diferir.</p></DataQuality>
     </div>
-    {endpoints.length > 0 && <figure className="reading-endpoints" aria-label="Valores del primer y último periodo en las mismas compañías">
-      <figcaption className="mb-4 text-xs font-semibold text-slate-600">{EXECUTIVE_METRICS[result.metric].unit}</figcaption>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-        {endpoints.map((point, index) => <div key={index} className={index ? "contents" : "min-w-0"}>
-          {index === 1 && <ArrowRight size={18} className="finding-arrow text-slate-400" aria-hidden="true"/>}
-          <div className="min-w-0"><div className="text-xs text-slate-600">{result.cuts[index === 0 ? 0 : result.cuts.length - 1].label}</div>
-          <div className={`mt-2 text-3xl font-bold tracking-tight ${index ? "text-cyan-900" : "text-slate-500"}`}>{format(point.fixed.value!)}</div>
-          <div className="mt-3 h-1.5 rounded-full bg-slate-100" aria-hidden="true"><div className={`h-full rounded-full ${index ? "bg-cyan-700" : "bg-slate-400"}`} style={{width:`${point.fixed.value! / peak * 100}%`}}/></div></div>
-        </div>)}
-      </div>
-    </figure>}
+    {endpoints.length > 0 && <div className="reading-endpoints"><PeriodSlope before={endpoints[0].fixed.value!} after={endpoints[1].fixed.value!} firstLabel={result.cuts[0].label} lastLabel={result.cuts.at(-1)!.label} unit={EXECUTIVE_METRICS[result.metric].unit} tone={tone}/></div>}
     </div>
     <div className="finding-action"><span>Qué hacer</span><p>{reading.question}</p></div>
     <details className="mt-4 border-t border-cyan-100 pt-3">

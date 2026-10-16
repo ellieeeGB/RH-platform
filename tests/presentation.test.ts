@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { ComparisonPlot } from "../src/components/analysis/comparison-view";
-import { MarketBullet, Sparkline } from "../src/components/ui/data-visuals";
+import { MarketBullet, Sparkline, PeriodSlope } from "../src/components/ui/data-visuals";
 import { buildComparison } from "../src/lib/selection-comparison";
 import { singleSelection } from "../src/lib/comparison-selection";
 import { PERIODS } from "../src/lib/company-panel";
@@ -46,4 +46,21 @@ test("market markers describe equality, improvement and missing reference accura
   assert.match(bullet(15,10),/5.*días.*más lento/);
   assert.match(bullet(10,10),/Al ritmo del mercado/);
   assert.doesNotMatch(bullet(null,10),/más rápido|más lento|Al ritmo/);
+});
+
+
+test("period slope preserves zero, labels and a proportional zero-based scale", () => {
+  const slope=(before:number,after:number)=>renderToString(React.createElement(PeriodSlope,{before,after,firstLabel:"May-Jun 25",lastLabel:"Jul-Ago 25",unit:"salidas",tone:after<before?"good":"neutral"}));
+  const zero=slope(0,0);
+  assert.match(zero,/Sin cambio entre periodos/);
+  assert.doesNotMatch(zero,/NaN|Infinity/);
+  const lower=slope(12.85,10.07);
+  assert.match(lower,/12.85 → 10.07 salidas/);
+  assert.match(lower,/Mejora entre periodos/);
+  assert.match(lower,/May-Jun 25/);
+  assert.match(lower,/Jul-Ago 25/);
+  const points=[...lower.matchAll(/<circle[^>]+cy="([^"]+)"/g)].map(match=>Number(match[1]));
+  assert.ok(points[1]>points[0],"A smaller value appears lower on the same scale");
+  const tiny=[...slope(100,99.9).matchAll(/<circle[^>]+cy="([^"]+)"/g)].map(match=>Number(match[1]));
+  assert.ok(Math.abs(tiny[1]-tiny[0])<1,"A tiny change cannot occupy the full chart height");
 });

@@ -40,7 +40,7 @@ export function PageSummary() {
     "/copilot":["El asistente organiza respuestas verificables del estudio según el contexto seleccionado.","Consulta un tema y revisa su evidencia antes de convertirlo en una acción."],
     "/data-quality":["Los faltantes y las cifras por confirmar delimitan qué conclusiones son defendibles.","Prioriza las solicitudes de información que recuperen más comparaciones."],
     "/data-atlas":["El estudio reúne 40 empresas y siete bimestres, con cobertura distinta por indicador.","Localiza el dominio que necesitas y comprueba qué información está disponible."],
-    "/comparar":["Las comparaciones temporales conservan las mismas empresas con datos válidos.","Elige un indicador y abre una cifra para revisar el detalle de su compañía y periodo."],
+    "/comparar":["Una misma base. Una lectura clara del cambio.","Compara compañías y periodos con las mismas empresas; abre una cifra para ver su detalle."],
   };
   const text=summaries[pathname]??[reading.title,reading.question];
   return <section className="page-summary" aria-label="Resumen ejecutivo"><div><span className="summary-label">Resumen ejecutivo</span><p>{text[0]}</p></div><p className="summary-action"><ArrowRight size={17} aria-hidden="true"/>{text[1]}</p><span className="sr-only">{fixed?"Mercado completo":companyLabel} · {cut}</span></section>;
