@@ -10,16 +10,16 @@ La información y las rutas existentes se conservan. Los cambios afectan present
 
 | Elemento | Uso |
 | --- | --- |
-| Navy `#081d31` | Marca, navegación y tarjeta protagonista. |
+| Navy `#081d31` | Marca y tarjeta protagonista; navegación sobre marfil. |
 | Teal `#096773` | Selección, tendencias y acciones principales. |
 | Verde `#176144` sobre `#e7f3ec` | Evolución favorable según el indicador. |
 | Ámbar `#80500b` sobre `#fcf1d9` | Atención o información que requiere revisión. |
 | Coral `#a43832` sobre `#fbe9e5` | Aumento de salidas en una base comparable. |
 | Violeta `#654685` | Referencia de mercado; no representa un estado. |
-| Georgia / serif del sistema | Titulares editoriales y hallazgos. Sin descarga de fuentes externa. |
-| Inter / sans del sistema | Controles, tablas y datos; cifras tabulares. |
+| Newsreader variable | Titulares editoriales y hallazgos; archivo local, `next/font/local`. |
+| DM Sans variable | Controles, tablas y datos; cifras tabulares, archivo local. |
 
-El Inicio usa una tarjeta de salidas con mayor peso visual y tres indicadores secundarios. Los marcadores de mercado llevan etiquetas directas y formas distintas. Candidatos y vacantes usan proporciones con cantidades visibles; el ancho se limita a la escala y avisa si se supera.
+El Inicio usa una tarjeta de salidas que ocupa tres filas en escritorio y tres indicadores secundarios a su derecha; en tablet pasa a dos columnas y en móvil a una. El resumen ejecutivo abre la lectura sobre un bloque jade suave. El lienzo marfil `#f7f5ef` y la navegación clara reducen el peso del navy. Los marcadores de mercado llevan etiquetas directas y formas distintas. Candidatos y vacantes usan proporciones con cantidades visibles; el ancho se limita a la escala y avisa si se supera.
 
 ## Integridad de la lectura
 
@@ -45,3 +45,15 @@ Los puntos de adaptación previstos son 375, 768, 1024 y 1440 px. Las tablas ext
 React 19 no serializa correctamente un `<title>` con varios hijos de texto. El título SVG de Comparar se emitía vacío desde el servidor. Ahora cada título y descripción dinámicos usa una única cadena, también en el mapa de decisiones. No se oculta el error mediante `suppressHydrationWarning` ni se desactiva el render del servidor.
 
 La regresión se cubre en [presentation.test.ts](../tests/presentation.test.ts). Los componentes compartidos están en [data-visuals.tsx](../src/components/ui/data-visuals.tsx), [overview-kpis.tsx](../src/components/analysis/overview-kpis.tsx) e [indicator-kpis.tsx](../src/components/analysis/indicator-kpis.tsx).
+
+## Tipografía y comparación editorial
+
+Newsreader y DM Sans se distribuyen en `public/fonts` con sus licencias SIL OFL. Proceden de [Google Fonts: DM Sans](https://github.com/google/fonts/tree/main/ofl/dmsans) y [Newsreader](https://github.com/google/fonts/tree/main/ofl/newsreader). Se conserva el subconjunto latino, acentos españoles y puntuación; las fuentes no requieren peticiones externas al navegar ni durante la compilación. Los archivos variables se cargan con `font-display: swap`.
+
+Escala: titulares principales 42–70 px, hallazgos 29–42 px, texto de lectura 15–17 px, controles y tablas 14 px, notas 12–13 px. Se usan pesos 400–650 en lugar de negritas extremas, con interlineado 1.55–1.65 para lectura y cifras tabulares. La serif se reserva a titulares y síntesis; los datos permanecen en sans.
+
+La pendiente del hallazgo representa solamente el primer y último periodo del grupo comparable. Mantiene una escala común desde cero: cambios pequeños no se amplifican. Fechas, cifras, unidad y estado textual acompañan al color. Salarios, contrataciones y plantilla conservan un estado neutral porque un aumento no demuestra una mejora. La gráfica temporal completa y la tabla permanecen debajo.
+
+Los indicadores se eligen mediante botones con `aria-pressed`; compañías y periodos usan chips con controles nativos de selección múltiple o única. Se mantienen búsqueda, «Solo esta», selección total, cancelación, validación, persistencia y descarga CSV. Los meses sin desglose siguen deshabilitados.
+
+Efectos: trama diagonal casi imperceptible en la tarjeta principal, superficies cálidas con degradado suave y transiciones cortas en los controles. Evitar textos menores de 12 px, mayúsculas en frases largas, pesos extremos, color sin explicación y escalas que exageren variaciones.

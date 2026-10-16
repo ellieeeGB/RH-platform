@@ -80,7 +80,7 @@ export function ComparisonView() {
     <PageSummary/>
     <section className="panel p-5 md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <label className="text-xs font-bold text-slate-500">Indicador<select aria-label="Indicador a comparar" value={result.metric} onChange={e=>setMetric(e.target.value as ComparisonMetric)} className="mt-2 block max-w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-900">{(Object.keys(COMPARISON_METRICS) as ComparisonMetric[]).filter(k=>comparison.timeMode==="months"?k==="monthlyExits":k!=="monthlyExits").map(k=><option key={k} value={k}>{EXECUTIVE_METRICS[k].label}</option>)}</select></label>
+        <div className="min-w-0 flex-1"><h2 className="text-lg font-semibold">¿Qué quieres comparar?</h2><div className="indicator-pills" role="group" aria-label="Indicador a comparar">{(Object.keys(COMPARISON_METRICS) as ComparisonMetric[]).filter(k=>comparison.timeMode==="months"?k==="monthlyExits":k!=="monthlyExits").map(k=><button key={k} type="button" aria-pressed={result.metric===k} onClick={()=>setMetric(k)}>{EXECUTIVE_METRICS[k].label}</button>)}</div></div>
         <button type="button" onClick={()=>downloadCsv(comparisonCsvRows(result),`catch-comparacion-${result.metric}.csv`)} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-cyan-900"><ArrowDownToLine size={15}/> Descargar comparación</button>
       </div>
       <details className="mt-4 max-w-4xl text-xs leading-5 text-slate-500"><summary className="cursor-pointer font-bold text-slate-700">Qué mide y cómo se calcula</summary><p className="mt-2">{spec.description}</p></details>

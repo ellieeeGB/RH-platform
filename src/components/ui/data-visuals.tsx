@@ -64,3 +64,34 @@ export function MarketBullet({ label, own, market, maximum, isMarket }: { label:
       {own===null&&<text x="25" y="20" fill="#526175">Empresa: sin dato</text>}
     </svg></div>;
 }
+
+/** A common zero baseline keeps a small change from looking dramatic. */
+export function PeriodSlope({ before, after, firstLabel, lastLabel, unit, tone }: {
+  before: number; after: number; firstLabel: string; lastLabel: string; unit: string; tone: Tone;
+}) {
+  const maximum = Math.max(1, before, after) * 1.1;
+  const y = (value: number) => 190 - value / maximum * 105;
+  const format = (value: number) => value.toLocaleString("es-MX", { maximumFractionDigits: 2 });
+  const color = tone === "good" ? "#176144" : tone === "alert" ? "#a43832" : tone === "attention" ? "#80500b" : "#096773";
+  const delta = after - before;
+  const label = Math.abs(delta) < 1e-9 ? "Sin cambio entre periodos" : tone === "good" ? "Mejora entre periodos" : tone === "alert" ? "Requiere atención" : tone === "attention" ? "Priorizar cobertura" : "Contrastar con el plan";
+  return <figure className="slope-chart">
+    <figcaption className="slope-unit">{unit}</figcaption>
+    <svg viewBox="0 0 360 215" role="img" aria-label={`${firstLabel}: ${format(before)}; ${lastLabel}: ${format(after)} ${unit}. ${label}. Escala desde cero.`}>
+      <title>{`${format(before)} → ${format(after)} ${unit}`}</title>
+      <text x="18" y="35" className="slope-value" fill="#526773">{format(before)}</text>
+      <text x="342" y="35" textAnchor="end" className="slope-value" fill={color}>{format(after)}</text>
+      <path d={`M35 ${y(before)} L325 ${y(after)} L325 190 L35 190 Z`} fill={color} opacity=".07"/>
+      <line x1="35" x2="325" y1="190" y2="190" stroke="#b9c9be"/>
+      <text x="15" y="195" fill="#526773" fontSize="13">0</text>
+      <line x1="35" x2="35" y1="52" y2="190" stroke="#c4d1c7" strokeDasharray="3 4"/>
+      <line x1="325" x2="325" y1="52" y2="190" stroke="#c4d1c7" strokeDasharray="3 4"/>
+      <path d={`M35 ${y(before)} L325 ${y(after)}`} stroke={color} strokeWidth="3" fill="none" className="sparkline-stroke"/>
+      <circle cx="35" cy={y(before)} r="6" fill="#e9efe6" stroke={color} strokeWidth="2"/>
+      <circle cx="325" cy={y(after)} r="7" fill={color}/>
+    </svg>
+    <div className="slope-periods"><span>{firstLabel}</span><span>{lastLabel}</span></div>
+    <StatusChip tone={tone}>{label}</StatusChip>
+    <p className="slope-caption">Mismas empresas · escala desde cero. Se muestran los extremos seleccionados.</p>
+  </figure>;
+}
