@@ -50,7 +50,7 @@ export function FilterPicker() {
   }
 
   return <>
-    <button type="button" onClick={open} aria-haspopup="dialog" aria-controls="scope-picker" className="filter-chip !px-3 !py-2" aria-label={`Seleccionar compañías: ${companySelectionLabel(current.companies)}`}><Building2 size={14} className="text-cyan-700"/><span className="max-w-[190px] truncate">{companySelectionLabel(current.companies)}</span><ChevronDown size={13}/></button>
+    <button type="button" onClick={open} aria-haspopup="dialog" aria-controls="scope-picker" className="filter-chip !px-3 !py-2" aria-label={`Seleccionar compañías: ${companySelectionLabel(current.companies)}`}><Building2 size={14} className="text-cyan-700"/><span className="max-w-[190px] break-words">{companySelectionLabel(current.companies)}</span><ChevronDown size={13}/></button>
     <button type="button" onClick={open} aria-haspopup="dialog" aria-controls="scope-picker" className="filter-chip !px-3 !py-2" aria-label={`Seleccionar periodos: ${timeSelectionLabel(current)}`}><CalendarDays size={14} className="text-cyan-700"/><span>{timeSelectionLabel(current)}</span><ChevronDown size={13}/></button>
     <dialog ref={modal} id="scope-picker" aria-labelledby="scope-title" className="scope-picker" onClick={e=>{if(e.target===e.currentTarget)modal.current?.close();}}>
       <form onSubmit={apply}>

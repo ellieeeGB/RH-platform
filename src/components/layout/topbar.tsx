@@ -9,13 +9,14 @@ import { FilterPicker } from "@/components/filters/filter-picker";
 import { ReadingHelp } from "@/components/ui/reading-help";
 import { navigation } from "@/lib/navigation";
 
+import { companySelectionLabel, timeSelectionLabel } from "@/lib/comparison-selection";
 import { MONTH_PERIODS } from "@/lib/company-detail";
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const pathname = normalizePathname(usePathname());
   const currentSection = navigation.flatMap(group => group.items).find(item => item.href === pathname)?.label ?? "People Intelligence";
   const hasFilters = !["/data-atlas", "/what-if"].includes(pathname);
-  const { month, setMonth } = useFilters();
+  const { month, setMonth, companyLabel, period, comparison } = useFilters();
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-[#f7f9fc]/92 backdrop-blur-2xl">
@@ -39,6 +40,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
           </Link>
         </div>
       </div>
+      <div className="context-ribbon" aria-label="Contexto de consulta"><span className="context-dot"/>{pathname === "/comparar" ? <><strong>{companySelectionLabel(comparison.companies)}</strong><span>{timeSelectionLabel(comparison)}</span><span className="context-mode">Comparación</span></> : <><strong>{hasFilters?companyLabel:"Mercado completo"}</strong><span>{hasFilters?period:"Jul–Ago 25"}</span><span className="context-mode">{pathname==="/data-atlas"?"Cobertura del estudio":"Corte de consulta"}</span></>}</div>
     </header>
   );
 }

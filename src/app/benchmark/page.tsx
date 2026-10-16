@@ -5,7 +5,7 @@ import { Building2, Scale, Timer, UsersRound } from "lucide-react";
 import { DashboardFrame, PageHeader } from "@/components/layout/dashboard-frame";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { useFilters } from "@/components/filters/filter-context";
-import { getCompanySnapshot } from "@/lib/company-panel";
+import { getCompanySnapshot, PERIODS } from "@/lib/company-panel";
 import { comparisonPeers, distribution, validSalaryBands, type PeerSize, type PeerUnion } from "@/lib/benchmark-comparison";
 
 const money = (n: number | null | undefined) => n == null ? "—" : new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(n);
@@ -24,6 +24,11 @@ export default function BenchmarkStudioPage() {
   const candidates = distribution(peers.map(row => row.acceptedPer10));
   const maximum = Math.max(1, ...salary.flatMap(row => [row.q3 ?? 0, row.own ?? 0]));
 
+  const history=PERIODS.map(cut=>{
+    const group=comparisonPeers(cut,size,union,isMarket?undefined:company);
+    return [group.length,distribution(group.filter(validSalaryBands).map(r=>r.salaryDaily.entry)).median,distribution(group.map(r=>r.timeToFill.technical)).median,distribution(group.map(r=>r.acceptedPer10)).median];
+  });
+  const trend=(index:number)=>({values:history.map(row=>row[index]),labels:PERIODS,selected:PERIODS.indexOf(period)});
   return <DashboardFrame>
     <PageHeader eyebrow="Comparación de mercado" title="Comparación con el mercado" scopeMode="active" description="Compara salarios y contratación con empresas del mismo bimestre. Elige una empresa en la barra superior para ver su posición frente al grupo." />
     <section aria-label="Grupo de comparación" className="panel mb-5 p-5">
@@ -43,10 +48,10 @@ export default function BenchmarkStudioPage() {
       <p role="status" className="mb-0 mt-3 text-sm text-slate-600">{peers.length} empresas en el grupo{!isMarket && ` · ${companyLabel} se compara por separado`}. Cada referencia necesita al menos cinco respuestas válidas.</p>
     </section>
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <KpiCard label="Empresas comparables" value={String(peers.length)} changeLabel={period} icon={Building2}/>
-      <KpiCard label="Sueldo diario de entrada · valor central" value={money(salary[0].median)} changeLabel={`${salary[0].n} respuestas válidas · MXN/día`} icon={Scale}/>
-      <KpiCard label="Días para cubrir puestos técnicos" value={number(coverage.median," días")} changeLabel={`${coverage.n} respuestas con plazo exacto`} icon={Timer}/>
-      <KpiCard label="Candidatos adecuados" value={number(candidates.median," de cada 10")} changeLabel={`${candidates.n} respuestas válidas · mediana`} icon={UsersRound}/>
+      <KpiCard label="Empresas comparables" value={String(peers.length)} changeLabel={period} icon={Building2} trend={trend(0)}/>
+      <KpiCard label="Sueldo diario de entrada · valor central" value={money(salary[0].median)} changeLabel={`${salary[0].n} respuestas válidas · MXN/día`} icon={Scale} trend={trend(1)}/>
+      <KpiCard label="Días para cubrir puestos técnicos" value={number(coverage.median," días")} changeLabel={`${coverage.n} respuestas con plazo exacto`} icon={Timer} trend={trend(2)}/>
+      <KpiCard label="Candidatos adecuados" value={number(candidates.median," de cada 10")} changeLabel={`${candidates.n} respuestas válidas · mediana`} icon={UsersRound} trend={trend(3)}/>
     </section>
     <section className="panel mt-5 p-5 md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
