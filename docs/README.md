@@ -12,7 +12,8 @@ Este índice describe la implementación actual. Los documentos en `history/` co
 | Las fórmulas que realmente usa la plataforma | [Registro de métricas](metric-registry.md) |
 | Selección múltiple y comparaciones temporales | [Comparaciones](flexible-comparison.md) |
 | Mapa de empresas, descomposición y bitácora | [Estudio de decisiones](decision-study.md) |
-| Jerarquía visual y referencias del diseño | [Diseño visual](visual-design.md) |
+| Sistema visual, interacción y semántica de indicadores | [Sistema de diseño](design-system.md) |
+| Referencias y evolución del diseño | [Diseño visual](visual-design.md) |
 | Ramas, pruebas y colaboración | [Contribuir](../CONTRIBUTING.md) |
 | Compilación y publicación privada | [Despliegue](deployment.md) |
 | Qué se conservó y qué se retiró en esta limpieza | [Mantenimiento del repositorio](maintenance.md) |

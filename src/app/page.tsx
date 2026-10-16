@@ -1,46 +1,30 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, CalendarDays, Building2, UsersRound, UserPlus, UserMinus, Orbit, GitCompareArrows, ShieldCheck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, Building2, Orbit, GitCompareArrows, ShieldCheck } from "lucide-react";
 import { DashboardFrame } from "@/components/layout/dashboard-frame";
 import { SignalPreview } from "@/components/analysis/signal-preview";
 import { ExecutiveBrief } from "@/components/analysis/executive-brief";
 import { AgendaPreview } from "@/components/analysis/agenda-preview";
 import { useFilters } from "@/components/filters/filter-context";
 import { deriveScopeMetrics, getScopeSnapshot, scopeCoverage } from "@/lib/company-panel";
-import { analyzeSignal, type SignalMetric } from "@/lib/signal-analysis";
+import { OverviewKpis } from "@/components/analysis/overview-kpis";
 import { qualityReport } from "@/lib/data-quality";
 
 const int = (v: number | null | undefined) => v == null ? "—" : new Intl.NumberFormat("es-MX",{maximumFractionDigits:0}).format(v);
 const pct = (v: number | null) => v === null ? "—" : `${v.toFixed(1)}%`;
 
 export default function Home() {
-  const {period,company,companyLabel,isMarket} = useFilters();
+  const {period,company,companyLabel} = useFilters();
   const scope = getScopeSnapshot(company,period), metrics = deriveScopeMetrics(scope);
   const coverage = scopeCoverage(company,period), quality = qualityReport(period,company);
   const net = metrics.netMovement;
-  const cards = [
-    {label:"Empleados reportados",value:int(scope?.headcount.total),metric:"headcount" as SignalMetric,n:coverage.headcount,Icon:UsersRound,href:"/contexto",note:"Personal registrado; puede haber categorías sin respuesta"},
-    {label:"Contrataciones",value:int(scope?.hires),metric:"hires" as SignalMetric,n:coverage.hires,Icon:UserPlus,href:"/talent-acquisition",note:"Contrataciones registradas en estos dos meses"},
-    {label:"Salidas de personal",value:int(scope?.exits),metric:"exits" as SignalMetric,n:coverage.exits,Icon:UserMinus,href:"/retencion",note:"Salidas registradas en estos dos meses"},
-    {label:"Puestos por cubrir",value:int(scope?.vacancies.total),metric:"vacancies" as SignalMetric,n:coverage.vacancies,Icon:BriefcaseBusiness,href:"/workforce-planning",note:"Puestos que las empresas planean cubrir"},
-  ];
   return <DashboardFrame>
     <section className="page-heading mb-6 flex flex-wrap items-end justify-between gap-4">
       <div><div className="eyebrow">Catch Consulting · People Intelligence</div><h1 className="mt-2 text-3xl font-black tracking-tight text-[#0b2140] md:text-4xl">Panorama de personal</h1><p className="mt-2 text-sm leading-6 text-slate-500">Personal, contrataciones y puestos por cubrir en el bimestre seleccionado.</p></div>
       <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-600"><span className="filter-chip"><CalendarDays size={14}/>{period}</span><span className="filter-chip"><Building2 size={14}/>{companyLabel}</span></div>
     </section>
     <div className="section-heading"><span>01</span><h2>Indicadores del bimestre</h2></div>
-    <section className="overview-metrics" aria-label="Indicadores del bimestre">
-      {cards.map(c=>{const change=analyzeSignal(c.metric,period,company);const ready=change.n>=(isMarket?5:1);return <Link key={c.label} href={c.href} className="overview-metric group">
-        <div className="flex items-center justify-between gap-2"><span className="text-sm font-semibold text-slate-600">{c.label}</span><c.Icon size={18} className="text-cyan-800"/></div>
-        <div className="overview-value">{c.value}</div>
-        <p className="mt-2 min-h-10 text-xs leading-5 text-slate-500">{c.note}</p>
-        <div className="mt-4 flex items-center justify-between gap-2 text-[11px] text-slate-600"><span>Cobertura de datos</span><strong>{c.n} / {coverage.total}</strong></div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div className="h-full bg-cyan-700" style={{width:`${coverage.total ? c.n/coverage.total*100 : 0}%`}}/></div>
-        <p className="mt-2 text-[11px] leading-4 text-slate-500">Empresas con {c.metric==="headcount"||c.metric==="vacancies"?"categorías completas":"respuesta"}</p>
-        <div className="metric-change">{ready&&change.matchedPct!==null?<><strong>{change.matchedPct>0?"+":""}{change.matchedPct.toFixed(1)}%</strong><span>frente al bimestre anterior<br/>mismas {change.n} empresas</span></>:<span>{change.previous?"Faltan datos para comparar el cambio":"Primer bimestre disponible"}</span>}<ArrowUpRight size={15} className="ml-auto shrink-0 text-cyan-800" aria-hidden="true"/></div>
-      </Link>})}
-    </section>
+    <OverviewKpis/>
     <div className="section-heading mt-8"><span>02</span><h2>Evolución comparable</h2></div>
     <ExecutiveBrief/>
     <div className="section-heading mt-8"><span>03</span><h2>Seguimiento y evidencia</h2></div>

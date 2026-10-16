@@ -1,3 +1,4 @@
+import { DataQuality, Sparkline, StatusChip } from "@/components/ui/data-visuals";
 import type { LucideIcon } from "lucide-react";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
@@ -8,6 +9,7 @@ export function KpiCard({
   changeLabel,
   icon: Icon,
   inverse = false,
+  trend,
 }: {
   label: string;
   value: string;
@@ -15,6 +17,7 @@ export function KpiCard({
   changeLabel: string;
   icon: LucideIcon;
   inverse?: boolean;
+  trend?: { values: (number|null)[]; labels: string[]; selected: number };
 }) {
   const hasChange = change != null && Number.isFinite(change);
   const isPositive = hasChange && (inverse ? change < 0 : change > 0);
@@ -22,8 +25,8 @@ export function KpiCard({
   const TrendIcon = change === 0 ? Minus : (change ?? 0) > 0 ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <article className="group relative overflow-hidden rounded-[22px] border border-slate-200/75 bg-white/90 p-5 shadow-[0_12px_34px_rgba(15,35,65,.045)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(15,35,65,.075)]">
-      <div className={`absolute inset-x-0 top-0 h-0.5 ${isNeutral ? "bg-slate-200" : isPositive ? "bg-gradient-to-r from-emerald-400 to-cyan-400" : "bg-gradient-to-r from-amber-400 to-rose-400"}`} />
+    <article className="kpi-editorial">
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="metric-label">{label}</div>
@@ -33,11 +36,13 @@ export function KpiCard({
           <Icon size={17} strokeWidth={1.8} />
         </div>
       </div>
+      <div className="mt-4"><StatusChip tone={isNeutral?"neutral":isPositive?"good":"attention"}>{value==="—"?"Información pendiente":"Referencia del grupo"}</StatusChip></div>
+      {trend && <><Sparkline values={trend.values} labels={trend.labels} selected={trend.selected} label={`${label}: referencias de cada bimestre`}/><span className="cohort-label">Cobertura variable entre periodos</span></>}
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-[11px]">
         {hasChange && <span className={`inline-flex items-center gap-1 font-black ${isNeutral ? "text-slate-500" : isPositive ? "text-emerald-700" : "text-rose-700"}`}>
           <TrendIcon size={12} /> {(change ?? 0) > 0 ? "+" : ""}{change}%
         </span>}
-        <span className="text-right font-semibold text-slate-600">{changeLabel}</span>
+        <DataQuality different={!!trend}>{changeLabel}{trend && <p>La tendencia aplica los filtros de tamaño y relación laboral en cada bimestre; las empresas que cumplen pueden cambiar. No representa la evolución de un grupo fijo.</p>}</DataQuality>
       </div>
     </article>
   );

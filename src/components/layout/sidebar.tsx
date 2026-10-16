@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { navigation } from "@/lib/navigation";
 import { normalizePathname } from "@/lib/route-path";
@@ -21,12 +21,16 @@ function CatchMark() {
 
 export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = normalizePathname(usePathname());
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    setCollapsed(Object.fromEntries(navigation.map(group => [group.label, !group.items.some(item => item.href === pathname)])));
+  }, [pathname]);
   const [query, setQuery] = useState("");
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const groups = navigation.map(group => ({...group, items: group.items.filter(item => normalize(item.label).includes(normalize(query.trim())))})).filter(group => group.items.length);
 
   return (
-    <aside aria-label="Navegación principal" className={mobile ? "flex h-full w-full flex-col bg-[#061529] text-white" : "hidden h-screen w-[278px] shrink-0 border-r border-white/10 bg-[#061529] text-white lg:sticky lg:top-0 lg:flex lg:flex-col"}>
+    <aside aria-label="Navegación principal" className={mobile ? "flex h-full w-full flex-col bg-[#061529] text-white" : "hidden h-screen w-[254px] shrink-0 border-r border-white/10 bg-[#061529] text-white lg:sticky lg:top-0 lg:flex lg:flex-col"}>
       <div className="relative border-b border-white/10 px-5 py-5">
         <div className="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="relative flex items-center gap-3">
@@ -51,14 +55,15 @@ export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNa
       <div className="mx-4 mt-3 flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2">
         <Search size={15} className="shrink-0 text-slate-400" aria-hidden="true" />
         <input type="search" aria-label="Buscar sección" placeholder="Buscar sección…" value={query} onChange={event=>setQuery(event.target.value)} className="min-w-0 w-full bg-transparent text-sm text-white placeholder:text-slate-400" />
+        {!query && <kbd className="text-[10px] text-slate-300" aria-hidden="true">⌘K</kbd>}
         {query && <button type="button" aria-label="Limpiar búsqueda" onClick={()=>setQuery("")} className="rounded p-1 text-slate-300"><X size={14}/></button>}
       </div>
       <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:thin]">
         {groups.length === 0 && <p role="status" className="px-3 text-sm text-slate-300">No hay secciones con ese nombre.</p>}
         {groups.map((group) => (
           <div key={group.label} className="mb-4">
-            <div className="mb-1.5 px-3 text-[10px] font-extrabold uppercase tracking-[.14em] text-slate-400">{group.label}</div>
-            <div className="space-y-0.5">
+            <button type="button" className="nav-group-toggle" aria-expanded={!!query || !collapsed[group.label]} aria-controls={`${mobile?"mobile":"desktop"}-${group.label.replaceAll(" ","-")}`} onClick={()=>setCollapsed(state=>({...state,[group.label]:!state[group.label]}))}><span>{group.label}</span><ChevronDown size={14}/></button>
+            <div id={`${mobile?"mobile":"desktop"}-${group.label.replaceAll(" ","-")}`} hidden={!query && !!collapsed[group.label]} className="space-y-0.5">
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const active = item.href ? pathname === item.href : false;
@@ -71,7 +76,7 @@ export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNa
                 return (
                   <Link key={item.label} href={item.href ?? "#"} onClick={onNavigate} aria-current={active ? "page" : undefined} className={className}>
                     {active && <span className="absolute left-0 h-5 w-1 rounded-full bg-cyan-600" />}
-                    <Icon size={16} strokeWidth={active ? 2.4 : 1.8} className={active ? "text-cyan-900" : "text-slate-500 group-hover:text-cyan-300"} />
+                    <Icon size={16} strokeWidth={active ? 2.4 : 1.8} className={active ? "text-cyan-900" : "text-slate-400 group-hover:text-cyan-300"} />
                     <span className="flex-1">{item.label}</span>
                   </Link>
                 );
@@ -81,7 +86,7 @@ export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNa
         ))}
       </nav>
 
-      <div className="border-t border-white/10 px-5 py-3 text-[10px] leading-4 text-slate-500">
+      <div className="border-t border-white/10 px-5 py-3 text-[10px] leading-4 text-slate-400">
         Catch Consulting · Información bimestral de RH
       </div>
     </aside>

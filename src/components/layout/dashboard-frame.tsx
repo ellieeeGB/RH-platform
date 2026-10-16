@@ -1,9 +1,10 @@
 "use client";
 import { normalizePathname } from "@/lib/route-path";
 
-import { useEffect, useRef } from "react";
+import { Children, useEffect, useRef } from "react";
 import { Building2, CalendarDays, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { PageSummary } from "@/components/analysis/page-summary";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { useFilters } from "@/components/filters/filter-context";
@@ -12,10 +13,21 @@ import { PERIODS } from "@/lib/company-panel";
 const ACTIVE_FILTER_ROUTES = new Set(["/copilot", "/signals", "/data-quality", "/benchmark","/contexto", "/salarios", "/indicadores", "/retencion", "/workforce-planning", "/beneficios", "/talent-acquisition", "/relaciones-laborales", "/labor-risk", "/tabulador"]);
 
 export function DashboardFrame({ children }: { children: React.ReactNode }) {
+  const sections = Children.toArray(children);
   const menu = useRef<HTMLDialogElement>(null);
   const pathname = normalizePathname(usePathname());
   const { month, monthLabel, period } = useFilters();
   useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        const mobile = window.matchMedia?.("(max-width: 1023px)").matches;
+        if (mobile) menu.current?.showModal();
+        const input = document.querySelector<HTMLInputElement>(mobile ? "#mobile-navigation input[type=search]" : "aside:not(dialog aside) input[type=search]");
+        input?.focus();
+      }
+    };
+    window.addEventListener("keydown", shortcut);
     let closed: HTMLDetailsElement[] = [];
     const expandForPrint = () => {
       closed = Array.from(document.querySelectorAll<HTMLDetailsElement>("main details:not([open])"));
@@ -25,6 +37,7 @@ export function DashboardFrame({ children }: { children: React.ReactNode }) {
     window.addEventListener("beforeprint", expandForPrint);
     window.addEventListener("afterprint", restoreAfterPrint);
     return () => {
+      window.removeEventListener("keydown", shortcut);
       window.removeEventListener("beforeprint", expandForPrint);
       window.removeEventListener("afterprint", restoreAfterPrint);
     };
@@ -36,7 +49,7 @@ export function DashboardFrame({ children }: { children: React.ReactNode }) {
       <dialog ref={menu} id="mobile-navigation" aria-label="Navegación" className="mobile-navigation" onClick={e=>{if(e.target===e.currentTarget)menu.current?.close();}}><div className="relative h-full"><button type="button" aria-label="Cerrar navegación" autoFocus onClick={()=>menu.current?.close()} className="absolute right-2 top-2 z-10 rounded-lg bg-slate-800 p-2 text-white"><X size={18}/></button><Sidebar mobile onNavigate={()=>menu.current?.close()}/></div></dialog>
       <div className="relative min-w-0 flex-1 overflow-clip">
         <Topbar onOpenMenu={()=>menu.current?.showModal()} />
-        <main id="main-content" tabIndex={-1} className="relative mx-auto max-w-[1540px] p-5 md:p-7 xl:p-8">{pathname === "/retencion" && month!=="all" && <p className="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-xs leading-5 text-cyan-950">Consulta de bajas: <strong>{monthLabel}</strong>. El resto de los indicadores corresponde al bimestre {period}. El desglose mensual solo se muestra cuando está confirmado en la fuente.</p>}{children}</main>
+        <main id="main-content" tabIndex={-1} className="relative mx-auto max-w-[1540px] p-5 md:p-7 xl:p-8">{pathname === "/retencion" && month!=="all" && <p className="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-xs leading-5 text-cyan-950">Consulta de bajas: <strong>{monthLabel}</strong>. El resto de los indicadores corresponde al bimestre {period}. El desglose mensual solo se muestra cuando está confirmado en la fuente.</p>}{pathname === "/comparar" ? <>{children}</> : <>{sections[0]}<PageSummary/>{sections.slice(1)}</>}</main>
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ function TalentMap({points, selected, salaryMedian, turnoverMedian, onSelect}: {
     <text x={left} y="16" fill="#475569" fontSize="11">Salidas por cada 100 empleados al cierre</text>
     <text x={left+width/2} y="369" textAnchor="middle" fill="#475569" fontSize="12">Salario diario de ingreso · MXN</text>
     {[...points].sort((a,b) => Number(a.company===selected)-Number(b.company===selected)).map(p => <g key={p.company} role="button" tabIndex={0} aria-pressed={p.company===selected} aria-label={`${p.company}: ${money(p.salary)} diarios, ${fmt(p.turnover)}% bajas, ${fmt(p.headcount,0)} personas${p.review?", plantilla por confirmar":""}`} onClick={()=>onSelect(p.company)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();onSelect(p.company);}}} className="cursor-pointer focus:outline-none">
-      <title>{p.company} · {money(p.salary)}/día · {fmt(p.turnover)}% bajas{p.review?" · confirmar plantilla":""}</title>
+      <title>{`${p.company} · ${money(p.salary)}/día · ${fmt(p.turnover)}% bajas${p.review?" · confirmar plantilla":""}`}</title>
       <circle cx={x(p.salary)} cy={y(p.turnover)} r={Math.max(5,Math.sqrt(p.headcount)*.28)} fill={p.company===selected?"#0b2140":p.review?"#f59e0b":"#0891b2"} fillOpacity={p.company===selected?.95:.5} stroke={p.company===selected?"#22d3ee":p.review?"#b45309":"#fff"} strokeWidth={p.company===selected?3:1.5} />
       {p.company===selected && <text x={x(p.salary)} y={y(p.turnover)-Math.max(5,Math.sqrt(p.headcount)*.28)-9} textAnchor="middle" fontWeight="700" fill="#0b2140" fontSize="11">{p.company.replace("COMPAÑIA ","C")}</text>}
     </g>)}

@@ -38,3 +38,20 @@ La arquitectura ya no presenta PostgreSQL, un backend Python, RBAC o IA generati
 - `npm run verify` reúne verificación de estructura, datos, tipos, pruebas y exportación estática.
 
 La comprobación estructural no detecta cada export sin consumidor ni evalúa la apariencia visual; esas revisiones siguen requiriendo criterio humano. Esta tarea no modifica las cifras, el contrato de extracción ni la audiencia del sitio alojado.
+
+## Nombres de ramas · actualización visual
+
+Las ramas de funcionalidad conservan trabajo y trazabilidad de PR anteriores; tener varias no duplica la aplicación desplegada. Las referencias permanentes son `develop` y `main`. Tras integrar y verificar una rama temporal puede retirarse su referencia conservando el historial del merge.
+
+El renombrado de las seis ramas remotas con el prefijo anterior está preparado en [rename-legacy-branches.mjs](../scripts/rename-legacy-branches.mjs). La herramienta conectada no expone renombrados y el navegador no tiene una sesión autenticada: **el renombrado remoto está pendiente**. No se crean ramas duplicadas para simularlo. Los nombres locales de trabajo sí se actualizaron a `feat/…` y `chore/…`.
+
+Para revisar y ejecutar desde una computadora con GitHub CLI:
+
+```bash
+node scripts/rename-legacy-branches.mjs
+gh auth login
+node scripts/rename-legacy-branches.mjs --apply
+git fetch origin --prune
+```
+
+El primer comando solo muestra el plan. La ejecución usa el renombrado nativo de GitHub, comprueba que el commit se conserve y se detiene ante nombres ocupados o ramas modificadas. No elimina historial ni cambia permisos. GitHub CLI se instala y autentica aparte; no es una dependencia de la plataforma.
