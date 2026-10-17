@@ -7,7 +7,7 @@ import { MarketBullet, Sparkline, PeriodSlope } from "../src/components/ui/data-
 import { buildComparison } from "../src/lib/selection-comparison";
 import { singleSelection } from "../src/lib/comparison-selection";
 import { PERIODS } from "../src/lib/company-panel";
-import { movementSentence, movementTone } from "../src/lib/visual-reading";
+import { movementSentence, movementTone, comparisonTone, comparisonMovement } from "../src/lib/visual-reading";
 
 Object.assign(globalThis, { React });
 
@@ -63,4 +63,18 @@ test("period slope preserves zero, labels and a proportional zero-based scale", 
   assert.ok(points[1]>points[0],"A smaller value appears lower on the same scale");
   const tiny=[...slope(100,99.9).matchAll(/<circle[^>]+cy="([^"]+)"/g)].map(match=>Number(match[1]));
   assert.ok(Math.abs(tiny[1]-tiny[0])<1,"A tiny change cannot occupy the full chart height");
+});
+
+
+test("comparison language preserves rate units, direction, tiny changes and missing bases", () => {
+  assert.equal(comparisonMovement("turnover",-2.8),"2.8 salidas menos por cada 100 empleados.");
+  assert.equal(comparisonMovement("absenceRate",1.5),"1.5 ausencias más por cada 100 empleados.");
+  assert.equal(comparisonMovement("timeToFill",-5),"5 días menos para cubrir un puesto.");
+  assert.match(comparisonMovement("turnover",.001),/Menos de 0.01.*más/);
+  assert.match(comparisonMovement("turnover",null),/Faltan datos/);
+  assert.match(comparisonMovement("turnover",0),/Sin cambio/);
+  assert.equal(comparisonTone("turnover",-1),"good");
+  assert.equal(comparisonTone("vacancyRate",1),"attention");
+  assert.equal(comparisonTone("timeToFill",1),"alert");
+  for(const metric of ["headcount","salary","hires"] as const) assert.equal(comparisonTone(metric,5),"neutral");
 });

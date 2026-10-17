@@ -19,7 +19,7 @@ La información y las rutas existentes se conservan. Los cambios afectan present
 | Newsreader variable | Titulares editoriales y hallazgos; archivo local, `next/font/local`. |
 | DM Sans variable | Controles, tablas y datos; cifras tabulares, archivo local. |
 
-El Inicio usa una tarjeta de salidas que ocupa tres filas en escritorio y tres indicadores secundarios a su derecha; en tablet pasa a dos columnas y en móvil a una. El resumen ejecutivo abre la lectura sobre un bloque jade suave. El lienzo marfil `#f7f5ef` y la navegación clara reducen el peso del navy. Los marcadores de mercado llevan etiquetas directas y formas distintas. Candidatos y vacantes usan proporciones con cantidades visibles; el ancho se limita a la escala y avisa si se supera.
+El Inicio usa una portada asimétrica: salidas ocupa dos columnas; personal, contrataciones y vacantes forman superficies de apoyo en azul suave, jade y arena. En tablet pasa a dos columnas y en móvil a una. El resumen ejecutivo se integra después de los indicadores como una franja petróleo, sin desplazar el dato principal hacia abajo. El lienzo `#dfe7e1` y la navegación clara separan el contexto de las superficies de datos. Los marcadores de mercado llevan etiquetas directas y formas distintas. Candidatos y vacantes usan proporciones con cantidades visibles; el ancho se limita a la escala y avisa si se supera.
 
 ## Integridad de la lectura
 
@@ -57,3 +57,16 @@ La pendiente del hallazgo representa solamente el primer y último periodo del g
 Los indicadores se eligen mediante botones con `aria-pressed`; compañías y periodos usan chips con controles nativos de selección múltiple o única. Se mantienen búsqueda, «Solo esta», selección total, cancelación, validación, persistencia y descarga CSV. Los meses sin desglose siguen deshabilitados.
 
 Efectos: trama diagonal casi imperceptible en la tarjeta principal, superficies cálidas con degradado suave y transiciones cortas en los controles. Evitar textos menores de 12 px, mayúsculas en frases largas, pesos extremos, color sin explicación y escalas que exageren variaciones.
+
+## Narrativa visual y exploración del periodo
+
+La composición vigente de Panorama y Comparar se concentra en [storytelling.css](../src/app/storytelling.css). La base compartida permanece en `globals.css`; se retiraron las reglas de la antigua cuadrícula de Inicio. El color de las superficies identifica bloques de información, mientras que los estados favorable, atención y alerta siguen usando texto e icono.
+
+- **Panorama:** dato del corte, cambio emparejado y tendencia histórica se identifican por separado. La lectura del cambio incluye ambos valores y el número de empresas. El gráfico principal permite tocar o enfocar un bimestre para consultar el valor exacto del grupo histórico; esa inspección no cambia los filtros de la página.
+- **Comparar:** la síntesis responde al indicador activo. Las diferencias de tasas se expresan como casos más o menos por cada 100 empleados. La diferencia numérica en puntos porcentuales permanece en el resumen y en la tabla. Personal, contratación y salario mantienen una interpretación neutral.
+- **Recorrido:** la gráfica muestra los valores directamente cuando hay una sola serie. Los controles de periodo permiten inspeccionar las cifras de cada compañía o del conjunto comparable. El sombreado mantiene huecos en datos faltantes; no interpola ni convierte faltantes en cero. El cambio del lector se calcula contra el primer corte elegido y se identifica explícitamente.
+- **Lectura móvil:** solo el lienzo de la gráfica y la tabla se desplazan horizontalmente; los controles y la lectura de cifras permanecen en el ancho disponible.
+
+Una grabación mostró un icono de alerta sobredimensionado: el selector genérico de SVG dentro de la pendiente también alcanzaba el icono del estado. El gráfico ahora tiene la clase `slope-plot` y los iconos de estado conservan dimensiones explícitas de 14 px. La comprobación DOM usa los estilos compilados para evitar que se repita.
+
+La tipografía editorial queda en peso 400 para evitar que utilidades generales de negrita vuelvan a engrosar los titulares. Las fechas pequeñas del gráfico tienen controles equivalentes con etiquetas completas y valores legibles fuera del SVG.

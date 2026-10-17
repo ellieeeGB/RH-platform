@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Check, Info, Minus, TriangleAlert } from "lucide-react";
 
 export type Tone = "good" | "attention" | "alert" | "neutral";
 export function StatusChip({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   const Icon = tone === "good" ? Check : tone === "alert" ? TriangleAlert : tone === "attention" ? Info : Minus;
-  return <span className={`status-chip status-${tone}`}><Icon size={13} aria-hidden="true"/>{children}</span>;
+  return <span className={`status-chip status-${tone}`}><Icon size={14} className="status-icon" aria-hidden="true"/>{children}</span>;
 }
 
 export function DataQuality({ children, different = false }: { children: React.ReactNode; different?: boolean }) {
@@ -77,7 +77,7 @@ export function PeriodSlope({ before, after, firstLabel, lastLabel, unit, tone }
   const label = Math.abs(delta) < 1e-9 ? "Sin cambio entre periodos" : tone === "good" ? "Mejora entre periodos" : tone === "alert" ? "Requiere atención" : tone === "attention" ? "Priorizar cobertura" : "Contrastar con el plan";
   return <figure className="slope-chart">
     <figcaption className="slope-unit">{unit}</figcaption>
-    <svg viewBox="0 0 360 215" role="img" aria-label={`${firstLabel}: ${format(before)}; ${lastLabel}: ${format(after)} ${unit}. ${label}. Escala desde cero.`}>
+    <svg className="slope-plot" viewBox="0 0 360 215" role="img" aria-label={`${firstLabel}: ${format(before)}; ${lastLabel}: ${format(after)} ${unit}. ${label}. Escala desde cero.`}>
       <title>{`${format(before)} → ${format(after)} ${unit}`}</title>
       <text x="18" y="35" className="slope-value" fill="#526773">{format(before)}</text>
       <text x="342" y="35" textAnchor="end" className="slope-value" fill={color}>{format(after)}</text>
@@ -94,4 +94,17 @@ export function PeriodSlope({ before, after, firstLabel, lastLabel, unit, tone }
     <StatusChip tone={tone}>{label}</StatusChip>
     <p className="slope-caption">Mismas empresas · escala desde cero. Se muestran los extremos seleccionados.</p>
   </figure>;
+}
+
+
+/** Exact values on focus/tap; missing periods stay missing. */
+export function TrendLens({ values, labels, selected, label }: { values: (number | null)[]; labels: string[]; selected: number; label: string }) {
+  const [inspected, setInspected] = useState<number | null>(null);
+  const index = inspected !== null && inspected < values.length ? inspected : Math.max(0, selected);
+  const value = values[index];
+  return <div className="trend-lens">
+    <div className="trend-readout" aria-live="polite"><span>{labels[index]}</span><strong>{value == null ? "Sin dato" : value.toLocaleString("es-MX", { maximumFractionDigits: 1 })}</strong><span>{label}</span></div>
+    <Sparkline values={values} labels={labels} selected={index} label={label}/>
+    <div className="trend-stops" role="group" aria-label="Explorar tendencia por bimestre">{labels.map((period, i)=><button key={period} type="button" aria-label={`${period}: ${values[i]===null?"sin dato":values[i]?.toLocaleString("es-MX")}`} aria-pressed={index===i} onClick={()=>setInspected(i)} onFocus={()=>setInspected(i)}><span>{period.slice(0,3)}</span><small>{period.slice(-2)}</small></button>)}</div>
+  </div>;
 }
