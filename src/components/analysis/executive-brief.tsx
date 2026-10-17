@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, MessageSquareText } from "lucide-react";
+import { comparisonTone } from "@/lib/visual-reading";
 import { DataQuality, PeriodSlope } from "@/components/ui/data-visuals";
 import { useFilters } from "@/components/filters/filter-context";
 import { getPreviousPeriod } from "@/lib/company-panel";
@@ -12,8 +13,7 @@ import { executiveReading, EXECUTIVE_METRICS } from "@/lib/executive-reading";
 export function DecisionReading({ result, minimum = 1 }: { result: ReturnType<typeof buildComparison>; minimum?: number }) {
   const reading = executiveReading(result, minimum);
   const endpoints = reading.canCompare ? [result.points[0], result.points.at(-1)!] : [];
-  const directional = ["turnover", "exits", "monthlyExits", "vacancies", "vacancyRate", "absenceRate", "timeToFill"].includes(result.metric);
-  const tone = !reading.canCompare || !directional || Math.abs(result.delta ?? 0) < 1e-9 ? "neutral" : result.delta! < 0 ? "good" : ["vacancies", "vacancyRate"].includes(result.metric) ? "attention" : "alert";
+  const tone = comparisonTone(result.metric, reading.canCompare ? result.delta : null);
   return <section className="executive-reading my-5 p-5 md:p-6" aria-label="Hallazgo del periodo">
     <div className={endpoints.length ? "reading-layout" : ""}>
     <div>

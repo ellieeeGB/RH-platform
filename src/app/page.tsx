@@ -7,6 +7,7 @@ import { ExecutiveBrief } from "@/components/analysis/executive-brief";
 import { AgendaPreview } from "@/components/analysis/agenda-preview";
 import { useFilters } from "@/components/filters/filter-context";
 import { deriveScopeMetrics, getScopeSnapshot, scopeCoverage } from "@/lib/company-panel";
+import { PageSummary } from "@/components/analysis/page-summary";
 import { OverviewKpis } from "@/components/analysis/overview-kpis";
 import { qualityReport } from "@/lib/data-quality";
 
@@ -19,12 +20,12 @@ export default function Home() {
   const coverage = scopeCoverage(company,period), quality = qualityReport(period,company);
   const net = metrics.netMovement;
   return <DashboardFrame>
-    <section className="page-heading mb-6 flex flex-wrap items-end justify-between gap-4">
-      <div><div className="eyebrow">Catch Consulting · People Intelligence</div><h1 className="mt-2 text-3xl font-black tracking-tight text-[#0b2140] md:text-4xl">Panorama de personal</h1><p className="mt-2 text-sm leading-6 text-slate-500">Personal, contrataciones y puestos por cubrir en el bimestre seleccionado.</p></div>
+    <section className="page-heading panorama-heading mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div><div className="eyebrow">Informe de talento · Catch Consulting</div><h1 className="mt-2 text-3xl font-black tracking-tight text-[#0b2140] md:text-4xl">Panorama de personal</h1><p className="mt-2 text-sm leading-6 text-slate-500">Personal, contrataciones y puestos por cubrir en el bimestre seleccionado.</p></div>
       <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-600"><span className="filter-chip"><CalendarDays size={14}/>{period}</span><span className="filter-chip"><Building2 size={14}/>{companyLabel}</span></div>
     </section>
-    <div className="section-heading"><span>01</span><h2>Indicadores del bimestre</h2></div>
     <OverviewKpis/>
+    <PageSummary/>
     <div className="section-heading mt-8"><span>02</span><h2>Evolución comparable</h2></div>
     <ExecutiveBrief/>
     <div className="section-heading mt-8"><span>03</span><h2>Seguimiento y evidencia</h2></div>
