@@ -2,6 +2,10 @@
 
 Plataforma de consultoría RH en español. Convierte la encuesta bimestral de empresas en datos trazables, un panel interactivo y un reporte imprimible. Este es el repositorio **rh**; no modifica el proyecto anterior RH-platform.
 
+## Ver el rediseño
+
+Abre [la vista previa interactiva](documentacion/vista_previa.html) para explorar el diseño sin instalar. Usa **datos ficticios**; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
+
 ## Empezar en tres pasos
 
 Necesitas Python 3.12, acceso a Internet para instalar dependencias la primera vez y una terminal.
@@ -35,8 +39,9 @@ Eso activa un estudio **ficticio** con 8 empresas y 7 bimestres, generado con se
 - XLSX o CSV de dos encabezados. Mapeo por texto de pregunta + subopción, diccionario JSON editable, columnas nuevas conservadas, columnas sin encabezado reportadas sin asignaciones inventadas.
 - Modelo largo con valor, estado de limpieza, unidad y coordenada de origen. Contactos descartados antes de crear registros.
 - Rotación y plantilla, altas/bajas, antigüedad y edad de las bajas, fuentes, vacantes, tiempos, capacitación, ausentismo, negociación, salarios y prestaciones. Todas las preguntas importadas son explorables, incluidas las que todavía no tienen un nombre corto curado.
+- Panorama con titular calculado, balance visual y prioridades enlazadas; agenda de consultoría, mapa empresa–bimestre y exploradores con barras y categorías.
 - Filtros de empresa múltiple y bimestres; todos los periodos; variación anterior/interanual con empresas pareadas; vista guardada localmente, tema oscuro, historia, consultas por intención y escenario aritmético.
-- Calidad visible, historial de atípicos, exclusión/corrección auditada y control de cambios concurrentes.
+- Calidad visible, historial gráfico de atípicos, sensibilidad con/sin una empresa, exclusión/corrección auditada y control de cambios concurrentes.
 - Exportación CSV neutralizada y reporte HTML con portada, índice, secciones y metodología. Abre Reporte y usa Imprimir → Guardar como PDF.
 
 ## Qué no se afirma
@@ -45,7 +50,7 @@ La base contiene empresas y bimestres, **no expedientes de empleados**. No permi
 
 El escenario de seis meses es persistencia del último dato, con error retrospectivo de un paso. No tiene un intervalo predictivo calibrado. El IC de benchmark es un bootstrap descriptivo de empresas, no una garantía de representatividad de toda la industria.
 
-Esta entrega **no está desplegada en Internet**. Se probó mediante API, pruebas de cálculo y compilación; la revisión visual de 375/768/1024/1440 px queda pendiente porque no hubo navegador de QA disponible. No se incluyen capturas fabricadas. Antes de exponerla a clientes, sigue los pendientes de [SEGURIDAD.md](SEGURIDAD.md).
+Esta entrega **no está desplegada en Internet**. Se probó mediante API, cálculos, comprobación de sintaxis e interacciones en DOM; la revisión visual de 375/768/1024/1440 px queda pendiente porque no hubo navegador de QA disponible. No se incluyen capturas fabricadas. Antes de exponerla a clientes, sigue los pendientes de [SEGURIDAD.md](SEGURIDAD.md).
 
 ## Organización
 
@@ -58,7 +63,7 @@ Esta entrega **no está desplegada en Internet**. Se probó mediante API, prueba
 | `aplicacion/servicio.py` | Transacciones y aislamiento de consultas |
 | `aplicacion/seguridad.py` | Contraseñas, sesiones, CSRF y límites |
 | `aplicacion/main.py` | API y entrega de interfaz |
-| `web/` | HTML, CSS y JavaScript sin CDN ni compilador |
+| `web/` | Interfaz, reglas descriptivas y adaptador de vista ficticia; sin CDN ni compilador |
 | `configuracion/diccionario_columnas.json` | Diccionario editable de preguntas y subopciones |
 | `datos_demo/` | Datos ficticios, separados de los reales |
 | `pruebas/` | Pruebas matemáticas, importación, permisos y auditoría |
@@ -70,6 +75,7 @@ El stack conserva FastAPI + Pydantic + SQLAlchemy + SQLite y usa JavaScript modu
 ## Comandos útiles
 
 ```bash
+npm ci  # Solo para pruebas: requiere Node 24
 make test
 .venv/bin/python -m aplicacion.cli usuario analista --rol analista
 .venv/bin/python -m aplicacion.cli usuario cliente01 --rol cliente --empresa 'COMPAÑIA 1'

@@ -1,0 +1,11 @@
+{
+  "name": "catch-rh-verificacion",
+  "private": true,
+  "description": "Pruebas de cálculo y DOM; la interfaz funciona sin compilador ni dependencias de navegador.",
+  "scripts": {
+    "test": "node --test pruebas/lectura.test.cjs pruebas/interfaz.test.mjs"
+  },
+  "devDependencies": {
+    "happy-dom": "21.0.3"
+  }
+}

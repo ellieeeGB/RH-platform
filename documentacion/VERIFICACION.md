@@ -23,3 +23,19 @@ También se verificaron mediante TestClient los filtros, el panel, la calidad, e
 - Aprobar una prueba no resuelve las ambigüedades del cuestionario: deben revisarse con su propietario.
 
 Los siguientes pasos están en [SIGUIENTE_FASE.md](SIGUIENTE_FASE.md).
+
+## Rediseño narrativo
+
+La regresión de Python después del rediseño pasó: **56 pruebas correctas y una omitida** porque el archivo privado es opcional. La integración del Excel ya se había comprobado en la entrega inicial (57 correctas); este cambio no modifica el importador ni el backend.
+
+Se añadieron **15 pruebas JavaScript**, todas correctas: ocho de cálculos descriptivos y siete de interacciones en DOM. Comprueban las mismas empresas en la evolución, ceros/faltantes, sensibilidad sin mutación, navegación, filtros, matriz temporal, trayectorias, explorador, paginación, presentación, agenda y escenario.
+
+```bash
+npm ci
+.venv/bin/python scripts/generar_vista.py
+npm test
+```
+
+Happy DOM evalúa únicamente el código local de la interfaz y la vista ficticia. Su advertencia sobre evaluación JavaScript no implica que se hayan abierto páginas externas. No se utiliza para renderizar capturas ni se reporta como revisión visual de navegador.
+
+La vista autónoma es un artefacto reproducible con datos ficticios. La revisión visual real en las cuatro resoluciones sigue pendiente.
