@@ -1,4 +1,4 @@
-# Catch · People Intelligence
+#  People Intelligence
 
 Plataforma de consultoría RH en español. Convierte la encuesta bimestral de empresas en datos trazables, un panel interactivo y un reporte imprimible. Este es el repositorio **rh**; no modifica el proyecto anterior RH-platform.
 
