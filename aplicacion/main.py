@@ -1,24 +1,21 @@
-import csv,hashlib,html,io,json,os,secrets,time
-from pathlib import Path
-from contextlib import asynccontextmanager
+import csv,html,io,json,os,secrets,time
 from threading import Lock
 from typing import Literal
 from fastapi import FastAPI,Request,Response,HTTPException,UploadFile,File,Form,Depends
 from fastapi.responses import FileResponse,HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel,Field,ConfigDict
+from pydantic import BaseModel,Field
 from sqlalchemy import select,update
 from .modelos import conectar,Usuario,Sesion,Hecho,Importacion,Auditoria,como_dict
-from .importador import leer_archivo,cargar_diccionario,limpiar,RAIZ
+from .importador import leer_archivo,cargar_diccionario,limpiar,RAIZ,validar_ajustes
 from .metricas import serie,resumen_empresas,validar,hallazgos,desglose,pronostico
 from .servicio import activa,consulta,persistir,auditar,seudonimo,benchmark
 from . import planes,catalogo
 from .planes import EntradaPlan
 from .seguridad import autenticar,iniciar_sesion,cookies,rol,limitar,hash_token,ph
 
-previews={};preview_lock=Lock()
-
 def crear_app(url=None):
+    previews={};preview_lock=Lock()
     for var in ['RH_SECRET','RH_HMAC_SECRET']:
         if len(os.environ.get(var,''))<32:raise RuntimeError(f'Configure {var} con al menos 32 caracteres aleatorios.')
     engine,Session=conectar(url)
@@ -148,9 +145,18 @@ def crear_app(url=None):
     def calidad(empresas:str='',periodos:str='',u=Depends(identity),db=Depends(db_dep)):
         fs=consulta(db,u,filtros_lista(empresas),filtros_lista(periodos));imp=activa(db)
         issues=validar(fs)
+        # El filtro temporal acota las incidencias, pero no borra la trayectoria del atípico.
+        if periodos and fs:
+            context=consulta(db,u,filtros_lista(empresas),metricas=['plantilla_operativa','plantilla_administrativa','bajas','contrataciones'])
+            visible={(f['empresa'],f['bimestre']) for f in fs}
+            issues=[x for x in issues if x['codigo']!='atipico_plantilla']
+            issues += [x for x in validar(context) if x['codigo']=='atipico_plantilla' and (x['empresa'],x['bimestre']) in visible]
         if imp:
             visible={(f['empresa'],f['bimestre']) for f in fs}
-            issues+= [x for x in imp.incidencias_fuente if (x.get('empresa'),x.get('bimestre')) in visible]
+            selected_periods=filtros_lista(periodos)
+            issues += [x for x in imp.incidencias_fuente if (x.get('empresa'),x.get('bimestre')) in visible or
+                       (u.rol!='cliente' and not x.get('empresa') and
+                        (not selected_periods or x.get('bimestre') in selected_periods))]
         if u.rol=='cliente':issues=[{**x,'empresa':seudonimo(x['empresa'])} if x.get('empresa') else x for x in issues]
         from collections import Counter
         issues.sort(key=lambda x:0 if x['codigo']=='atipico_plantilla' else 1)
@@ -194,14 +200,8 @@ def crear_app(url=None):
         overrides=cargar_diccionario()
         if diccionario:
             try:
-                edited=json.loads(diccionario)
-                if not isinstance(edited,dict) or len(edited)>3000:raise ValueError()
-                allowed={'metrica','dimension','unidad','grupo_100','categoria','accion'}
-                for key,value in edited.items():
-                    if not isinstance(value,dict):raise ValueError()
-                    overrides[key]={k:v for k,v in value.items() if k in allowed and isinstance(v,str) and len(v)<500}
-                    if overrides[key].get('accion') not in {None,'incluir','descartar'}:overrides[key]['accion']='descartar'
-            except (ValueError,TypeError):raise HTTPException(422,'Diccionario JSON inválido.')
+                overrides.update(validar_ajustes(json.loads(diccionario)))
+            except (ValueError,TypeError) as e:raise HTTPException(422,str(e) if isinstance(e,ValueError) and not isinstance(e,json.JSONDecodeError) else 'Diccionario JSON inválido.')
         try:b=leer_archivo(data,archivo.filename or '',overrides)
         except (ValueError,UnicodeError) as e:raise HTTPException(422,str(e))
         except Exception:raise HTTPException(422,'No fue posible leer el archivo. Revise formato y encabezados.')

@@ -104,7 +104,7 @@ def columnas(fila1, fila2, overrides=None):
     resultado, pregunta = [], ''
     overrides = overrides or {}
     for i, (a,b) in enumerate(zip(fila1, fila2)):
-        if a is None and b is None:
+        if not texto(a) and not texto(b):
             resultado.append({'columna': i+1, 'accion': 'sin_encabezado'})
             pregunta = ''
             continue
@@ -134,6 +134,8 @@ def limpiar(v, unidad, formato=''):
     if isinstance(v, (datetime,time,timedelta)):
         if unidad not in {'horas','hora_del_dia'}: return None, None, 'fecha_no_esperada'
         hours = v.total_seconds()/3600 if isinstance(v,timedelta) else v.hour+v.minute/60+v.second/3600
+        if unidad=='hora_del_dia' and not 0<=hours<24:return None,str(hours),'hora_fuera_rango'
+        if hours<0:return None,str(hours),'negativo'
         return hours, None, 'hora_convertida'
     raw = texto(v)
     n = canon(raw)
@@ -184,11 +186,13 @@ def leer_archivo(data: bytes, nombre: str, overrides=None):
             if sum(i.file_size for i in z.infolist())>100*1024*1024: raise ValueError('Excel descomprimido mayor a 100 MB.')
             if any('vbaProject' in i.filename or 'externalLinks/' in i.filename for i in z.infolist()): raise ValueError('No se aceptan macros ni vínculos externos.')
             w=openpyxl.load_workbook(io.BytesIO(data),read_only=True,data_only=False,keep_links=False)
-            if len(w.worksheets)>24: raise ValueError('Máximo 24 hojas.')
-            if sum((s.max_row or 0)*(s.max_column or 0) for s in w)>1_000_000: raise ValueError('Máximo un millón de celdas por archivo.')
-            for s in w:
-                if s.max_column>2000 or s.max_row>1000: raise ValueError('Máximo 2,000 columnas y 1,000 filas por hoja.')
-                sheets.append((s.title,list(s.iter_rows())))
+            try:
+                if len(w.worksheets)>24: raise ValueError('Máximo 24 hojas.')
+                if sum((s.max_row or 0)*(s.max_column or 0) for s in w)>1_000_000: raise ValueError('Máximo un millón de celdas por archivo.')
+                for s in w:
+                    if s.max_column>2000 or s.max_row>1000: raise ValueError('Máximo 2,000 columnas y 1,000 filas por hoja.')
+                    sheets.append((s.title,list(s.iter_rows())))
+            finally:w.close()
         except (zipfile.BadZipFile,KeyError): raise ValueError('El archivo no es un XLSX válido.')
     elif nombre.lower().endswith('.csv'):
         # Mismo formato ancho de dos encabezados; el nombre es el bimestre.
@@ -235,6 +239,7 @@ def leer_archivo(data: bytes, nombre: str, overrides=None):
                     'valor':val,'texto':txt,'estado':state,'clave':c['clave'],'unidad':'porcentaje' if c['unidad']=='proporcion' else c['unidad'],
                     'categoria':c['categoria'],'grupo_100':c['grupo_100'],'hoja':label,'fila':ri,'columna':c['columna'],
                     'excluido':False})
+        if not profile['empresas']:raise ValueError(f'{name}: no contiene empresas identificadas.')
         perfiles.append(profile)
     # No confundir composiciones en fracciones sin formato con puntos porcentuales.
     # El analista puede declarar unidad=proporcion en el diccionario y reimportar.
@@ -247,9 +252,44 @@ def leer_archivo(data: bytes, nombre: str, overrides=None):
             for f in group:
                 if f['valor'] is not None:
                     f['texto']=str(f['valor']);f['valor']=None;f['estado']='escala_porcentaje_ambigua'
+    if not facts:raise ValueError('El archivo no contiene métricas para importar.')
     fingerprint=data if nombre.lower().endswith('.xlsx') else data+Path(nombre).stem.upper().encode()
-    return {'huella':hashlib.sha256(fingerprint).hexdigest(),'hechos':facts,'incidencias':issues,'diccionario':dic,'perfil':perfiles}
+    fuente=hashlib.sha256(fingerprint).hexdigest()
+    # Mismo archivo + mismo mapeo = duplicado. Un mapeo corregido crea otra versión.
+    huella=hashlib.sha256(('mapeo-v2:'+fuente+firma_diccionario(dic)).encode()).hexdigest()
+    return {'huella':huella,'huella_fuente':fuente,'hechos':facts,'incidencias':issues,'diccionario':dic,'perfil':perfiles}
+
+CAMPOS_MAPEO={'metrica','dimension','unidad','grupo_100','categoria','accion'}
+UNIDADES={'texto','seleccion','numero','personas','eventos','porcentaje','proporcion','horas',
+          'hora_del_dia','dias','escala_0_10','mxn_anio','mxn_platillo','mxn_persona_mes'}
+
+def firma_diccionario(diccionario):
+    """Firma del mapeo efectivo; ignora posición y metadatos de presentación."""
+    normalized={key:{k:v for k,v in c.items() if k in CAMPOS_MAPEO} for key,c in diccionario.items()}
+    return json.dumps(normalized,sort_keys=True,ensure_ascii=False,separators=(',',':'))
+
+def validar_ajustes(edited):
+    """Acepta también el diccionario completo descargado, sin ignorar errores de tipo."""
+    if not isinstance(edited,dict) or len(edited)>3000:raise ValueError('Diccionario JSON inválido.')
+    result={}
+    limits={'metrica':100,'dimension':500,'unidad':40,'grupo_100':80,'categoria':40,'accion':40}
+    for key,value in edited.items():
+        if not isinstance(key,str) or not re.fullmatch(r'[a-f0-9]{20}',key) or not isinstance(value,dict):
+            raise ValueError('Cada entrada requiere una clave de columna y un objeto de mapeo.')
+        row={k:v for k,v in value.items() if k in CAMPOS_MAPEO}
+        for k,v in row.items():
+            if not isinstance(v,str) or len(v)>limits[k] or (k!='grupo_100' and not v.strip()):
+                raise ValueError(f'Campo {k} inválido en el diccionario.')
+        if 'unidad' in row and row['unidad'] not in UNIDADES:raise ValueError('Unidad no reconocida en el diccionario.')
+        if 'accion' in row and row['accion'] not in {'incluir','descartar','descartar_pii','identificador'}:
+            raise ValueError('Acción no reconocida en el diccionario.')
+        # La identificación y el descarte privado se vuelven a imponer por texto en columnas().
+        if row.get('accion') in {'descartar_pii','identificador'}:row['accion']='descartar'
+        result[key]=row
+    return result
 
 def cargar_diccionario():
     p=RAIZ/'configuracion/diccionario_columnas.json'
-    return json.loads(p.read_text()) if p.exists() else {}
+    data=json.loads(p.read_text()) if p.exists() else {}
+    validar_ajustes(data)
+    return data

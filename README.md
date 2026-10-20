@@ -8,7 +8,7 @@ Abre [la vista previa interactiva](documentacion/catch_rh_panorama_v3.html) para
 
 ## Empezar en tres pasos
 
-Necesitas Python 3.12, acceso a Internet para instalar dependencias la primera vez y una terminal.
+Necesitas Python 3.12 y una terminal de Linux, macOS o WSL en Windows. La instalación inicial de dependencias requiere Internet. Node 24 solo se necesita para desarrollar y ejecutar las pruebas de interfaz.
 
 ```bash
 git clone https://github.com/ellieeeGB/rh.git
@@ -72,7 +72,10 @@ Esta entrega **no está desplegada en Internet**. Se probó mediante API, cálcu
 | `web/` | Interfaz, reglas descriptivas y adaptador de vista ficticia; sin CDN ni compilador |
 | `configuracion/diccionario_columnas.json` | Diccionario editable de preguntas y subopciones |
 | `datos_demo/` | Datos ficticios, separados de los reales |
-| `pruebas/` | Pruebas matemáticas, importación, permisos y auditoría |
+| `pruebas/` | Pruebas matemáticas, pipeline XLSX/CSV, CLI, API, permisos, auditoría e interfaz |
+| `scripts/` | Demo ficticia, vista autónoma, reporte privado y verificación del repositorio |
+| `requirements.txt` / `requirements-dev.txt` | Dependencias de ejecución / herramientas de prueba |
+| `Makefile` / `.github/workflows/pruebas.yml` | Comandos de verificación iguales en local y CI |
 | `documentacion/` | Arquitectura, calidad, uso, pitch y siguientes fases |
 | `privado/` | Base, reportes reales y exportaciones; excluido de Git |
 
@@ -81,8 +84,9 @@ El stack conserva FastAPI + Pydantic + SQLAlchemy + SQLite y usa JavaScript modu
 ## Comandos útiles
 
 ```bash
+.venv/bin/pip install -r requirements-dev.txt
 npm ci  # Solo para pruebas: requiere Node 24
-make test
+make test  # Estructura, HTML sincronizado, sintaxis, Python e interfaz
 .venv/bin/python -m aplicacion.cli usuario analista --rol analista
 .venv/bin/python -m aplicacion.cli usuario cliente01 --rol cliente --empresa 'COMPAÑIA 1'
 .venv/bin/python -m aplicacion.cli perfilar '/ruta/BASE HISTORICA.xlsx'
@@ -91,7 +95,21 @@ make test
 
 `perfilar` genera `privado/perfil/REPORTE_CALIDAD.md`, incidencias JSON, modelo largo JSONL, perfil y diccionario. No subas esos archivos a un repositorio público. El comando `importar` es para el operador local y activa el archivo directamente; la interfaz ofrece la revisión previa.
 
+## Verificar el recorrido completo
+
+`make test` ejecuta las mismas comprobaciones que GitHub Actions. No lee el Excel privado salvo que lo indiques:
+
+```bash
+RH_TEST_EXCEL='/ruta/BASE HISTORICA.xlsx' make test
+```
+
+La integración real usa una **base temporal**: carga y revisa el archivo por API, confirma su activación, consulta panel/catálogo/calidad, exporta y prueba exclusión/restauración. No toca tu base de trabajo. Sin esa variable se omiten únicamente las dos pruebas que requieren el archivo privado.
+
+Después de modificar la interfaz o los datos ficticios ejecuta `make vista`; `make verificar` detecta si olvidaste actualizar el HTML. Las pruebas no regeneran la entrega silenciosamente.
+
 ## Documentos
+
+Empieza por el [índice de documentación](documentacion/README.md). El resultado de la revisión integral está en [Auditoría del pipeline y repositorio](documentacion/AUDITORIA_PIPELINE.md).
 
 - [Guía paso a paso](documentacion/GUIA_DE_USO.md)
 - [Fórmulas y límites](METRICAS.md)

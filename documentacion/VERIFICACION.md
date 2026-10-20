@@ -1,5 +1,7 @@
 # Verificación de la entrega
 
+**Revisión vigente: 20 de octubre de 2026.** Pasaron **87 pruebas Python y 22 JavaScript** con el Excel privado mediante `make test`, además de los controles de estructura, enlaces, configuración y HTML reproducible. La revisión anterior se conserva debajo como historial. Véase [AUDITORIA_PIPELINE.md](AUDITORIA_PIPELINE.md) para las correcciones, el alcance y la reproducción.
+
 Fecha: 18 de octubre de 2026. Entorno: Python 3.12, SQLite y Node para comprobar sintaxis JavaScript.
 
 ## Resultado

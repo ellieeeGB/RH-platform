@@ -1,5 +1,7 @@
 name: Pruebas del estudio
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   pruebas:
     runs-on: ubuntu-latest
@@ -8,11 +10,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements.txt
-      - run: python -m pytest pruebas -q
+      - run: pip install -r requirements-dev.txt
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: npm ci
-      - run: python scripts/generar_vista.py
-      - run: npm test
+      - run: make test PYTHON=python

@@ -1,6 +1,5 @@
 """Cálculos descriptivos. Cada total conserva su cobertura y sus componentes."""
 from collections import defaultdict, Counter
-import math
 import statistics
 import random
 
@@ -96,15 +95,17 @@ def validar(facts):
         if r['operativos'] is not None:byperiod[r['bimestre']].append(r);bycompany[r['empresa']].append(r)
     for p,rows in byperiod.items():
         vals=sorted(r['operativos'] for r in rows)
-        if len(vals)<5:continue
-        q1,_,q3=statistics.quantiles(vals,n=4,method='inclusive');upper=q3+3*(q3-q1)
+        upper=None
+        if len(vals)>=5:
+            q1,_,q3=statistics.quantiles(vals,n=4,method='inclusive');upper=q3+3*(q3-q1)
         for r in rows:
             others=[x['operativos'] for x in bycompany[r['empresa']] if x['bimestre']!=p]
             med=statistics.median(others) if others else None
             temporal=med is not None and med>0 and (r['operativos']>med*3 or r['operativos']<med/3)
-            if r['operativos']>upper or temporal:
+            if (upper is not None and r['operativos']>upper) or temporal:
                 f=next(x for x in grouped[(r['empresa'],p)] if x['metrica']=='plantilla_operativa')
-                add('atipico_plantilla',f"Operativos {r['operativos']:g}; mediana otros bimestres {med}; umbral IQR {upper:g}. Señal, no error confirmado.",r['empresa'],p,
+                threshold=f'{upper:g}' if upper is not None else 'no calculable con menos de 5 empresas'
+                add('atipico_plantilla',f"Operativos {r['operativos']:g}; mediana otros bimestres {med}; umbral IQR {threshold}. Señal, no error confirmado.",r['empresa'],p,
                     hecho_id=f.get('id'),columna=f['columna'],fila=f['fila'],metrica='plantilla_operativa',historial=[{'bimestre':x['bimestre'],'valor':x['operativos']} for x in bycompany[r['empresa']]])
     return issues
 
@@ -123,11 +124,11 @@ def hallazgos(points):
 def desglose(facts,metrica):
     groups=defaultdict(list)
     for f in facts:
-        if f['metrica']==metrica:groups[f['dimension']].append(f)
+        if f['metrica']==metrica:groups[(f['dimension'],f['unidad'])].append(f)
     result=[]
-    for d,fs in sorted(groups.items()):
+    for (d,unit),fs in sorted(groups.items()):
         vals=[numero(f) for f in fs if numero(f) is not None]
-        result.append({'dimension':d,'unidad':fs[0]['unidad'],'n_valores':len(vals),'n_empresas':len({f['empresa'] for f in fs if numero(f) is not None}),
+        result.append({'dimension':d,'unidad':unit,'n_valores':len(vals),'n_empresas':len({f['empresa'] for f in fs if numero(f) is not None}),
             'n_respuestas':sum(numero(f) is not None or bool(f.get('texto') and not f.get('excluido')) for f in fs),
             'n_empresas_respuestas':len({f['empresa'] for f in fs if numero(f) is not None or (f.get('texto') and not f.get('excluido'))}),
             'mediana':statistics.median(vals) if vals else None,'suma':sum(vals) if vals else None,

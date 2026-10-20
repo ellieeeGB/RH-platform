@@ -44,6 +44,7 @@ El generador solo lee `datos_demo/` y el diccionario. No consulta `.env`, SQLite
 Con Node 24 y el entorno Python instalado:
 
 ```bash
+.venv/bin/pip install -r requirements-dev.txt
 npm ci
 make test
 ```

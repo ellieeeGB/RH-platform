@@ -1,6 +1,6 @@
 """Empaqueta la interfaz real como vista autónoma con los CSV ficticios del repositorio."""
 from pathlib import Path
-import json, sys
+import argparse,json,sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from aplicacion.importador import leer_archivo,cargar_diccionario
 from aplicacion.metricas import validar
@@ -8,6 +8,9 @@ from aplicacion.catalogo import definiciones,TEMAS
 ROOT=Path(__file__).resolve().parents[1]
 
 def main():
+    parser=argparse.ArgumentParser(description='Generar o comprobar la vista HTML ficticia.')
+    parser.add_argument('--comprobar',action='store_true',help='Falla si el HTML guardado no coincide; no escribe archivos.')
+    args=parser.parse_args()
     hechos=[];diccionario={}
     for p in sorted((ROOT/'datos_demo').glob('*.csv')):
         b=leer_archivo(p.read_bytes(),p.name,cargar_diccionario())
@@ -28,7 +31,11 @@ def main():
     payload=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')
     scripts='\n'.join((ROOT/'web'/p).read_text() for p in ['lectura.js','demo.js','trabajo.js','app.js'])
     s=s.replace('</body>',f'<script>window.CATCH_DEMO={payload};\n{scripts}</script></body>')
-    out=ROOT/'documentacion/catch_rh_panorama_v3.html';out.write_text(s)
+    out=ROOT/'documentacion/catch_rh_panorama_v3.html'
+    if args.comprobar:
+        if not out.exists() or out.read_text()!=s:raise SystemExit('Vista desactualizada. Ejecuta make vista y guarda el HTML actualizado.')
+        print('Vista HTML sincronizada con el código y los datos ficticios.');return
+    out.write_text(s)
     print(f'{out.name}: {len(hechos)} registros ficticios; interfaz actual empaquetada.')
 
 if __name__=='__main__':main()

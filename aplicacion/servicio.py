@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select, update, insert
 from .modelos import Empresa, Periodo, Importacion, Hecho, Auditoria, como_dict
 from .metricas import resumen_empresas, numero, intervalo_mediana
+from .importador import firma_diccionario
 import hashlib,hmac,os,statistics
 
 def auditar(db, actor, accion, detalle):
@@ -11,6 +12,11 @@ def auditar(db, actor, accion, detalle):
 def persistir(db,b,actor):
     if db.scalar(select(Importacion).where(Importacion.huella==b['huella'])):
         raise ValueError('Este archivo ya fue importado. No se duplicaron registros.')
+    # Compatibilidad con importaciones anteriores, cuya huella solo cubría el archivo.
+    legacy=db.scalar(select(Importacion).where(Importacion.huella==b.get('huella_fuente','')))
+    if legacy and firma_diccionario(legacy.diccionario)==firma_diccionario(b['diccionario']):
+        raise ValueError('Este archivo y su mapeo ya fueron importados. No se duplicaron registros.')
+    if not b['hechos']:raise ValueError('No se puede activar un estudio sin métricas.')
     empresas=set(db.scalars(select(Empresa.codigo)));periodos=set(db.scalars(select(Periodo.codigo)))
     for e in {f['empresa'] for f in b['hechos']}-empresas:db.add(Empresa(codigo=e))
     for p in {f['bimestre'] for f in b['hechos']}-periodos:db.add(Periodo(codigo=p))

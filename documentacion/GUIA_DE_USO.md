@@ -74,6 +74,6 @@ Administrador crea cuentas en **Accesos**. Selecciona cliente y su empresa para 
 | Sin dato | La respuesta falta o no es válida para ese cálculo; no significa cero. |
 | Benchmark reservado | No hay al menos 5 empresas válidas comparables; no se puede ampliar el grupo para revelar identidades. |
 | Vista previa vencida | Volver a revisar el archivo; vence tras 15 minutos o al reiniciar. |
-| Archivo ya importado | No se duplicó. Si necesitas corregir un valor, usa la revisión auditada. |
+| Archivo ya importado | Mismo archivo y mismo mapeo: no se duplicó. Para un dato puntual usa la revisión auditada; para cambiar el mapeo adjunta el diccionario corregido y confirma una nueva importación. |
 | Nombre de hoja inválido | Usar por ejemplo JUL-AGO_2025; el CSV debe llevar ese nombre. |
 | Acceso bloqueado | Esperar 15 minutos después de cinco fallos. |
