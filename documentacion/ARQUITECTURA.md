@@ -69,12 +69,20 @@ La relación usuario–auditoría es lógica por nombre de actor, no una FK; tam
 
 Granularidad de HECHOS: empresa, bimestre, métrica, dimensión y celda de origen. Importación+hoja+fila+columna es único. Encabezados ambiguos se registran sin un valor utilizable para no colapsar dos respuestas bajo una misma métrica. Índice por empresa/bimestre/métrica y por importación.
 
-No se crean tablas ficticias de empleados, cohortes o movimientos individuales: la encuesta no permite poblarlas. Las preguntas sobre puestos, vacantes, fuentes, beneficios y contratos son dimensiones de los hechos de encuesta, no entidades transaccionales inventadas. Si se obtiene un historial individual, se agregan tablas relacionadas con identidades privadas y hechos de entrada/salida.
+No se crean tablas ficticias de empleados, cohortes o movimientos individuales: la encuesta no permite poblarlas. Las respuestas sobre puestos, vacantes, fuentes, beneficios y contratos son dimensiones de los hechos de encuesta. Los planes manuales se registran por separado como trabajo de seguimiento, nunca como respuestas inferidas del Excel. Si se obtiene un historial individual, se agregan tablas relacionadas con identidades privadas y hechos de entrada/salida.
 
 ## Versiones, operaciones y límites
 
-- `migraciones.py` aplica versión inicial 1 idempotente y registra `version_esquema`. Una versión diferente se rechaza; futuros cambios requerirán migraciones explícitas y respaldo, no borrar/recrear la base.
+- `migraciones.py` registra `version_esquema = 2`. Al abrir una base v1 crea las tablas de planes e historial y actualiza la versión; no reescribe hechos. Es idempotente. Las versiones desconocidas se rechazan. Respaldar antes de migrar.
 - Se conserva cada importación. Confirmar una nueva desactiva la anterior dentro de la transacción.
 - Vistas previas en memoria, no en navegador. No hay upload de archivos a terceros ni dependencias CDN.
 - `/api/panel` consulta solo campos del núcleo; `/api/explorar` filtra métrica en SQL. Calidad y exportación necesitan más columnas; son operaciones apropiadas para el tamaño actual, no para millones de empleados.
 - El despliegue soportado en esta versión es un proceso local. Escalado distribuido, trabajos en cola y almacenamiento compartido requieren implementación adicional.
+
+## Seguimiento y presentación del cuestionario
+
+`planes_vacantes` contiene importación, empresa, bimestre de origen, puesto, nivel, plazas, cubiertas, prioridad, estado, fecha objetivo, notas y acciones. `eventos_planes` conserva una instantánea de cada versión, con actor y fecha UTC; la combinación plan+revisión es única. La creación/edición y su auditoría se confirman juntas. Un `UPDATE` condicionado por revisión evita sobrescribir una edición concurrente. No hay borrado por API.
+
+`catalogo.py` une el diccionario del estudio activo con títulos/temas de `presentacion_metricas.json`. La cobertura se agrega en SQL con el mismo alcance autorizado de empresa y periodo. Los metadatos no alteran valores, unidades, reglas de importación ni claves normalizadas. La interfaz usa `trabajo.js` para el tablero y el catálogo, junto con `app.js`.
+
+La vista autónoma añade `demo.js`, que simula consultas con los CSV ficticios y guarda planes de prueba en almacenamiento local. Este adaptador nunca se carga en la aplicación servida por FastAPI.

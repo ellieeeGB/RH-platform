@@ -23,7 +23,7 @@ test('Mapa abre trayectorias y responde a filtros de empresas y periodos',async 
 });
 test('Explorador cambia de pregunta y conserva resultados completos y paginación',async t=>{
  const w=await start(t),d=w.document;await click(w,'[data-view="reclutamiento"]');assert.ok(d.querySelectorAll('.bar-row').length>0);
- await click(w,'[data-metric-tab="tiempo_contratacion"]');assert.match(d.querySelector('.metric-story h2').textContent,/Tiempo/);assert.ok(d.querySelector('#next'));
+ await click(w,'[data-metric-tab="tiempo_contratacion"]');assert.match(d.querySelector('.metric-story h2').textContent,/Días para contratar/);assert.ok(d.querySelector('#next'));
  await click(w,'#next');assert.match(d.querySelector('.source-panel:last-child').textContent,/Página 2/);assert.equal(d.querySelector('.source-panel:last-child details').open,true);
  await click(w,'[data-metric-tab="vacantes_proximas"]');assert.equal(d.querySelector('[data-stat="suma"]'),null,'No sumar vacantes a través de siete periodos');
 });
@@ -45,4 +45,40 @@ test('El escenario actualiza el resultado y rechaza una plantilla negativa',asyn
  change('base','100');change('altas','20');change('bajas','5');change('costo','1000');
  assert.equal(d.querySelector('.scenario-total').textContent,'115');assert.match(d.querySelector('.scenario-cost').textContent,/20,000/);
  change('bajas','150');assert.match(d.querySelector('#scenarioResult').textContent,/superan/);
+});
+
+test('Cargar estudio es visible desde la barra y el movimiento puede reducirse',async t=>{
+ const w=await start(t),d=w.document;
+ assert.equal(d.querySelector('#uploadTop').hidden,false);await click(w,'#uploadTop');assert.ok(d.querySelector('#uploadForm'));
+ await click(w,'#motion');assert.equal(d.body.classList.contains('reduce-motion'),true);assert.equal(d.querySelector('#motion').getAttribute('aria-pressed'),'true');
+ await click(w,'#motion');assert.equal(d.body.classList.contains('reduce-motion'),false);
+});
+test('Catálogo encuentra preguntas de todo el estudio y muestra cobertura real de la demo',async t=>{
+ const w=await start(t),d=w.document;await click(w,'[data-view="catalogo"]');
+ assert.equal(d.querySelector('.catalog-count strong').textContent,'183');assert.equal(d.querySelectorAll('.catalog-result').length,183);
+ const search=d.querySelector('#catalogSearch');search.value='contingencia';search.dispatchEvent(new w.Event('input',{bubbles:true}));
+ assert.ok(d.querySelectorAll('.catalog-result').length>0);assert.ok(d.querySelectorAll('.catalog-result').length<183);
+ await click(w,'[data-open-metric]');assert.match(d.querySelector('.metric-story h2').textContent.toLowerCase(),/contingencia/);
+ assert.match(d.querySelector('#metricVisual').textContent,/No hay respuestas/);
+});
+test('Vacante demo guarda notas y acciones, se edita y conserva historial sin cambiar la encuesta',async t=>{
+ const w=await start(t),d=w.document,before=JSON.stringify(w.CATCH_DEMO.hechos);
+ await click(w,'[data-view="planes"]');assert.equal(d.querySelectorAll('.vacancy-card').length,0);await click(w,'#newPlan');
+ const set=(name,value)=>{const el=d.querySelector(`#planForm [name="${name}"]`);el.value=value;el.dispatchEvent(new w.Event('input',{bubbles:true}));};
+ set('puesto','Técnico de mantenimiento');set('plazas','3');set('notas','Revisar candidatos del convenio técnico.');
+ await click(w,'#addPlanAction');const task=d.querySelector('[data-field="tarea"]');task.value='Agendar entrevistas';task.dispatchEvent(new w.Event('input',{bubbles:true}));
+ await click(w,'#planForm [type="submit"]');assert.equal(d.querySelector('#dialog').open,false);assert.equal(d.querySelectorAll('.vacancy-card').length,1);
+ assert.match(d.querySelector('.vacancy-card').textContent,/Agendar entrevistas/);assert.match(w.localStorage.getItem('catch-demo-planes-v1'),/Revisar candidatos/);
+ await click(w,'[data-edit-plan]');set('cubiertas','3');await click(w,'#planForm [type="submit"]');
+ assert.match(d.querySelector('.board-column:nth-child(4)').textContent,/Técnico de mantenimiento/);
+ await click(w,'[data-edit-plan]');await click(w,'#planHistory');assert.equal(d.querySelectorAll('#planHistoryContent details').length,2);
+ assert.match(d.querySelector('#planHistoryContent').textContent,/Agendar entrevistas/);await click(w,'#closeDialog');
+ await click(w,'[data-view="inicio"]');await click(w,'[data-view="planes"]');assert.equal(d.querySelectorAll('.vacancy-card').length,1);
+ assert.equal(JSON.stringify(w.CATCH_DEMO.hechos),before);
+});
+test('Formulario conserva el borrador al rechazar plazas incoherentes',async t=>{
+ const w=await start(t),d=w.document;await click(w,'[data-view="planes"]');await click(w,'#newPlan');
+ d.querySelector('[name="puesto"]').value='Puesto de prueba';d.querySelector('[name="cubiertas"]').value='2';
+ await click(w,'#planForm [type="submit"]');assert.equal(d.querySelector('#dialog').open,true);assert.match(d.querySelector('#planError').textContent,/no pueden superar/);
+ assert.equal(w.localStorage.getItem('catch-demo-planes-v1'),null);
 });

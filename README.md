@@ -4,7 +4,7 @@ Plataforma de consultoría RH en español. Convierte la encuesta bimestral de em
 
 ## Ver el rediseño
 
-Abre [la vista previa interactiva](documentacion/vista_previa.html) para explorar el diseño sin instalar. Usa **datos ficticios**; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
+Abre [la vista previa interactiva](documentacion/vista_previa.html) para explorar el diseño sin instalar. Usa **datos ficticios** y guarda los planes de prueba en ese navegador; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
 
 ## Empezar en tres pasos
 
@@ -20,7 +20,7 @@ En el primer inicio se generan secretos locales y se pide crear una contraseña 
 
 Si ya tienes `.venv` pero faltan dependencias: `.venv/bin/pip install -r requirements.txt`.
 
-1. En **Cargar estudio**, selecciona el Excel con las siete hojas. La aplicación revisa encabezados, empresa, periodos y calidad antes de guardar.
+1. Pulsa **Cargar estudio** en la barra superior; selecciona el Excel con las siete hojas. La aplicación revisa encabezados, empresa, periodos y calidad antes de guardar.
 2. Lee la vista previa y confirma **activar este estudio**. La importación sustituye el estudio activo completo; conserva importaciones anteriores y la bitácora. No es una carga incremental.
 3. Abre **Calidad de datos**. Revisa los atípicos antes de interpretar las tasas. Para una corrección, indica valor, motivo y evidencia; para excluir, no se borra la fuente normalizada.
 
@@ -35,10 +35,13 @@ Eso activa un estudio **ficticio** con 8 empresas y 7 bimestres, generado con se
 ## Qué funciona
 
 - Acceso con Argon2, JWT en cookie httpOnly, renovación rotatoria, cierre revocable, CSRF, bloqueo y límites de peticiones.
-- Administrador, analista y cliente. El cliente solo consulta su empresa; el filtro se aplica en el servidor. Sus pares se consultan únicamente como benchmark agregado con al menos 5 empresas válidas.
+- Administrador, analista y cliente. El cliente consulta y planifica únicamente para su empresa; el filtro se aplica en el servidor. Sus pares se consultan únicamente como benchmark agregado con al menos 5 empresas válidas.
 - XLSX o CSV de dos encabezados. Mapeo por texto de pregunta + subopción, diccionario JSON editable, columnas nuevas conservadas, columnas sin encabezado reportadas sin asignaciones inventadas.
 - Modelo largo con valor, estado de limpieza, unidad y coordenada de origen. Contactos descartados antes de crear registros.
-- Rotación y plantilla, altas/bajas, antigüedad y edad de las bajas, fuentes, vacantes, tiempos, capacitación, ausentismo, negociación, salarios y prestaciones. Todas las preguntas importadas son explorables, incluidas las que todavía no tienen un nombre corto curado.
+- Rotación y plantilla, altas/bajas, antigüedad y edad de las bajas, fuentes, vacantes, tiempos, capacitación, ausentismo, negociación, salarios y prestaciones. Todas las preguntas importadas son explorables, con títulos cortos y acceso a cada pregunta original.
+- Vacantes y acciones: puestos pendientes, plazas cubiertas, prioridad, fecha objetivo, notas y tareas con área a cargo. Guardado en base, historial por versión y protección ante ediciones simultáneas.
+- Todo el estudio: catálogo buscable de las 183 métricas del diccionario, 11 temas y cobertura de respuestas según los filtros. Títulos cortos editables sin alterar la pregunta original.
+- Movimiento breve en gráficas, tarjetas y diálogos, con control manual y respeto de la preferencia de accesibilidad del sistema.
 - Panorama con titular calculado, balance visual y prioridades enlazadas; agenda de consultoría, mapa empresa–bimestre y exploradores con barras y categorías.
 - Filtros de empresa múltiple y bimestres; todos los periodos; variación anterior/interanual con empresas pareadas; vista guardada localmente, tema oscuro, historia, consultas por intención y escenario aritmético.
 - Calidad visible, historial gráfico de atípicos, sensibilidad con/sin una empresa, exclusión/corrección auditada y control de cambios concurrentes.
@@ -59,7 +62,10 @@ Esta entrega **no está desplegada en Internet**. Se probó mediante API, cálcu
 | `aplicacion/importador.py` | Encabezados, limpieza, PII y lectura de Excel/CSV |
 | `aplicacion/metricas.py` | Cálculos, reconciliación, comparación y atípicos |
 | `aplicacion/modelos.py` | Tablas, índices y conexión SQLAlchemy |
-| `aplicacion/migraciones.py` | Migración inicial versionada |
+| `aplicacion/migraciones.py` | Esquema v2 y migración aditiva desde v1 |
+| `aplicacion/planes.py` | Seguimiento manual de vacantes, permisos e historial |
+| `aplicacion/catalogo.py` | Cobertura de todo el cuestionario y metadatos visuales |
+| `configuracion/presentacion_metricas.json` | Títulos cortos y temas editables |
 | `aplicacion/servicio.py` | Transacciones y aislamiento de consultas |
 | `aplicacion/seguridad.py` | Contraseñas, sesiones, CSRF y límites |
 | `aplicacion/main.py` | API y entrega de interfaz |
@@ -100,3 +106,5 @@ make test
 ## Privacidad del repositorio
 
 El repositorio es público. Solo incluye código, preguntas del diccionario, documentación metodológica y demo ficticia. El Excel real, identidades, registros normalizados, contraseñas y bases no se versionan. No se cambió la visibilidad del repositorio ni se publicó un sitio.
+
+El seguimiento y el catálogo se documentan en [Vacantes y cobertura](documentacion/VACANTES_Y_COBERTURA.md).

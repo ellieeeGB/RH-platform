@@ -1,0 +1,734 @@
+{
+  "pregunta_2e7f8e8c72e5": {
+    "titulo": "Estado",
+    "tema": "contexto"
+  },
+  "municipio": {
+    "titulo": "Municipio",
+    "tema": "contexto"
+  },
+  "pregunta_21ce0313dd27": {
+    "titulo": "Parque o zona industrial",
+    "tema": "contexto"
+  },
+  "pregunta_3f2d898aae9d": {
+    "titulo": "Aviso de privacidad del cuestionario",
+    "tema": "otros"
+  },
+  "pregunta_e94c6982b335": {
+    "titulo": "Información elegida para responder",
+    "tema": "otros"
+  },
+  "pregunta_77abef5f4657": {
+    "titulo": "Parque industrial · detalle de ubicación",
+    "tema": "contexto"
+  },
+  "pregunta_4fbf45ffd084": {
+    "titulo": "Parque industrial · variante 1",
+    "tema": "contexto"
+  },
+  "pregunta_2de4afb7c08a": {
+    "titulo": "Parque industrial · variante 2",
+    "tema": "contexto"
+  },
+  "pregunta_28c1a13cff6a": {
+    "titulo": "Parque industrial · variante 3",
+    "tema": "contexto"
+  },
+  "pregunta_a4d42b4d0225": {
+    "titulo": "Parque industrial · variante 4",
+    "tema": "contexto"
+  },
+  "pregunta_6e09c1fc989c": {
+    "titulo": "Parque industrial · variante 5",
+    "tema": "contexto"
+  },
+  "pregunta_77ea5888cda3": {
+    "titulo": "Parque industrial · variante 6",
+    "tema": "contexto"
+  },
+  "pregunta_abb6fcbbec7d": {
+    "titulo": "Parque industrial · variante 7",
+    "tema": "contexto"
+  },
+  "pregunta_38608921c0bd": {
+    "titulo": "Parque o zona industrial · variante 1",
+    "tema": "contexto"
+  },
+  "sector": {
+    "titulo": "Sector principal",
+    "tema": "contexto"
+  },
+  "pregunta_91ba702502cf": {
+    "titulo": "Productos y servicios de la empresa",
+    "tema": "contexto"
+  },
+  "pregunta_4e9f144a7d69": {
+    "titulo": "Sectores atendidos · industria general",
+    "tema": "contexto"
+  },
+  "pregunta_d3746980e5a5": {
+    "titulo": "Sectores atendidos · servicios para la industria",
+    "tema": "contexto"
+  },
+  "pregunta_f87e30df3967": {
+    "titulo": "Sectores atendidos · servicios generales",
+    "tema": "contexto"
+  },
+  "pregunta_84d3f346e5ef": {
+    "titulo": "Sectores atendidos · instituciones educativas",
+    "tema": "contexto"
+  },
+  "pregunta_ae2cbe256012": {
+    "titulo": "Sectores atendidos · instituciones públicas",
+    "tema": "contexto"
+  },
+  "pregunta_f6f733a3e0df": {
+    "titulo": "Origen principal del capital",
+    "tema": "contexto"
+  },
+  "pregunta_505a4379d97f": {
+    "titulo": "Antigüedad de operación de la empresa",
+    "tema": "contexto"
+  },
+  "pregunta_1bca57834038": {
+    "titulo": "Presencia de sindicato o confederación",
+    "tema": "relaciones"
+  },
+  "pregunta_cbedc7a40362": {
+    "titulo": "Procesos de la compañía",
+    "tema": "contexto"
+  },
+  "pregunta_99b5f18dae4c": {
+    "titulo": "Categoría principal por procesos",
+    "tema": "contexto"
+  },
+  "tier": {
+    "titulo": "Nivel Tier / OEM",
+    "tema": "contexto"
+  },
+  "pregunta_51d5f58f04bb": {
+    "titulo": "Armadoras con suministro directo",
+    "tema": "contexto"
+  },
+  "pregunta_c006b6e4f395": {
+    "titulo": "Costo anual del sindicato",
+    "tema": "relaciones"
+  },
+  "pregunta_64e975a45031": {
+    "titulo": "Valoración de la relación sindical",
+    "tema": "relaciones"
+  },
+  "plantilla_operativa": {
+    "titulo": "Plantilla operativa",
+    "tema": "contexto"
+  },
+  "plantilla_administrativa": {
+    "titulo": "Plantilla administrativa",
+    "tema": "contexto"
+  },
+  "plantilla_otros": {
+    "titulo": "Otro personal",
+    "tema": "contexto"
+  },
+  "genero": {
+    "titulo": "Composición por género",
+    "tema": "contexto"
+  },
+  "edad_plantilla": {
+    "titulo": "Generaciones y edad de la plantilla",
+    "tema": "contexto"
+  },
+  "pregunta_16185e2cf4db": {
+    "titulo": "Salario diario operativo · inicial",
+    "tema": "salarios"
+  },
+  "pregunta_6a38b957ad42": {
+    "titulo": "Salario diario operativo · intermedio bajo",
+    "tema": "salarios"
+  },
+  "pregunta_4511b176d7aa": {
+    "titulo": "Salario diario operativo · intermedio alto",
+    "tema": "salarios"
+  },
+  "pregunta_080353b1b400": {
+    "titulo": "Salario diario operativo · máximo",
+    "tema": "salarios"
+  },
+  "pregunta_fc065ca57d26": {
+    "titulo": "Personal a cargo en la categoría máxima",
+    "tema": "salarios"
+  },
+  "pregunta_0db5ed78a211": {
+    "titulo": "Ascensos, personal por categoría y escolaridad",
+    "tema": "salarios"
+  },
+  "pregunta_77338f7e67ba": {
+    "titulo": "Otros esquemas salariales operativos",
+    "tema": "salarios"
+  },
+  "pregunta_ad58329e53e9": {
+    "titulo": "Puestos técnicos presentes",
+    "tema": "salarios"
+  },
+  "pregunta_ce68aeef7f8e": {
+    "titulo": "Salario mensual mínimo por puesto",
+    "tema": "salarios"
+  },
+  "pregunta_56326519c5a6": {
+    "titulo": "Salario mensual promedio por puesto",
+    "tema": "salarios"
+  },
+  "pregunta_b983ff1059e1": {
+    "titulo": "Salario mensual máximo por puesto",
+    "tema": "salarios"
+  },
+  "pregunta_921cad86ef93": {
+    "titulo": "Personal por puesto técnico",
+    "tema": "salarios"
+  },
+  "pregunta_7a4ba51af063": {
+    "titulo": "Continuidad del cuestionario · actualizar información",
+    "tema": "otros"
+  },
+  "pregunta_20e2c132f440": {
+    "titulo": "Bimestre indicado en el cuestionario",
+    "tema": "otros"
+  },
+  "contrataciones": {
+    "titulo": "Contrataciones del bimestre",
+    "tema": "reclutamiento"
+  },
+  "contrataciones_desglose": {
+    "titulo": "Nueva creación y reemplazos",
+    "tema": "reclutamiento"
+  },
+  "pregunta_cb3585626a67": {
+    "titulo": "Escolaridad mínima de ingreso",
+    "tema": "reclutamiento"
+  },
+  "tiempo_contratacion": {
+    "titulo": "Días para contratar por nivel",
+    "tema": "reclutamiento"
+  },
+  "pregunta_edd9b2ae9be5": {
+    "titulo": "Candidatos que cumplen requisitos · de cada 10",
+    "tema": "reclutamiento"
+  },
+  "rechazo_motivo": {
+    "titulo": "Motivos de rechazo de candidatos",
+    "tema": "reclutamiento"
+  },
+  "bajas": {
+    "titulo": "Bajas totales",
+    "tema": "rotacion"
+  },
+  "bajas_mes": {
+    "titulo": "Bajas por mes",
+    "tema": "rotacion"
+  },
+  "bajas_tipo": {
+    "titulo": "Bajas operativas y administrativas",
+    "tema": "rotacion"
+  },
+  "bajas_motivo": {
+    "titulo": "Motivos de baja",
+    "tema": "rotacion"
+  },
+  "pregunta_5bdc1f9fd048": {
+    "titulo": "Afectaciones declaradas por la rotación",
+    "tema": "rotacion"
+  },
+  "bajas_antiguedad": {
+    "titulo": "Antigüedad de las bajas",
+    "tema": "rotacion"
+  },
+  "bajas_edad": {
+    "titulo": "Edad de las bajas",
+    "tema": "rotacion"
+  },
+  "faltas": {
+    "titulo": "Faltas del bimestre",
+    "tema": "ausentismo"
+  },
+  "pregunta_6a8ac0bb37a4": {
+    "titulo": "Faltas operativas justificadas e injustificadas",
+    "tema": "ausentismo"
+  },
+  "pregunta_c38ff0d92610": {
+    "titulo": "Presencia de incapacidades en el bimestre",
+    "tema": "ausentismo"
+  },
+  "pregunta_1aba78d14502": {
+    "titulo": "Afectaciones declaradas por el ausentismo",
+    "tema": "ausentismo"
+  },
+  "incapacidades": {
+    "titulo": "Casos de incapacidad",
+    "tema": "ausentismo"
+  },
+  "incapacidades_tipo": {
+    "titulo": "Incapacidades por causa",
+    "tema": "ausentismo"
+  },
+  "pregunta_6b6e4028c57e": {
+    "titulo": "Incapacidades por accidentes de trabajo",
+    "tema": "ausentismo"
+  },
+  "pregunta_b956e4fc04fb": {
+    "titulo": "Afectaciones declaradas por incapacidades",
+    "tema": "ausentismo"
+  },
+  "capacitacion_horas": {
+    "titulo": "Horas de capacitación",
+    "tema": "capacitacion"
+  },
+  "pregunta_d881d5d2223d": {
+    "titulo": "Perfiles en desarrollo mediante capacitación",
+    "tema": "capacitacion"
+  },
+  "negociacion_estatus": {
+    "titulo": "Estatus de negociación colectiva · referencia 2024",
+    "tema": "relaciones"
+  },
+  "incremento_otorgado": {
+    "titulo": "Incrementos salariales y de prestaciones otorgados",
+    "tema": "relaciones"
+  },
+  "incremento_meses": {
+    "titulo": "Meses de incremento otorgado",
+    "tema": "relaciones"
+  },
+  "pregunta_d0f851aee02e": {
+    "titulo": "Prestaciones incluidas en el incremento otorgado",
+    "tema": "relaciones"
+  },
+  "incremento_planeado": {
+    "titulo": "Incrementos salariales y de prestaciones previstos",
+    "tema": "relaciones"
+  },
+  "incremento_meses_previstos": {
+    "titulo": "Meses previstos de incremento",
+    "tema": "relaciones"
+  },
+  "pregunta_096984cb95a6": {
+    "titulo": "Prestaciones incluidas en el incremento previsto",
+    "tema": "relaciones"
+  },
+  "pregunta_e8583ada8655": {
+    "titulo": "Intención de contratar en el mes actual y siguiente",
+    "tema": "reclutamiento"
+  },
+  "fuentes_seleccion": {
+    "titulo": "Fuentes de reclutamiento seleccionadas",
+    "tema": "reclutamiento"
+  },
+  "pregunta_6739dba3bc33": {
+    "titulo": "Colaboradores que se trasladan de otro municipio o estado",
+    "tema": "contexto"
+  },
+  "vacantes_proximas": {
+    "titulo": "Vacantes próximas: operativas y administrativas",
+    "tema": "reclutamiento"
+  },
+  "pregunta_6835a0d2e5b2": {
+    "titulo": "Vacantes por especialización operativa",
+    "tema": "reclutamiento"
+  },
+  "pregunta_52c8c9655681": {
+    "titulo": "Vacantes por especialización técnica",
+    "tema": "reclutamiento"
+  },
+  "pregunta_2ff227598315": {
+    "titulo": "Vacantes administrativas y gerenciales",
+    "tema": "reclutamiento"
+  },
+  "pregunta_e617e8294a24": {
+    "titulo": "Citatorios conciliatorios y demandas",
+    "tema": "relaciones"
+  },
+  "pregunta_c0790ddf6856": {
+    "titulo": "Planes de contingencia",
+    "tema": "seguridad"
+  },
+  "pregunta_e2d97d52df60": {
+    "titulo": "Información sobre seguridad y conflictos en la región",
+    "tema": "seguridad"
+  },
+  "pregunta_8b246ed771ec": {
+    "titulo": "Afectaciones por problemas sindicales",
+    "tema": "relaciones"
+  },
+  "pregunta_b5e021594b52": {
+    "titulo": "Otras situaciones derivadas de conflictos laborales",
+    "tema": "relaciones"
+  },
+  "pregunta_1c474db99c5b": {
+    "titulo": "Problemas y situaciones de riesgo en el bimestre",
+    "tema": "seguridad"
+  },
+  "pregunta_759b1b984b49": {
+    "titulo": "Descripción de situaciones de riesgo",
+    "tema": "seguridad"
+  },
+  "pregunta_a722ead92827": {
+    "titulo": "Ubicación declarada de los incidentes",
+    "tema": "seguridad"
+  },
+  "pregunta_679040c58742": {
+    "titulo": "Denuncias de los incidentes",
+    "tema": "seguridad"
+  },
+  "pregunta_a3e6b64bffbe": {
+    "titulo": "Continuidad del cuestionario · resto de la encuesta",
+    "tema": "otros"
+  },
+  "pregunta_9e654cc7355d": {
+    "titulo": "Plantilla operativa histórica · referencia enero 2023",
+    "tema": "contexto"
+  },
+  "pregunta_f9f19cc0cf91": {
+    "titulo": "Plantilla administrativa histórica · referencia enero 2023",
+    "tema": "contexto"
+  },
+  "pregunta_c5ea7cf902a9": {
+    "titulo": "Rotación mensual declarada · promedio de seis meses",
+    "tema": "rotacion"
+  },
+  "pregunta_aebe368d951a": {
+    "titulo": "Frecuencia declarada de motivos de baja · escala 0–5",
+    "tema": "rotacion"
+  },
+  "pregunta_10afeab1bdf1": {
+    "titulo": "Ausentismo e incapacidad · promedio mensual de seis meses",
+    "tema": "ausentismo"
+  },
+  "pregunta_d5b3881b172b": {
+    "titulo": "Días perdidos por accidentes · referencia 2023",
+    "tema": "ausentismo"
+  },
+  "pregunta_ca562e1cd3a2": {
+    "titulo": "Vales de despensa y fondo de ahorro",
+    "tema": "beneficios"
+  },
+  "pregunta_1ecf6f9e7a93": {
+    "titulo": "Prima vacacional por nivel de personal",
+    "tema": "beneficios"
+  },
+  "pregunta_3850f958ec24": {
+    "titulo": "Bonos operativos de asistencia, puntualidad y productividad",
+    "tema": "beneficios"
+  },
+  "pregunta_ae14cb25cbe4": {
+    "titulo": "Ayuda por nacimiento y defunción",
+    "tema": "beneficios"
+  },
+  "pregunta_d425852e105e": {
+    "titulo": "Días de vacaciones por nivel de personal",
+    "tema": "beneficios"
+  },
+  "pregunta_2dcfdbfb9215": {
+    "titulo": "Días de aguinaldo por nivel de personal",
+    "tema": "beneficios"
+  },
+  "pregunta_8ce42acc9c01": {
+    "titulo": "Uniformes anuales por nivel de personal",
+    "tema": "beneficios"
+  },
+  "pregunta_3bddd053ce15": {
+    "titulo": "Servicio médico en el lugar de trabajo",
+    "tema": "beneficios"
+  },
+  "pregunta_f6ab2bf93184": {
+    "titulo": "Opciones de retiro anticipado",
+    "tema": "beneficios"
+  },
+  "pregunta_d2f8e6532aeb": {
+    "titulo": "Descanso adicional para personal operativo",
+    "tema": "beneficios"
+  },
+  "pregunta_130536c02fec": {
+    "titulo": "Días de descanso adicionales a los festivos",
+    "tema": "beneficios"
+  },
+  "pregunta_f36549d1349d": {
+    "titulo": "Utilidades o bono sustituto · referencia 2023/2024 ambigua",
+    "tema": "beneficios"
+  },
+  "pregunta_2e31ccd205dc": {
+    "titulo": "Utilidades · monto promedio declarado",
+    "tema": "beneficios"
+  },
+  "pregunta_56aea8913f4c": {
+    "titulo": "Utilidades o bono sustituto para directores",
+    "tema": "beneficios"
+  },
+  "pregunta_e1eabe521734": {
+    "titulo": "Comunicación del reparto de utilidades",
+    "tema": "beneficios"
+  },
+  "pregunta_bd3de2a9b582": {
+    "titulo": "Estrategias de comunicación de prestaciones",
+    "tema": "beneficios"
+  },
+  "pregunta_3315552d3127": {
+    "titulo": "Oferta de seguro de gastos médicos mayores",
+    "tema": "beneficios"
+  },
+  "pregunta_35a96ca9b18b": {
+    "titulo": "SGMM · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_3cb055004529": {
+    "titulo": "Uso efectivo de prestación",
+    "tema": "beneficios"
+  },
+  "costo_sgmm": {
+    "titulo": "SGMM · costo anual de póliza total",
+    "tema": "beneficios"
+  },
+  "pregunta_1670a4f07928": {
+    "titulo": "SGMM · cobertura familiar",
+    "tema": "beneficios"
+  },
+  "pregunta_93576231899c": {
+    "titulo": "Oferta de seguro de vida",
+    "tema": "beneficios"
+  },
+  "pregunta_e83cffcad5a5": {
+    "titulo": "Seguro de vida · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_ac86fc57c9e1": {
+    "titulo": "Uso efectivo de prestación · variante 1",
+    "tema": "beneficios"
+  },
+  "pregunta_5ea45dd203ec": {
+    "titulo": "Seguro de vida · costo anual de póliza total",
+    "tema": "beneficios"
+  },
+  "pregunta_c9f132d6125a": {
+    "titulo": "Seguro de vida · cobertura familiar",
+    "tema": "beneficios"
+  },
+  "pregunta_555b309ecd3a": {
+    "titulo": "Asignación de automóvil como prestación",
+    "tema": "beneficios"
+  },
+  "pregunta_a8609207e2c3": {
+    "titulo": "Automóvil · tipo, renovación y chofer",
+    "tema": "beneficios"
+  },
+  "pregunta_a480c5273a13": {
+    "titulo": "Uso efectivo de prestación · variante 2",
+    "tema": "beneficios"
+  },
+  "pregunta_37350b2c4d54": {
+    "titulo": "Automóvil · plan de adquisición",
+    "tema": "beneficios"
+  },
+  "pregunta_4d6e9db55797": {
+    "titulo": "Automóvil · servicios cubiertos por la empresa",
+    "tema": "beneficios"
+  },
+  "pregunta_89e3886fa444": {
+    "titulo": "Apoyo de gasolina como prestación",
+    "tema": "beneficios"
+  },
+  "pregunta_40d392ef2ec1": {
+    "titulo": "Gasolina · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_4b5a55986d54": {
+    "titulo": "Uso efectivo de prestación · variante 3",
+    "tema": "beneficios"
+  },
+  "pregunta_0cc19c05eb61": {
+    "titulo": "Gasolina · presupuesto mensual por persona",
+    "tema": "beneficios"
+  },
+  "pregunta_2063b52b17c1": {
+    "titulo": "Apoyo por uso de automóvil personal",
+    "tema": "beneficios"
+  },
+  "pregunta_4e6cd4bbcff5": {
+    "titulo": "Automóvil personal · personal con apoyo",
+    "tema": "beneficios"
+  },
+  "pregunta_509fa2367588": {
+    "titulo": "Uso efectivo de prestación · variante 4",
+    "tema": "beneficios"
+  },
+  "pregunta_c439c6531f6b": {
+    "titulo": "Automóvil personal · pago por kilómetro",
+    "tema": "beneficios"
+  },
+  "pregunta_f0d44ebd44a0": {
+    "titulo": "Automóvil personal · servicios de mantenimiento cubiertos",
+    "tema": "beneficios"
+  },
+  "pregunta_3c8a7a5fa1c8": {
+    "titulo": "Oferta de transporte de personal",
+    "tema": "beneficios"
+  },
+  "pregunta_352a6004cb4e": {
+    "titulo": "Transporte · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_d59f92f000bc": {
+    "titulo": "Uso efectivo de prestación · variante 5",
+    "tema": "beneficios"
+  },
+  "pregunta_2985b5412ce0": {
+    "titulo": "Transporte · número de rutas",
+    "tema": "beneficios"
+  },
+  "costo_transporte": {
+    "titulo": "Transporte · costo mensual por persona",
+    "tema": "beneficios"
+  },
+  "pregunta_7d0fb109ae57": {
+    "titulo": "Transporte · distancia de la ruta más lejana",
+    "tema": "beneficios"
+  },
+  "pregunta_0be7eb5f6491": {
+    "titulo": "Transporte · características del servicio",
+    "tema": "beneficios"
+  },
+  "pregunta_1c7767a6a537": {
+    "titulo": "Oferta de servicio de comedor",
+    "tema": "beneficios"
+  },
+  "pregunta_ea1cb38607ca": {
+    "titulo": "Comedor · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_bd5a12f072b1": {
+    "titulo": "Uso efectivo de prestación · variante 6",
+    "tema": "beneficios"
+  },
+  "costo_comedor": {
+    "titulo": "Comedor · costo por platillo",
+    "tema": "beneficios"
+  },
+  "pregunta_cbc557191286": {
+    "titulo": "Política de relocalización y apoyo para traslados",
+    "tema": "beneficios"
+  },
+  "pregunta_23d0e5c81126": {
+    "titulo": "Relocalización · prestaciones incluidas",
+    "tema": "beneficios"
+  },
+  "pregunta_33ca89befce9": {
+    "titulo": "Colaboradores con la prestación indicada",
+    "tema": "beneficios"
+  },
+  "pregunta_e848911d3353": {
+    "titulo": "Servicios de subcontratación utilizados",
+    "tema": "reclutamiento"
+  },
+  "pregunta_9295294fee03": {
+    "titulo": "Valoración de la subcontratación · escala 0–10",
+    "tema": "reclutamiento"
+  },
+  "fuentes_uso": {
+    "titulo": "Fuentes por nivel de puesto · uso declarado 0–10",
+    "tema": "reclutamiento"
+  },
+  "pregunta_56fca710a136": {
+    "titulo": "Continuidad del cuestionario · pausa",
+    "tema": "otros"
+  },
+  "pregunta_189d388dc400": {
+    "titulo": "Plantilla operativa planeada · referencia enero 2025",
+    "tema": "contexto"
+  },
+  "pregunta_d7545ddfd1b2": {
+    "titulo": "Plantilla administrativa planeada · referencia enero 2025",
+    "tema": "contexto"
+  },
+  "pregunta_27ff51afd888": {
+    "titulo": "Contratación de practicantes",
+    "tema": "reclutamiento"
+  },
+  "pregunta_4e8a27d1bac5": {
+    "titulo": "Practicantes por programa",
+    "tema": "reclutamiento"
+  },
+  "pregunta_f67fdf60736c": {
+    "titulo": "Apoyo económico mensual a practicantes",
+    "tema": "reclutamiento"
+  },
+  "pregunta_d02215e8eb66": {
+    "titulo": "Áreas que reciben practicantes",
+    "tema": "reclutamiento"
+  },
+  "pregunta_c48e2cbca9cc": {
+    "titulo": "Beneficios para practicantes",
+    "tema": "reclutamiento"
+  },
+  "pregunta_ac42ff684b2c": {
+    "titulo": "Turnos y horarios de trabajo",
+    "tema": "organizacion"
+  },
+  "pregunta_643de8697965": {
+    "titulo": "Rotación de turnos operativos",
+    "tema": "organizacion"
+  },
+  "pregunta_d957d87c2bbf": {
+    "titulo": "Jornadas operativas de 12 horas",
+    "tema": "organizacion"
+  },
+  "pregunta_8382da250b12": {
+    "titulo": "Flexibilidad de jornada administrativa",
+    "tema": "organizacion"
+  },
+  "pregunta_316fb0e8fc6b": {
+    "titulo": "Otros beneficios elegibles",
+    "tema": "beneficios"
+  },
+  "pregunta_11d870d0764a": {
+    "titulo": "Convenios gratuitos con terceros",
+    "tema": "organizacion"
+  },
+  "pregunta_fd7b0a2202f8": {
+    "titulo": "Eventos ofrecidos al personal",
+    "tema": "organizacion"
+  },
+  "pregunta_abbad9ad0d0d": {
+    "titulo": "Programas de ideas de mejora",
+    "tema": "organizacion"
+  },
+  "pregunta_a82a05f1b6fd": {
+    "titulo": "Premios e incentivos",
+    "tema": "organizacion"
+  },
+  "pregunta_8ae656425052": {
+    "titulo": "Oferta de bono de permanencia",
+    "tema": "beneficios"
+  },
+  "pregunta_f91dfc25b2d5": {
+    "titulo": "Bono de permanencia · personal al que se ofrece",
+    "tema": "beneficios"
+  },
+  "pregunta_90e91f3a18dd": {
+    "titulo": "Bono de permanencia · antigüedad requerida",
+    "tema": "beneficios"
+  },
+  "pregunta_70f100d29b48": {
+    "titulo": "Bono de permanencia · efectivo o porcentaje salarial",
+    "tema": "beneficios"
+  },
+  "pregunta_ce0d681070ff": {
+    "titulo": "Bono de permanencia · opciones en especie",
+    "tema": "beneficios"
+  },
+  "pregunta_51e05c57e7f2": {
+    "titulo": "Prácticas de responsabilidad social",
+    "tema": "organizacion"
+  },
+  "pregunta_12bb7dd6776b": {
+    "titulo": "Primera participación en la encuesta",
+    "tema": "otros"
+  }
+}

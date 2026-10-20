@@ -33,11 +33,39 @@
    return {dimension,unidad:g[0].unidad,n_valores:ns.length,n_empresas:new Set(ns.map(f=>f.empresa)).size,n_respuestas:ns.length+texts.length,n_empresas_respuestas:new Set([...ns,...texts].map(f=>f.empresa)).size,mediana:L.mediana(ns.map(f=>f.valor)),suma:ns.length?ns.reduce((s,f)=>s+f.valor,0):null,categorias};});
   return {resumen,filas:facts.slice((page-1)*100,page*100),total:facts.length,pagina:page,definiciones:data.diccionario.filter(d=>d.metrica===metric)};
  }
+ const storeKey='catch-demo-planes-v1';
+ let plans=[];
+ try{plans=JSON.parse(localStorage.getItem(storeKey)||'[]');if(!Array.isArray(plans))plans=[];}catch{plans=[];}
+ function coverage(fs){return {temas:data.temas,metricas:data.catalogo.map(d=>{
+  const facts=fs.filter(f=>f.metrica===d.metrica),ns=facts.filter(valid),texts=facts.filter(f=>!f.excluido&&f.texto);
+  return {...d,celdas:facts.length,numericas:ns.length,textos:texts.length,empresas_respuesta:new Set([...ns,...texts].map(f=>f.empresa)).size,bimestres:new Set(facts.map(f=>f.bimestre)).size,excluidas:facts.filter(f=>f.excluido).length,sin_valor_utilizable:facts.filter(f=>!valid(f)&&(!f.texto||f.excluido)).length};
+ })};}
+ function planResult(p){const {historial,...row}=p;return {...row,empresa_id:p.empresa,pendientes:p.plazas-p.cubiertas};}
+ function planRequest(route,u,options){
+  const method=options.method||'GET',id=Number(route.split('/')[2]),existing=plans.find(p=>p.id===id);
+  if(method==='GET'&&route.endsWith('/historial'))return existing?{body:existing.historial}:{status:404,body:{detail:'Plan no disponible.'}};
+  if(method==='GET'){
+   const es=(u.searchParams.get('empresas')||'').split(',').filter(Boolean),ps=(u.searchParams.get('periodos')||'').split(',').filter(Boolean);
+   return {body:{importacion:1,planes:plans.filter(p=>(!es.length||es.includes(p.empresa))&&(!ps.length||ps.includes(p.bimestre))&&(u.searchParams.get('archivadas')==='true'||p.estado!=='archivada')).map(planResult)}};
+  }
+  const b=JSON.parse(options.body||'{}');
+  if(method==='PUT'&&(!existing||existing.revision!==b.revision))return {status:409,body:{detail:'El plan cambió. Recarga antes de guardar.'}};
+  if(!['POST','PUT'].includes(method)||b.importacion!==1||!b.puesto?.trim()||!Number.isInteger(b.plazas)||b.plazas<1||!Number.isInteger(b.cubiertas)||b.cubiertas<0||b.cubiertas>b.plazas||b.acciones.some(a=>!a.tarea?.trim()))return {status:422,body:{detail:'Revisa el puesto, las plazas y las acciones.'}};
+  if(b.estado==='cubierta'&&b.cubiertas!==b.plazas)return {status:422,body:{detail:'Para cerrar la vacante deben estar cubiertas todas las plazas.'}};
+  const now=new Date().toISOString(),p={...b,id:existing?.id||Math.max(0,...plans.map(p=>p.id))+1,revision:existing?existing.revision+1:1,creado:existing?.creado||now,actualizado:now};
+  if(p.cubiertas===p.plazas&&p.estado!=='archivada')p.estado='cubierta';
+  p.historial=[{revision:p.revision,fecha:now,actor:'Vista de diseño',datos:{...p}},...(existing?.historial||[])];
+  const next=[...plans.filter(x=>x.id!==p.id),p];
+  try{localStorage.setItem(storeKey,JSON.stringify(next));}catch{return {status:400,body:{detail:'El navegador no permite guardar los planes demo. Habilita el almacenamiento local para probar el seguimiento.'}};}
+  plans=next;return {status:method==='POST'?201:200,body:planResult(p)};
+ }
  window.fetch=async(path,options={})=>{
   const u=new URL(path,'https://vista.local'),route=u.pathname.replace(/^\/api/,''),fs=filter(u);let body,status=200;
   if(route==='/me')body={nombre:'Vista de diseño',rol:'analista',csrf:'demo-local'};
   else if(route.startsWith('/auth/'))body={ok:true,csrf:'demo-local'};
-  else if(route==='/filtros')body={empresas:[...new Set(data.hechos.map(f=>f.empresa))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(e=>({id:e,nombre:e})),periodos:[...new Set(data.hechos.map(f=>f.bimestre))].sort(),metricas:[...new Map(data.diccionario.map(d=>[d.metrica,[d.metrica,d.categoria]])).values()],etiquetas:Object.fromEntries(data.diccionario.map(d=>[d.metrica,d.pregunta])),revision:1};
+  else if(route==='/filtros')body={empresas:[...new Set(data.hechos.map(f=>f.empresa))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(e=>({id:e,nombre:e})),periodos:[...new Set(data.hechos.map(f=>f.bimestre))].sort(),metricas:data.catalogo.map(d=>[d.metrica,d.tema]),catalogo:data.catalogo,temas:data.temas,etiquetas:Object.fromEntries(data.catalogo.map(d=>[d.metrica,d.titulo])),revision:1,importacion:1};
+  else if(route==='/catalogo')body=coverage(fs);
+  else if(route==='/planes'||route.startsWith('/planes/')){const result=planRequest(route,u,options);body=result.body;status=result.status||200;}
   else if(route==='/panel')body=panel(fs);
   else if(route==='/explorar')body=explore(fs,u.searchParams.get('metrica'),Number(u.searchParams.get('pagina')||1));
   else if(route==='/benchmark')body={disponible:false,motivo:'Esta vista usa ocho empresas ficticias. El benchmark protegido se consulta en la aplicación con el estudio importado.'};
@@ -45,8 +73,8 @@
    const visible=new Set(fs.map(f=>f.empresa+'|'+f.bimestre)),issues=data.incidencias.filter(x=>visible.has(x.empresa+'|'+x.bimestre)),counts={},estados={};issues.forEach(x=>counts[x.codigo]=(counts[x.codigo]||0)+1);fs.forEach(x=>estados[x.estado]=(estados[x.estado]||0)+1);
    body={incidencias:issues,conteos:counts,estados,revision:1,perfil:[]};
   }else if(route==='/auditoria')body=[];
-  else {status=400;body={detail:'Esta acción está disponible en la aplicación conectada al estudio. La vista de diseño no guarda cambios.'};}
-  return {ok:status===200,status,json:async()=>body};
+  else {status=400;body={detail:'Esta acción está disponible en la aplicación conectada al estudio. La carga y corrección del estudio requieren ejecutar la aplicación.'};}
+  return {ok:status>=200&&status<300,status,json:async()=>body};
  };
  // Evitar enlaces a un servidor inexistente al abrir el archivo sin conexión.
  window.open=()=>{window.alert('Los reportes y las exportaciones están disponibles al ejecutar la aplicación. Esta vista contiene únicamente datos ficticios.');return null;};

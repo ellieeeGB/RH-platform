@@ -48,3 +48,13 @@ Las pruebas de DOM comprueban navegación, filtros, trayectoria, paginación, pr
 - La sensibilidad cambia la muestra deliberadamente y se identifica como simulación. No confirma que un atípico sea un error.
 - El benchmark sigue protegido por el servidor. En administración, la referencia es la muestra completa; no se muestra un selector de segmento que no cambie el resultado.
 - Todos los resultados detallados continúan accesibles; las barras limitan la primera vista a 12 dimensiones para facilitar la lectura.
+
+## Seguimiento de vacantes y acceso a todo el estudio
+
+- Cargar estudio pasa a ser un botón destacado en la barra superior fija; también aparece en el estado inicial sin datos.
+- Panorama y Reclutamiento enlazan a Vacantes y acciones. El tablero muestra el recorrido desde Por iniciar hasta Cubierta, con próximos pasos y fechas visibles.
+- Las notas, tareas y plazas se guardan con versiones en la aplicación. En el HTML autónomo se pueden probar con almacenamiento local de datos ficticios.
+- Todo el estudio presenta 11 temas, búsqueda por pregunta/subopción y cobertura; los títulos cortos se editan en un JSON independiente del mapeo de importación.
+- Tarjetas, barras, curvas y diálogos incorporan movimiento breve y controles para reducirlo.
+
+Los detalles, reglas y límites están en [Vacantes y cobertura](VACANTES_Y_COBERTURA.md).

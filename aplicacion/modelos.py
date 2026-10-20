@@ -1,4 +1,4 @@
-"""Esquema v1: estudio agregado por empresa; no simula empleados inexistentes."""
+"""Esquema v2: estudio agregado por empresa; no simula empleados inexistentes."""
 from sqlalchemy import create_engine, String, Text, Integer, Float, Boolean, ForeignKey, JSON, Index, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from pathlib import Path
@@ -70,6 +70,35 @@ class Auditoria(Base):
     actor:Mapped[str]=mapped_column(String(100))
     accion:Mapped[str]=mapped_column(String(80))
     detalle:Mapped[dict]=mapped_column(JSON)
+
+class PlanVacante(Base):
+    __tablename__='planes_vacantes'
+    id:Mapped[int]=mapped_column(primary_key=True)
+    importacion_id:Mapped[int]=mapped_column(ForeignKey('importaciones.id'),index=True)
+    empresa:Mapped[str]=mapped_column(ForeignKey('empresas.codigo'),index=True)
+    bimestre:Mapped[str]=mapped_column(ForeignKey('periodos.codigo'))
+    puesto:Mapped[str]=mapped_column(String(160))
+    nivel:Mapped[str]=mapped_column(String(30))
+    plazas:Mapped[int]=mapped_column(Integer)
+    cubiertas:Mapped[int]=mapped_column(Integer,default=0)
+    prioridad:Mapped[str]=mapped_column(String(20))
+    estado:Mapped[str]=mapped_column(String(30))
+    fecha_objetivo:Mapped[str|None]=mapped_column(String(10),nullable=True)
+    notas:Mapped[str]=mapped_column(Text,default='')
+    acciones:Mapped[list]=mapped_column(JSON,default=list)
+    revision:Mapped[int]=mapped_column(Integer,default=1)
+    creado:Mapped[str]=mapped_column(String(40))
+    actualizado:Mapped[str]=mapped_column(String(40))
+
+class EventoPlan(Base):
+    __tablename__='eventos_planes'
+    id:Mapped[int]=mapped_column(primary_key=True)
+    plan_id:Mapped[int]=mapped_column(ForeignKey('planes_vacantes.id'),index=True)
+    revision:Mapped[int]=mapped_column(Integer)
+    fecha:Mapped[str]=mapped_column(String(40))
+    actor:Mapped[str]=mapped_column(String(100))
+    datos:Mapped[dict]=mapped_column(JSON)
+    __table_args__=(UniqueConstraint('plan_id','revision'),)
 
 def conectar(url=None):
     Path('privado').mkdir(exist_ok=True,mode=0o700)

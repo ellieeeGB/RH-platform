@@ -12,6 +12,8 @@ from .modelos import conectar,Usuario,Sesion,Hecho,Importacion,Auditoria,como_di
 from .importador import leer_archivo,cargar_diccionario,limpiar,RAIZ
 from .metricas import serie,resumen_empresas,validar,hallazgos,desglose,pronostico
 from .servicio import activa,consulta,persistir,auditar,seudonimo,benchmark
+from . import planes,catalogo
+from .planes import EntradaPlan
 from .seguridad import autenticar,iniciar_sesion,cookies,rol,limitar,hash_token,ph
 
 previews={};preview_lock=Lock()
@@ -108,7 +110,8 @@ def crear_app(url=None):
         pairs=db.execute(q).all()
         return {'empresas':[{'id':e,'nombre':e} for e in sorted({e for e,p in pairs})] if u.rol!='cliente' else [{'id':'propia','nombre':seudonimo(u.empresa)}],
             'periodos':sorted({p for e,p in pairs}),
-            'metricas':sorted({(c['metrica'],c['categoria']) for c in imp.diccionario.values() if c['accion']=='incluir'}),
+            'metricas':sorted((d['metrica'],d['tema']) for d in catalogo.definiciones(imp.diccionario)),
+            'catalogo':catalogo.definiciones(imp.diccionario),'temas':catalogo.TEMAS,
             'etiquetas':{c['metrica']:c['pregunta'][:180] for c in imp.diccionario.values() if c['accion']=='incluir'},
             'revision':imp.revision,'importacion':imp.id}
 
@@ -262,6 +265,26 @@ def crear_app(url=None):
         body+='<h2>Evolución</h2><table><tr><th>Bimestre</th><th>Plantilla</th><th>Altas</th><th>Bajas</th><th>Rotación %</th><th>n</th></tr>'+''.join('<tr>'+''.join('<td>'+esc(p[k])+'</td>' for k in ['bimestre','plantilla','contrataciones','bajas','rotacion','n_rotacion'])+'</tr>' for p in points)+'</table>'
         body+=''.join(sections)+'<h2>Anexo metodológico</h2><p>Rotación = bajas / (plantilla operativa + administrativa reportada) × 100. Sin imputación. La plantilla no se suma entre bimestres. Las medianas de varias fechas usan observaciones empresa–bimestre, con n de empresas distinto de n de valores. Porcentajes y escalas no se suman. Los intervalos son descriptivos y no prueban causalidad. Exportar a PDF desde Imprimir → Guardar como PDF.</p><p>Incidencias de validación en esta selección: '+str(len(validar(fs)))+'</p></main></html>'
         auditar(db,u.nombre,'exportar_reporte',{'bimestres':[p['bimestre'] for p in points]});db.commit();return body
+
+    @app.get('/api/catalogo')
+    def catalogo_estudio(empresas:str='',periodos:str='',u=Depends(identity),db=Depends(db_dep)):
+        return catalogo.cobertura(db,u,filtros_lista(empresas),filtros_lista(periodos))
+
+    @app.get('/api/planes')
+    def listar_planes(empresas:str='',periodos:str='',archivadas:bool=False,u=Depends(identity),db=Depends(db_dep)):
+        return planes.listar(db,u,filtros_lista(empresas),filtros_lista(periodos),archivadas)
+
+    @app.post('/api/planes',status_code=201)
+    def crear_plan(body:EntradaPlan,u=Depends(identity),db=Depends(db_dep)):
+        return planes.guardar(db,u,body)
+
+    @app.put('/api/planes/{id}')
+    def actualizar_plan(id:int,body:EntradaPlan,u=Depends(identity),db=Depends(db_dep)):
+        return planes.guardar(db,u,body,id)
+
+    @app.get('/api/planes/{id}/historial')
+    def historia_plan(id:int,u=Depends(identity),db=Depends(db_dep)):
+        return planes.historial(db,u,id)
 
     @app.get('/api/salud')
     def salud():return {'estado':'ok'}
