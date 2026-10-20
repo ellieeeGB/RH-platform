@@ -17,7 +17,7 @@ La entrega inicial organizaba gran parte del estudio como pregunta y tabla. La r
 
 ## Probar sin instalar
 
-Abre [vista_previa.html](vista_previa.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
+Abre [catch_rh_vacantes_v2.html](catch_rh_vacantes_v2.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
 
 Puedes probar panorama, navegación, filtros, comparación, exploradores, agenda y decisiones. Los reportes, la importación, el benchmark protegido y los cambios auditados completos requieren ejecutar la aplicación; la vista previa no se conecta al estudio real ni almacena cambios en él.
 

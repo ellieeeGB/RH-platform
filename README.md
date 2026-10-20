@@ -4,7 +4,7 @@ Plataforma de consultoría RH en español. Convierte la encuesta bimestral de em
 
 ## Ver el rediseño
 
-Abre [la vista previa interactiva](documentacion/vista_previa.html) para explorar el diseño sin instalar. Usa **datos ficticios** y guarda los planes de prueba en ese navegador; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
+Abre [la vista previa interactiva](documentacion/catch_rh_vacantes_v2.html) para explorar el diseño sin instalar. Usa **datos ficticios** y guarda los planes de prueba en ese navegador; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
 
 ## Empezar en tres pasos
 

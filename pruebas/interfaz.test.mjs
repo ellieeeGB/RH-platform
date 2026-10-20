@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
-const html=readFileSync(new URL('../documentacion/vista_previa.html',import.meta.url),'utf8');
+const html=readFileSync(new URL('../documentacion/catch_rh_vacantes_v2.html',import.meta.url),'utf8');
 async function start(t){
  const w=new Window({url:'https://vista.local',settings:{enableJavaScriptEvaluation:true,disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
  t.after(()=>w.happyDOM.close());w.document.write(html);await w.happyDOM.whenAsyncComplete();return w;
