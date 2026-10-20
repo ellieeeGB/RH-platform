@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
-const html=readFileSync(new URL('../documentacion/catch_rh_vacantes_v2.html',import.meta.url),'utf8');
+const html=readFileSync(new URL('../documentacion/catch_rh_panorama_v3.html',import.meta.url),'utf8');
 async function start(t){
  const w=new Window({url:'https://vista.local',settings:{enableJavaScriptEvaluation:true,disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
  t.after(()=>w.happyDOM.close());w.document.write(html);await w.happyDOM.whenAsyncComplete();return w;
@@ -12,7 +12,7 @@ const click=async(w,selector)=>{const el=w.document.querySelector(selector);asse
 test('Inicio carga ocho empresas, siete periodos, cifras y gráfica sin NaN',async t=>{
  const w=await start(t),d=w.document;
  assert.equal(d.querySelector('#app').hidden,false);assert.equal(d.querySelectorAll('input[name=company]:checked').length,8);assert.equal(d.querySelectorAll('input[name=period]:checked').length,7);
- assert.match(d.querySelector('#heroTitle').textContent,/contrataciones|bajas/);assert.equal(d.querySelectorAll('.metric-card').length,4);assert.equal(d.querySelectorAll('.priority').length,3);assert.doesNotMatch(d.querySelector('#content').innerHTML,/NaN|undefined/);
+ assert.match(d.querySelector('#heroTitle').textContent,/contrataciones|bajas/);assert.equal(d.querySelectorAll('.metric-card').length,4);assert.equal(d.querySelectorAll('.next-step-grid>button').length,3);assert.equal(d.querySelector('.story-hero'),null);assert.doesNotMatch(d.querySelector('#content').innerHTML,/NaN|undefined/);
  await click(w,'[data-trend="balance"]');assert.match(d.querySelector('#trendContent').textContent,/Contrataciones menos bajas/);
 });
 test('Mapa abre trayectorias y responde a filtros de empresas y periodos',async t=>{
@@ -81,4 +81,37 @@ test('Formulario conserva el borrador al rechazar plazas incoherentes',async t=>
  d.querySelector('[name="puesto"]').value='Puesto de prueba';d.querySelector('[name="cubiertas"]').value='2';
  await click(w,'#planForm [type="submit"]');assert.equal(d.querySelector('#dialog').open,true);assert.match(d.querySelector('#planError').textContent,/no pueden superar/);
  assert.equal(w.localStorage.getItem('catch-demo-planes-v1'),null);
+});
+
+test('Panorama resume motivos y vacantes del último bimestre y responde a los filtros',async t=>{
+ const w=await start(t),d=w.document;
+ const totals=(metric,period,company)=>{
+  const groups=new Map();w.CATCH_DEMO.hechos.filter(f=>f.metrica===metric&&f.bimestre===period&&(!company||f.empresa===company)&&typeof f.valor==='number'&&!f.excluido).forEach(f=>groups.set(f.dimension,(groups.get(f.dimension)||0)+f.valor));
+  return [...groups.values()].sort((a,b)=>b-a).slice(0,3).map(n=>new Intl.NumberFormat('es-MX').format(n));
+ };
+ assert.deepEqual([...d.querySelectorAll('#overviewDemand .vacancy-snapshot strong')].map(e=>e.textContent),totals('vacantes_proximas','2025-07'));
+ assert.equal(d.querySelectorAll('#overviewReasons .bar-row').length,3);
+ assert.match(d.querySelector('#overviewReasons .micro-note').textContent,/conciliación/);
+ assert.equal(d.querySelector('.coverage-visual svg').getAttribute('aria-label'),'8 de 8 empresas con rotación calculable');
+ d.querySelectorAll('input[name=company]').forEach(e=>e.checked=e.value==='COMPAÑIA 2');
+ d.querySelectorAll('input[name=period]').forEach(e=>e.checked=['2024-07','2024-09'].includes(e.value));
+ await click(w,'#apply');
+ assert.deepEqual([...d.querySelectorAll('#overviewDemand .vacancy-snapshot strong')].map(e=>e.textContent),totals('vacantes_proximas','2024-09','COMPAÑIA 2'));
+ assert.match(d.querySelector('#overviewDemand').textContent,/Sep–Oct 2024/);
+ assert.equal(d.querySelector('.coverage-visual svg').getAttribute('aria-label'),'1 de 1 empresas con rotación calculable');
+ await click(w,'.vacancy-signal [data-go="planes"]');assert.ok(d.querySelector('#newPlan'));
+});
+test('Panorama distingue cero de faltante en la demanda próxima',async t=>{
+ const w=await start(t),d=w.document;
+ const rows=w.CATCH_DEMO.hechos.filter(f=>f.metrica==='vacantes_proximas'&&f.bimestre==='2025-07');
+ rows.forEach(f=>{f.valor=0;f.estado='valido';f.excluido=false;});await click(w,'#apply');
+ assert.deepEqual([...d.querySelectorAll('#overviewDemand strong')].map(e=>e.textContent),['0','0']);
+ rows.forEach(f=>{f.valor=null;f.estado='vacio';});await click(w,'#apply');
+ assert.equal(d.querySelectorAll('#overviewDemand strong').length,0);assert.match(d.querySelector('#overviewDemand').textContent,/Sin cantidades válidas/);
+});
+test('Un fallo de motivos no bloquea indicadores ni vacantes del panorama',async t=>{
+ const w=await start(t),d=w.document,original=w.fetch;
+ w.fetch=(url,options)=>url.includes('metrica=bajas_motivo')?Promise.reject(new Error('Fallo de consulta de prueba')):original(url,options);
+ await click(w,'#apply');assert.match(d.querySelector('#overviewReasons').textContent,/No fue posible/);
+ assert.equal(d.querySelectorAll('.metric-card').length,4);assert.equal(d.querySelectorAll('#overviewDemand strong').length,2);
 });

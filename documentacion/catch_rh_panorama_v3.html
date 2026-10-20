@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es-MX"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Analítica de recursos humanos con evidencia, contexto y trazabilidad."><title>Catch · Versión 2 · Vacantes y acciones</title><style>/* Catch · sistema visual de lectura. Las cifras se mantienen en primer plano. */
+<html lang="es-MX"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Analítica de recursos humanos con evidencia, contexto y trazabilidad."><title>Catch · Versión 3 · Panorama visual</title><style>/* Catch · sistema visual de lectura. Las cifras se mantienen en primer plano. */
 :root {
   --bg: #f3f5f3;
   --surface: #fff;
@@ -108,18 +108,7 @@ main { max-width: 1580px; margin: auto; padding: 30px 32px; outline: none; }
 .filters>span { font-size: 11px; margin-left: auto; }
 .notice { padding: 14px 18px; border: 1px solid #d9be8f; border-radius: 10px; background: #fcf4e4; color: #68480f; margin-bottom: 20px; font-size: 13px; }
 
-/* Panorama: noticia, contexto, conversaciones */
-.story-hero { background: var(--nav); color: #fff; display: grid; grid-template-columns: 1.2fr 1fr; border-radius: 22px; overflow: hidden; margin-bottom: 16px; }
-.hero-copy { padding: 35px; align-self: center; }
-.hero-copy .eyebrow { color: #b9d9d6; }
-.hero-copy h2 { font-size: clamp(28px,3vw,45px); line-height: 1.08; letter-spacing: -.045em; max-width: 570px; margin: 18px 0; }
-.hero-copy>p:not(.eyebrow) { color: #c8dedd; font-size: 15px; max-width: 440px; }
-.hero-link { display: inline-flex; gap: 22px; align-items: center; color: #b6e8d6; text-decoration: none; border-bottom: 1px solid #6eaaa1; padding: 12px 0 7px; font-size: 13px; font-weight: 700; }
-.hero-balance { margin: 22px; padding: 22px 26px; border: 1px solid #40606a; background: #193b46; border-radius: 16px; }
-.balance-label { font-size: 9px; letter-spacing: 1.8px; color: #c8dfdf; }
-.balance-number { font-size: clamp(50px,5vw,76px); font-weight: 700; letter-spacing: -.06em; line-height: 1.1; margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
-.balance-caption { font-size: 12px; color: #c8dfdf; }
-.hero-balance>small { display: block; color: #c8dfdf; font-size: 10px; line-height: 1.5; margin-top: 16px; }
+/* Componentes compartidos de gráficas, indicadores y agenda */
 .bars { display: grid; gap: 22px; }
 .bar-label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 7px; font-size: 13px; }
 .bar-label>span { overflow-wrap: anywhere; max-width: 78%; }
@@ -129,12 +118,6 @@ main { max-width: 1580px; margin: auto; padding: 30px 32px; outline: none; }
 .bar-track { fill: var(--soft); }
 .bar-fill { fill: var(--accent); }
 .bar-row>small { font-size: 10px; }
-.balance-bars { margin-top: 22px; gap: 13px; }
-.balance-bars .bar-label { font-size: 12px; }
-.balance-bars .bar-track { fill: #31535b; }
-.balance-bars .bar-fill { fill: #b6e8d6; }
-.balance-bars .bar-row:nth-child(2) .bar-fill { fill: #e8ae96; }
-.balance-bars .bar-row>small { display: none; }
 .metric-strip { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
 .metric-card { border: 0; border-right: 1px solid var(--line); border-radius: 0; text-align: left; padding: 20px 22px; min-width: 0; }
 .metric-card:last-child { border-right: 0; }
@@ -143,10 +126,6 @@ main { max-width: 1580px; margin: auto; padding: 30px 32px; outline: none; }
 .metric-card>strong { display: block; font-size: clamp(23px,2.6vw,36px); letter-spacing: -.04em; font-variant-numeric: tabular-nums; margin: 8px 0 2px; line-height: 1.2; }
 .metric-card>small { font-size: 11px; display: block; min-height: 34px; }
 .metric-card .metric-coverage { color: var(--muted); font-size: 10px; display: block; margin-top: 8px; }
-.chapter { display: flex; gap: 13px; align-items: flex-start; margin: 35px 0 16px; }
-.chapter>span { font-size: 12px; border: 1px solid #bdcfca; color: var(--accent); border-radius: 50%; width: 31px; height: 31px; display: grid; place-items: center; flex-shrink: 0; }
-.chapter h2 { font-size: 22px; margin: 0 0 4px; }
-.chapter p { color: var(--muted); font-size: 12px; margin: 0; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 25px; margin-bottom: 20px; min-width: 0; }
 .panel-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 15px; }
 .panel-head h2 { font-size: 25px; margin-bottom: 7px; }
@@ -154,8 +133,6 @@ main { max-width: 1580px; margin: auto; padding: 30px 32px; outline: none; }
 .panel-head p { font-size: 12px; color: var(--muted); margin-bottom: 0; }
 .panel-head label { min-width: 155px; font-size: 11px; }
 .panel-head select { font-size: 12px; padding: 9px; margin-bottom: 0; }
-.evolution-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(235px,1fr); gap: 18px; }
-.evolution-panel { margin: 0; }
 .segmented { display: flex; gap: 4px; flex-wrap: wrap; padding: 4px; border: 1px solid var(--line); border-radius: 10px; width: fit-content; background: var(--bg); }
 .segmented button { border: 0; background: transparent; font-size: 11px; padding: 7px 11px; min-height: 36px; }
 .segmented .selected { background: var(--ink); color: var(--surface); }
@@ -169,15 +146,8 @@ main { max-width: 1580px; margin: auto; padding: 30px 32px; outline: none; }
 .chart .zero-line { stroke: var(--muted); stroke-width: 1; }
 .chart .line { stroke: var(--accent); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .chart .point { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
-.context-card { border: 1px solid #cbded4; border-radius: var(--radius); background: var(--soft); padding: 25px; }
-.context-card .eyebrow { color: var(--accent); }
-.context-card h3 { font-size: 23px; margin-bottom: 15px; }
-.context-card p { font-size: 12px; color: var(--muted); }
-.coverage-number { font-size: 44px; letter-spacing: -.05em; line-height: 1.1; margin: 25px 0 7px; font-weight: 700; }
-.coverage-number span { font-size: 18px; font-weight: 400; color: var(--muted); margin-left: 8px; letter-spacing: 0; }
 .text-button { background: none; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; padding: 8px 0; font-size: 12px; color: var(--accent); font-weight: 700; min-height: 40px; }
 .text-button:hover { background: transparent; color: var(--ink); }
-.context-card details { margin-top: 20px; }
 summary { font-size: 12px; font-weight: 700; padding: 8px 0; }
 details[open]>summary { margin-bottom: 12px; }
 details p { font-size: 13px; }
@@ -324,7 +294,6 @@ dialog::backdrop { background: #102b3bc9; }
 .night .priority.mint { background: #233e36; border-color:#456054; }
 .night .priority.blue { background: #243947; border-color:#456071; }
 .night .priority.sand { background: #3b382b; border-color:#655d42; }
-.night .context-card { border-color: #456054; }
 
 /* Pantallas pequeñas: mismo contenido, menos columnas. */
 @media (max-width:1200px) {
@@ -333,10 +302,6 @@ dialog::backdrop { background: #102b3bc9; }
   nav button { font-size: 11px; gap: 8px; }
   main { padding: 25px; }
   .topbar { padding: 13px 25px; }
-  .hero-copy { padding: 27px; }
-  .hero-balance { margin: 18px 18px 18px 0; padding: 22px; }
-  .hero-copy h2 { font-size: 34px; }
-  .evolution-layout { grid-template-columns: minmax(0,1.5fr) minmax(220px,1fr); }
   .priority { padding: 20px; }
   .priority h3 { font-size: 18px; }
   .metric-card { padding: 18px; }
@@ -344,18 +309,6 @@ dialog::backdrop { background: #102b3bc9; }
   .trend-meta { flex-wrap: wrap; }
 }
 @media (max-width:1023px) {
-  .story-hero { grid-template-columns: 1fr 1fr; }
-  .hero-copy h2 { font-size: 29px; }
-  .hero-copy>p:not(.eyebrow) { font-size: 13px; }
-  .hero-balance { padding: 20px; }
-  .balance-number { font-size: 52px; }
-  .evolution-layout { grid-template-columns: 1fr; }
-  .context-card { display: grid; grid-template-columns: 1fr 1fr; column-gap: 25px; }
-  .context-card .eyebrow { grid-column: 1 / -1; }
-  .context-card h3 { font-size: 20px; }
-  .context-card .coverage-number { margin: 5px 0; }
-  .context-card details { grid-column: 1 / -1; }
-  .context-card .text-button { justify-self: start; }
   .priority-grid { grid-template-columns: 1fr; }
   .priority { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
   .priority-top { grid-column: 1 / -1; margin: 0; }
@@ -401,27 +354,15 @@ dialog::backdrop { background: #102b3bc9; }
   .filters .saved-views .filter-list { left: auto; right: 0; }
   .filters button { font-size: 11px; }
   .filters>span { font-size: 10px; }
-  .story-hero { grid-template-columns: 1fr; border-radius: 17px; }
-  .hero-copy { padding: 25px; }
-  .hero-copy h2 { font-size: 34px; max-width: 500px; }
-  .hero-copy>p:not(.eyebrow) { font-size: 14px; }
-  .hero-balance { margin: 0 20px 20px; padding: 22px; }
-  .balance-number { font-size: 58px; }
-  .balance-bars { gap: 10px; }
   .metric-card { padding: 17px; }
   .metric-card>strong { font-size: 29px; }
   .metric-card>span:first-child { font-size: 11px; }
   .metric-card>small { font-size: 10px; }
-  .chapter { margin-top: 28px; }
-  .chapter h2 { font-size: 21px; }
-  .chapter p { font-size: 11px; }
   .panel { padding: 20px; border-radius: 15px; }
   .panel-head { flex-wrap: wrap; gap: 12px; }
   .panel-head h2 { font-size: 23px; }
   .panel-head label { width: 100%; }
   .panel-head h3 { font-size: 19px; }
-  .context-card { padding: 22px; }
-  .context-card h3 { font-size: 19px; }
   .priority { display: flex; gap: 0; padding: 23px; }
   .priority h3 { font-size: 22px; margin: 16px 0 20px; }
   .priority-value { align-self: flex-start; margin-bottom: 18px; font-size: 40px; }
@@ -472,7 +413,7 @@ dialog::backdrop { background: #102b3bc9; }
   .shell>aside,.topbar,.filters,footer { display: none !important; }
   .shell { display: block; }
   main { padding: 0; }
-  .panel,.priority,.story-hero,.metric-strip { break-inside: avoid; }
+  .panel,.priority,.metric-strip { break-inside: avoid; }
   .chart { min-width: 0; }
   .chart-scroll { overflow: visible; }
 }
@@ -609,7 +550,7 @@ dialog::backdrop { background: #102b3bc9; }
 @media(prefers-reduced-motion:no-preference) {
  button,a,.vacancy-card { transition: background .18s,border-color .18s,color .18s,transform .18s,box-shadow .18s; }
  .upload-button:hover,.topic-directory>button:hover,.vacancy-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px #112d3810; }
- #content>.plan-hero,#content>.catalog-intro,#content>.story-hero,.vacancy-card,.catalog-result,.topic-directory>button { animation: enter-view .4s ease-out backwards; }
+ #content>.plan-hero,#content>.catalog-intro,.vacancy-card,.catalog-result,.topic-directory>button { animation: enter-view .4s ease-out backwards; }
  .topic-directory>button:nth-child(3n+2),.board-column:nth-child(2) .vacancy-card { animation-delay: .06s; }
  .topic-directory>button:nth-child(3n),.board-column:nth-child(3) .vacancy-card { animation-delay: .12s; }
  .chart .line { stroke-dasharray: 1; stroke-dashoffset: 0; animation: trace-line .8s ease-out backwards; }
@@ -626,8 +567,122 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after,bo
 html:has(body.reduce-motion) { scroll-behavior: auto; }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after,dialog::backdrop { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media print { .work-launch,.recruit-bridge,.board-toolbar button,.vacancy-card>button { display: none; } .vacancy-card { break-inside: avoid; } }
+
+/* Panorama v3: lectura simultánea, sin una tarjeta de portada. */
+main.is-overview .page-heading { margin-bottom: 18px; }
+main.is-overview .page-heading .eyebrow { display: none; }
+main.is-overview .page-heading h1 { font-size: 27px; }
+main.is-overview .page-heading p:last-child { margin-bottom: 0; font-size: 12px; }
+.overview-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 18px; }
+.overview-heading .eyebrow { font-size: 9px; margin-bottom: 6px; color: var(--accent); }
+.overview-heading h2 { font-size: 19px; letter-spacing: -.02em; margin: 0; line-height: 1.35; }
+.overview-heading>button { white-space: nowrap; flex-shrink: 0; }
+.overview-metrics { gap: 12px; border: 0; border-radius: 0; background: transparent; overflow: visible; margin-bottom: 18px; }
+.overview-metrics .metric-card { border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 12px; padding: 16px 18px 13px; background: var(--surface); }
+.overview-metrics .metric-card:nth-child(2) { border-top-color: #4b7b9a; }
+.overview-metrics .metric-card:nth-child(3) { border-top-color: #81b9a4; }
+.overview-metrics .metric-card:nth-child(4) { border-top-color: var(--coral); }
+.overview-metrics .metric-card>strong { font-size: clamp(25px,2.6vw,36px); margin: 9px 0 4px; }
+.overview-metrics .metric-card>small { min-height: 28px; font-size: 10px; }
+.overview-metrics .metric-coverage { margin-top: 5px; font-size: 10px; }
+.overview-main { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(280px,1fr); gap: 16px; margin-bottom: 16px; }
+.overview-main>.panel { margin: 0; padding: 22px; }
+.overview-main .eyebrow,.overview-signals .eyebrow { margin-bottom: 7px; font-size: 9px; letter-spacing: 1.3px; }
+.overview-main .panel-head h3,.overview-signals .panel-head h3 { font-size: 18px; }
+.overview-main .panel-head .text-button { padding-top: 0; min-height: 32px; font-size: 10px; }
+.overview-evolution .trend-meta { margin-top: 16px; }
+.overview-evolution .trend-meta h3 { font-size: 12px; }
+.overview-evolution .chart { min-width: 360px; }
+.overview-evolution .sample-note { margin-top: 4px; font-size: 10px; }
+.overview-evolution details>summary { font-size: 10px; padding: 4px 0; }
+.movement-panel { display: flex; flex-direction: column; background: var(--soft); }
+.movement-symbol { font-size: 27px; color: var(--accent); line-height: 1; }
+.movement-total { display: flex; align-items: center; gap: 16px; margin: 8px 0 22px; }
+.movement-total>strong { font-size: clamp(35px,3.6vw,52px); letter-spacing: -.06em; line-height: 1; color: var(--accent); }
+.movement-total.is-negative>strong { color: var(--danger); }
+.movement-total>span { font-size: 12px; line-height: 1.5; }
+.movement-total small { font-size: 9px; }
+.overview-balance { gap: 17px; }
+.overview-balance .bar-row:nth-child(2) .bar-fill { fill: var(--coral); }
+.overview-balance .bar-row>small { display: none; }
+.overview-balance .bar-label { font-size: 11px; }
+.overview-balance .bar-label strong { font-size: 16px; }
+.overview-balance .bar-label strong small { font-size: 8px; }
+.micro-note { font-size: 10px; color: var(--muted); line-height: 1.6; margin: 16px 0 10px; }
+.movement-panel>.text-button { align-self: flex-start; margin-top: auto; font-size: 11px; }
+.overview-signals { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-bottom: 22px; }
+.overview-signal { display: flex; flex-direction: column; padding: 22px; margin: 0; }
+.signal-number { font-size: 11px; color: var(--muted); background: var(--bg); border: 1px solid var(--line); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; flex-shrink: 0; }
+.overview-signal>.text-button { align-self: flex-start; margin-top: auto; font-size: 11px; }
+.overview-signal .bar-row { margin: 0; }
+.overview-signal .bar-label { font-size: 11px; }
+.overview-signal .bar-label>span { max-width: 70%; }
+.overview-signal .bar-label strong { font-size: 14px; }
+.overview-signal .bar-label strong small { display: none; }
+.overview-signal .bar-row>small { font-size: 9px; }
+.overview-signal .bars { gap: 12px; }
+.overview-signal .empty-chart { padding: 20px 0; font-size: 12px; background: transparent; }
+.vacancy-snapshot { display: flex; flex-wrap: wrap; gap: 20px; margin: 8px 0 16px; }
+.vacancy-snapshot>div { flex: 1; min-width: 85px; border-left: 2px solid var(--accent); padding-left: 12px; }
+.vacancy-snapshot strong { display: block; font-size: 34px; line-height: 1.1; letter-spacing: -.04em; margin-bottom: 8px; }
+.vacancy-snapshot span { display: block; font-size: 11px; }
+.vacancy-snapshot small { display: block; font-size: 9px; margin-top: 6px; }
+.vacancy-signal>.primary { font-size: 11px; margin-top: auto; margin-bottom: 5px; }
+.vacancy-signal>.text-button { margin-top: 0; }
+.coverage-visual { display: flex; align-items: center; gap: 16px; margin: 6px 0 18px; }
+.coverage-visual svg { width: 112px; height: 112px; flex-shrink: 0; }
+.coverage-track,.coverage-arc { fill: none; stroke-width: 8; }
+.coverage-track { stroke: var(--line); }
+.coverage-arc { stroke: var(--accent); stroke-linecap: butt; }
+.coverage-visual text { fill: var(--ink); font: 700 23px "Trebuchet MS",Arial,sans-serif; letter-spacing: -1px; }
+.coverage-visual .coverage-unit { fill: var(--muted); font-size: 10px; font-weight: 400; letter-spacing: 0; }
+.coverage-visual p { margin: 0; }
+.coverage-visual p>strong { font-size: 28px; display: block; line-height: 1.1; }
+.coverage-visual p>span { display: block; font-size: 11px; margin: 6px 0; }
+.coverage-visual p>small { display: block; font-size: 9px; }
+.overview-method>summary { font-size: 10px; margin-top: 8px; }
+.overview-method p { font-size: 11px; }
+.overview-section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.overview-section-title h3 { font-size: 17px; margin: 0; }
+.overview-section-title button { font-size: 11px; }
+.next-step-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-bottom: 22px; }
+.next-step-grid>button { text-align: left; padding: 18px; border-radius: 12px; }
+.next-step-grid .eyebrow { display: block; font-size: 8px; margin-bottom: 8px; color: var(--accent); }
+.next-step-grid>button>strong { display: block; font-size: 14px; line-height: 1.4; margin-bottom: 12px; }
+.next-step-bottom { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: 16px; }
+.next-step-bottom small { font-size: 9px; display: block; margin-top: 3px; }
+.overview-reference { padding: 14px 24px; margin-bottom: 12px; }
+.overview-reference>details>summary>span { color: var(--muted); margin-left: 12px; font-size: 10px; font-weight: 400; }
+.overview-reference .benchmark-panel { margin: 22px 0 0; }
+@media(min-width:768px) and (max-width:1199px) { .overview-main { grid-template-columns: minmax(0,1.4fr) minmax(240px,1fr); } .overview-signals { grid-template-columns: repeat(2,minmax(0,1fr)); } .overview-signals>.overview-signal:last-child { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; } .overview-signals>.overview-signal:last-child .panel-head { grid-column: 1; } .overview-signals>.overview-signal:last-child .coverage-visual { grid-column: 2; grid-row: 1/4; } }
+@media(max-width:1000px) { .overview-main { grid-template-columns: 1fr; } .next-step-grid { grid-template-columns: 1fr; } .next-step-grid>button { display: grid; grid-template-columns: 105px 1fr 160px; gap: 10px; align-items: center; } .next-step-grid .eyebrow,.next-step-grid>button>strong { margin: 0; } }
+@media(max-width:767px) {
+ main.is-overview .page-heading { gap: 8px; }
+ main.is-overview .page-heading h1 { font-size: 25px; }
+ .overview-heading { align-items: flex-start; gap: 12px; }
+ .overview-heading h2 { font-size: 16px; }
+ .overview-heading .text-button { font-size: 10px; }
+ .overview-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+ .overview-metrics .metric-card { padding: 13px 12px; }
+ .overview-metrics .metric-card>strong { font-size: 28px; }
+ .overview-main>.panel,.overview-signal { padding: 18px; }
+ .overview-main .panel-head .text-button { font-size: 10px; }
+ .overview-main .panel-head { gap: 8px; }
+ .overview-main .trend-meta { flex-wrap: wrap; }
+ .overview-signals { grid-template-columns: 1fr; }
+ .coverage-visual { max-width: 360px; }
+ .next-step-grid>button { grid-template-columns: 1fr; gap: 8px; padding: 16px; }
+ .next-step-bottom small { display: inline; margin-left: 6px; }
+ .overview-reference>details>summary>span { display: block; margin: 5px 0 0; }
+}
+@media(prefers-reduced-motion:no-preference) {
+ .overview-metrics .metric-card,.overview-main>.panel,.overview-signals>.panel { animation: enter-view .35s ease-out backwards; }
+ .overview-metrics .metric-card:nth-child(2),.overview-signals>.panel:nth-child(2) { animation-delay: .06s; }
+ .overview-metrics .metric-card:nth-child(3),.overview-signals>.panel:nth-child(3) { animation-delay: .12s; }
+ .overview-metrics .metric-card:nth-child(4) { animation-delay: .18s; }
+}
 </style><style>.demo-banner{padding:8px 16px;background:#f8dfb1;color:#563e19;font:700 10px/1.5 Arial,sans-serif;letter-spacing:.6px;text-align:center;position:relative;z-index:30}.shell>aside{top:31px}@media(max-width:767px){.shell>aside{top:auto}}</style></head>
-<body><div class="demo-banner">VERSIÓN 2 · VACANTES Y ACCIONES · DATOS FICTICIOS · PLANES DEMO EN ESTE NAVEGADOR</div>
+<body><div class="demo-banner">VERSIÓN 3 · PANORAMA VISUAL · DATOS FICTICIOS · PLANES DEMO EN ESTE NAVEGADOR</div>
 <a class="skip-link" href="#main">Ir al contenido</a>
 <div id="login" class="login-layout">
  <section class="welcome"><div class="wordmark">Catch<span>CONSULTING</span></div><p class="eyebrow">PEOPLE INTELLIGENCE</p><h1>Entender el cambio.<br>Decidir con<br><em>evidencia.</em></h1><p>Una lectura clara de tu organización,<br>en cada bimestre.</p><div class="orbit" aria-hidden="true"><svg viewBox="0 0 300 160"><path d="M0 130 Q80 150 150 70 T300 30"/><path d="M0 160 Q100 90 180 110 T300 10"/><circle cx="150" cy="70" r="7"/></svg></div><small>CATCH CONSULTING · ESTUDIO RH</small></section>
@@ -922,7 +977,8 @@ function chart(data,key,label){
  return '<div class="chart-scroll">'+svg+'</svg></div>';
 }
 async function render(){
- const seq=++requestNumber;$('#notice').hidden=true;$('#breadcrumb').textContent=names[view];$('#pageTitle').textContent=view==='inicio'?'Panorama del estudio':names[view];$('#pageSubtitle').textContent=({inicio:'Los cambios, su contexto y el siguiente paso.',comparar:'Ubica diferencias y sigue la trayectoria de cada empresa.',agenda:'Prepara la conversación con evidencia concreta.',rotacion:'Entiende las salidas: motivos, edades y antigüedad.',reclutamiento:'Conecta la contratación actual con las vacantes próximas.',relaciones:'Revisa acuerdos, incrementos y tiempos de negociación.',beneficios:'Compara prestaciones respetando sus unidades de costo.',calidad:'Revisa las señales que pueden cambiar una conclusión.',escenarios:'Explora una decisión y haz visibles sus supuestos.',planes:'Del puesto pendiente al siguiente paso para cubrirlo.',catalogo:'Todas las preguntas, organizadas por tema y con su cobertura.',organizacion:'Jornadas, flexibilidad y prácticas de cultura laboral.',seguridad:'Situaciones reportadas y preparación ante contingencias.'})[view]||'Una vista del resultado. El detalle, cuando lo necesitas.';
+ $('#main').classList.toggle('is-overview',view==='inicio');
+ const seq=++requestNumber;$('#notice').hidden=true;$('#breadcrumb').textContent=names[view];$('#pageTitle').textContent=view==='inicio'?'Panorama del estudio':names[view];$('#pageSubtitle').textContent=({inicio:'Plantilla, movimientos y demanda en una sola vista.',comparar:'Ubica diferencias y sigue la trayectoria de cada empresa.',agenda:'Prepara la conversación con evidencia concreta.',rotacion:'Entiende las salidas: motivos, edades y antigüedad.',reclutamiento:'Conecta la contratación actual con las vacantes próximas.',relaciones:'Revisa acuerdos, incrementos y tiempos de negociación.',beneficios:'Compara prestaciones respetando sus unidades de costo.',calidad:'Revisa las señales que pueden cambiar una conclusión.',escenarios:'Explora una decisión y haz visibles sus supuestos.',planes:'Del puesto pendiente al siguiente paso para cubrirlo.',catalogo:'Todas las preguntas, organizadas por tema y con su cobertura.',organizacion:'Jornadas, flexibilidad y prácticas de cultura laboral.',seguridad:'Situaciones reportadas y preparación ante contingencias.'})[view]||'Una vista del resultado. El detalle, cuando lo necesitas.';
  $('#content').innerHTML='<div class="cards"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
  $('#companySummary').textContent=selection('company').length===filters.empresas.length?'Todas las empresas':`${selection('company').length} empresas`;
  $('#periodSummary').textContent=selection('period').length===filters.periodos.length?'Todos los bimestres':`${selection('period').length} bimestre(s)`;
@@ -942,9 +998,6 @@ async function render(){
 }
 const signed=(v,d=0)=>RHLectura.valid(v)?`${v>0?'+':''}${fmt(v,d)}`:'Sin dato';
 const human=s=>String(s||'Total').replaceAll('_',' ').replace(/^./,c=>c.toUpperCase());
-function chapter(n,title,description=''){
- return `<div class="chapter"><span>${n}</span><div><h2>${title}</h2>${description?`<p>${description}</p>`:''}</div></div>`;
-}
 function metricName(m){return filters.catalogo?.find(d=>d.metrica===m)?.titulo||(m.startsWith('pregunta_')?(filters.etiquetas?.[m]||'Pregunta del estudio'):titleMetric(m));}
 function readableSummary(rows,metric){const labels=filters.catalogo?.find(d=>d.metrica===metric)?.dimensiones||{};return rows.map(d=>({...d,dimension:labels[d.dimension]||d.dimension}));}
 function bars(items,unit='',className=''){
@@ -966,14 +1019,15 @@ function renderOverview(r){
  const l=RHLectura.lectura(p,r.detalle),c=RHLectura.cambio(p);
  const card=(name,value,n,detail,go)=>`<button class="metric-card" data-go="${go}"><span>${name}<span aria-hidden="true">↗</span></span><strong>${value}</strong><small>${detail}</small><span class="metric-coverage">${n} empresas</span></button>`;
  $('#content').innerHTML=`
- <section class="story-hero" aria-labelledby="heroTitle"><div class="hero-copy"><p class="eyebrow"><span class="live-dot"></span> ${esc(periodLabel(p.bimestre))} · LECTURA DEL BIMESTRE</p><h2 id="heroTitle">${l.titulo}</h2><p>${l.balance===null?'Necesitamos ambos datos para describir el balance.':`En las ${l.n} empresas con ambos datos, ${l.balance<0?'salieron '+fmt(Math.abs(l.balance))+' personas más de las que ingresaron':l.balance>0?'ingresaron '+fmt(l.balance)+' personas más de las que salieron':'se registró el mismo número de contrataciones y bajas'}.`}</p><a class="hero-link" href="#prioridades">Preparar el siguiente paso <span aria-hidden="true">↓</span></a></div><div class="hero-balance"><div class="balance-label">CONTRATACIONES − BAJAS</div><div class="balance-number">${signed(l.balance)}</div><span class="balance-caption">personas · ${l.n} empresas comparables</span>${bars([{label:'Contrataciones',value:l.altas},{label:'Bajas',value:l.bajas}],'','balance-bars')}<small>Balance de movimientos; no equivale al cambio observado de plantilla.</small></div></section>
- <div class="metric-strip">${card('Plantilla',fmt(p.plantilla),p.n_plantilla,'Personas reportadas','contexto')}${card('Rotación',fmt(p.rotacion,2)+' %',p.n_rotacion,c?signed(c.valor,2)+' puntos · comparación pareada':'Bajas / plantilla reportada','rotacion')}${card('Contrataciones',fmt(p.contrataciones),p.n_altas,'Total reportado del bimestre','reclutamiento')}${card('Bajas',fmt(p.bajas),p.n_bajas,'Total reportado del bimestre','rotacion')}</div>
- <div class="work-launch"><div><span class="eyebrow">DEL ANÁLISIS A LA ACCIÓN</span><h3>¿Qué puestos necesitas cubrir?</h3><p>Organiza plazas, fechas, anotaciones y próximos pasos.</p></div><button class="primary" data-go="planes">Abrir mi plan de vacantes ↗</button><button class="ghost" data-go="catalogo">Explorar todo el estudio</button></div>
- ${chapter('01','El cambio necesita contexto.','Sigue la misma base de empresas a lo largo de los periodos seleccionados.')}
- <div class="evolution-layout"><section class="panel evolution-panel"><div class="segmented" id="trendTabs" aria-label="Indicador de evolución"><button data-trend="rotacion" class="selected" aria-pressed="true">Rotación</button><button data-trend="balance" aria-pressed="false">Balance de movimientos</button><button data-trend="plantilla" aria-pressed="false">Plantilla</button></div><div id="trendContent"></div></section><aside class="context-card"><p class="eyebrow">ANTES DE CONCLUIR</p><h3>¿Cambio del negocio<br>o cambio de muestra?</h3><p>La gráfica utiliza únicamente empresas con datos válidos en todos los bimestres elegidos.</p><div class="coverage-number">${p.n_rotacion}<span>de ${p.n_empresas}</span></div><p>empresas permiten calcular la rotación del último bimestre.</p><button class="text-button" data-go="comparar">Ver empresa por empresa ↗</button><details><summary>Cómo se calcula</summary><p>${esc(r.nota)}</p><p>Una muestra pequeña o un único ciclo anual limita las conclusiones.</p></details></aside></div>
- <div id="prioridades">${chapter('02','Tres conversaciones para abrir.','Puntos de partida que puedes contrastar con la evidencia.')}${priorityCards(r)}</div>
- ${chapter('03','Tu resultado, en perspectiva.','Compara referencias equivalentes antes de fijar una meta.')}
- <section class="panel benchmark-panel"><div class="panel-head"><div><h3>Rotación frente al grupo de referencia</h3><p>Mediana de las tasas de empresa; cada empresa tiene el mismo peso.</p></div><label ${user.rol==='cliente'?'':'hidden'}>Grupo comparable<select id="benchmarkDimension"><option value="tamano">Tamaño</option><option value="sector">Sector</option><option value="municipio">Municipio</option><option value="tier">Tier / OEM</option></select></label></div><div id="benchmark">Consultando referencia…</div></section>
+ <div class="overview-heading"><div><p class="eyebrow">${esc(periodLabel(p.bimestre))} · ${p.n_empresas} EMPRESAS</p><h2 id="heroTitle">${l.titulo}</h2></div><button class="text-button" data-go="catalogo">Todo el estudio ↗</button></div>
+ <div class="metric-strip overview-metrics">${card('Plantilla',fmt(p.plantilla),p.n_plantilla,'Personas reportadas','contexto')}${card('Rotación',RHLectura.valid(p.rotacion)?fmt(p.rotacion,2)+' %':'Sin dato',p.n_rotacion,c?signed(c.valor,2)+' puntos · comparación pareada':'Bajas / plantilla reportada','rotacion')}${card('Contrataciones',fmt(p.contrataciones),p.n_altas,'Entradas del bimestre','reclutamiento')}${card('Bajas',fmt(p.bajas),p.n_bajas,'Salidas del bimestre','rotacion')}</div>
+ <div class="overview-main"><section class="panel overview-evolution"><div class="panel-head"><div><p class="eyebrow">EL PULSO EN EL TIEMPO</p><h3>Evolución del estudio</h3></div><button class="text-button" data-go="comparar">Comparar empresas ↗</button></div><div class="segmented" id="trendTabs" aria-label="Indicador de evolución"><button data-trend="rotacion" class="selected" aria-pressed="true">Rotación</button><button data-trend="balance" aria-pressed="false">Balance</button><button data-trend="plantilla" aria-pressed="false">Plantilla</button></div><div id="trendContent"></div></section>
+ <section class="panel movement-panel"><div class="panel-head"><div><p class="eyebrow">ENTRADAS Y SALIDAS</p><h3>Balance del bimestre</h3></div><span class="movement-symbol" aria-hidden="true">⇄</span></div><div class="movement-total ${l.balance<0?'is-negative':''}"><strong>${signed(l.balance)}</strong><span>personas<br><small>${l.n} empresas con ambos datos</small></span></div>${bars([{label:'Contrataciones',value:l.altas},{label:'Bajas',value:l.bajas}],'personas','overview-balance')}<p class="micro-note">Contrataciones menos bajas. No equivale al cambio observado de plantilla.</p><button class="text-button" data-go="reclutamiento" data-metric="contrataciones_desglose">Nueva creación y reemplazos ↗</button></section></div>
+ <div class="overview-signals"><section class="panel overview-signal"><div class="panel-head"><div><p class="eyebrow">PERMANENCIA</p><h3>Motivos de salida</h3></div><span class="signal-number" aria-hidden="true">01</span></div><div id="overviewReasons" aria-live="polite"><p class="muted">Consultando motivos…</p></div><button class="text-button" data-go="rotacion" data-metric="bajas_motivo">Todos los motivos ↗</button></section>
+ <section class="panel overview-signal vacancy-signal"><div class="panel-head"><div><p class="eyebrow">PRÓXIMAS CONTRATACIONES</p><h3>Vacantes declaradas</h3></div><span class="signal-number" aria-hidden="true">02</span></div><div id="overviewDemand" aria-live="polite"><p class="muted">Consultando demanda…</p></div><button class="primary" data-go="planes">＋ Organizar puestos y acciones</button><button class="text-button" data-go="reclutamiento" data-metric="vacantes_proximas">Ver demanda del estudio ↗</button></section>
+ <section class="panel overview-signal"><div class="panel-head"><div><p class="eyebrow">BASE DE LA LECTURA</p><h3>Cobertura de rotación</h3></div><span class="signal-number" aria-hidden="true">03</span></div><div class="coverage-visual"><svg viewBox="0 0 120 120" role="img" aria-label="${p.n_rotacion} de ${p.n_empresas} empresas con rotación calculable"><circle class="coverage-track" cx="60" cy="60" r="48"/><circle class="coverage-arc" cx="60" cy="60" r="48" pathLength="100" stroke-dasharray="${p.n_empresas?100*p.n_rotacion/p.n_empresas:0} 100" transform="rotate(-90 60 60)"/><text x="60" y="59" text-anchor="middle">${p.n_rotacion}/${p.n_empresas}</text><text class="coverage-unit" x="60" y="75" text-anchor="middle">empresas</text></svg><p><strong>${p.n_empresas-p.n_rotacion}</strong><span>sin una tasa calculable</span><small>Cobertura no equivale a calidad del dato.</small></p></div><button class="text-button" data-go="calidad">Revisar consistencia y atípicos ↗</button><details class="overview-method"><summary>Cómo leer las cifras</summary><p>${esc(r.nota)}</p><p>La curva conserva las mismas empresas en todos los periodos. Una muestra pequeña y siete bimestres limitan las conclusiones.</p></details></section></div>
+ <section class="overview-next" aria-label="Siguientes pasos"><div class="overview-section-title"><h3>Para revisar</h3><button class="text-button" data-go="agenda">Abrir agenda ↗</button></div><div class="next-step-grid">${priorities(r).map(h=>`<button data-go="${h.go}" data-metric="${h.metric}"><span class="eyebrow">${h.label}</span><strong>${h.title}</strong><span class="next-step-bottom"><span>${h.value} <small>${h.unit}</small></span><span aria-hidden="true">↗</span></span></button>`).join('')}</div></section>
+ <section class="panel overview-reference"><details><summary>Rotación frente al grupo de referencia <span>Mediana e intervalo descriptivo</span></summary><div class="benchmark-panel"><div class="panel-head"><div><h3>Tu resultado, en perspectiva</h3><p>Mediana de las tasas de empresa; cada empresa tiene el mismo peso.</p></div><label ${user.rol==='cliente'?'':'hidden'}>Grupo comparable<select id="benchmarkDimension"><option value="tamano">Tamaño</option><option value="sector">Sector</option><option value="municipio">Municipio</option><option value="tier">Tier / OEM</option></select></label></div><div id="benchmark">Consultando referencia…</div></div></details></section>
  <section class="panel source-panel"><details><summary>Consultar todas las cifras del panorama <span>${r.detalle.length} registros</span></summary><p>El detalle completo se conserva por empresa y bimestre.</p><a href="/api/exportar?${esc(query())}">Exportar CSV ↗</a>${table(['Empresa','Bimestre','Plantilla','Contrataciones','Bajas','Rotación %'],r.detalle.map(d=>[esc(d.empresa),esc(periodLabel(d.bimestre)),fmt(d.plantilla),fmt(d.contrataciones),fmt(d.bajas),fmt(d.rotacion,2)]))}</details></section>
  <section class="quick-search"><div><h3>¿Buscas otro dato?</h3><p>Explora fuentes, capacitación, salarios o prestaciones.</p></div><form id="ask" class="search-form"><input id="question" aria-label="Buscar un tema del estudio" placeholder="Buscar un tema…"><button class="primary">Explorar</button></form><p id="askHelp" role="status"></p></section>`;
  const drawTrend=key=>{
@@ -982,8 +1036,22 @@ function renderOverview(r){
   $('#trendContent').innerHTML=`<div class="trend-meta"><h3>${labels[key]}</h3><span class="badge">${e.n} empresas · base constante</span></div>${chart(e.puntos,'valor',labels[key])}<details><summary>Ver valores y cobertura</summary>${table(['Bimestre',labels[key],'n empresas'],e.puntos.map(p=>[esc(periodLabel(p.bimestre)),fmt(p.valor,2),e.n]))}</details>${e.n<10?'<p class="sample-note">Muestra pequeña: interpreta las diferencias con cautela.</p>':''}`;
   document.querySelectorAll('[data-trend]').forEach(b=>{b.classList.toggle('selected',b.dataset.trend===key);b.setAttribute('aria-pressed',String(b.dataset.trend===key));});
  };$('#trendTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>drawTrend(b.dataset.trend));drawTrend('rotacion');
- bindNavigation();loadBenchmark(p,r);
+ bindNavigation();loadBenchmark(p,r);loadOverviewSignals(p);
  $('#ask').onsubmit=e=>{e.preventDefault();const q=$('#question').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const target=[[/baja|rotacion/,'rotacion','bajas_motivo'],[/fuente/,'reclutamiento','fuentes_uso'],[/vacante/,'reclutamiento','vacantes_proximas'],[/contrata/,'reclutamiento','contrataciones_desglose'],[/capacit/,'capacitacion','capacitacion_horas'],[/transporte|prestacion/,'beneficios','costo_transporte'],[/negocia/,'relaciones','negociacion_estatus'],[/salario/,'salarios','']].find(([re])=>re.test(q));if(target)navigate(target[1],target[2]);else $('#askHelp').textContent='Prueba con rotación, vacantes, fuentes, capacitación, transporte, negociación o salarios.';};
+}
+async function loadOverviewSignals(point){
+ const targets=[$('#overviewReasons'),$('#overviewDemand')],args=new URLSearchParams(query());
+ args.set('periodos',point.bimestre);
+ const results=await Promise.allSettled(['bajas_motivo','vacantes_proximas'].map(m=>api('/explorar?'+args+'&metrica='+m)));
+ results.forEach((result,i)=>{
+  const node=targets[i];if(!node.isConnected)return;
+  if(result.status!=='fulfilled'){node.innerHTML='<p class="empty-chart">No fue posible consultar este dato. Abre su sección para reintentar.</p>';return;}
+  const metric=i===0?'bajas_motivo':'vacantes_proximas';
+  const rows=readableSummary(result.value.resumen,metric).filter(d=>d.unidad==='personas'&&RHLectura.valid(d.suma)&&d.suma>=0).sort((a,b)=>b.suma-a.suma);
+  if(!rows.length){node.innerHTML='<p class="empty-chart">Sin cantidades válidas en este bimestre. Consulta las respuestas y su estado en el detalle.</p>';return;}
+  if(i===0){node.innerHTML=bars(rows.slice(0,3).map(d=>({label:d.dimension,value:d.suma,note:`${d.n_empresas} empresas con respuesta`})), 'personas')+`<p class="micro-note">${rows.length>3?'Los 3 motivos con mayor volumen reportado. ':''}Las coberturas pueden variar; revisa la conciliación con el total de bajas.</p>`;}
+  else{node.innerHTML=`<div class="vacancy-snapshot">${rows.slice(0,3).map(d=>`<div><strong>${fmt(d.suma)}</strong><span>${esc(human(d.dimension))}</span><small>${d.n_empresas} empresas con respuesta</small></div>`).join('')}</div><p class="micro-note">${rows.length>3?`Se muestran 3 de ${rows.length} dimensiones. `:''}Demanda reportada en ${esc(periodLabel(point.bimestre))}. Tus planes se registran por separado.</p>`;}
+ });
 }
 function loadBenchmark(p,r){
  const container=$('#benchmark'),select=$('#benchmarkDimension');let version=0;

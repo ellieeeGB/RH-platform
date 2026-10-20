@@ -1,13 +1,23 @@
 # Rediseño visual y narrativo
 
-## Qué cambió
+## Panorama vigente · versión 3
+
+El inicio abre con un titular breve y cuatro indicadores compactos. La gráfica de evolución queda junto al balance de contrataciones y bajas; ambas usan escalas y cifras visibles. Debajo aparecen tres vistas: motivos de salida, vacantes declaradas y un anillo de cobertura de rotación. El color del anillo indica cobertura, no calificación de calidad ni riesgo.
+
+Las tarjetas grandes de conversación se conservan en Agenda. En Panorama se sustituyen por accesos breves a la evidencia. El benchmark, la metodología y la tabla completa siguen disponibles en desplegables. Cargar estudio permanece en la barra fija y el plan de vacantes se abre desde la demanda próxima.
+
+Motivos y vacantes consultan el **último bimestre seleccionado**, con las empresas autorizadas y seleccionadas. Las barras muestran hasta tres motivos por volumen reportado, con su n; no son porcentajes del total ni sustituyen la reconciliación de bajas. La demanda nunca suma vacantes de varios bimestres. La curva conserva la cohorte constante del diseño anterior.
+
+Se eliminaron el componente de portada y sus estilos sin uso. El diseño distribuye el contenido en columnas en escritorio y lo apila en pantallas pequeñas. La vista HTML se entrega como `catch_rh_panorama_v3.html`, con el rótulo visible «VERSIÓN 3 · PANORAMA VISUAL».
+
+## Evolución del diseño
 
 La entrega inicial organizaba gran parte del estudio como pregunta y tabla. La revisión convierte esa información en una experiencia de consultoría: titular calculado, contexto temporal, conversaciones concretas y evidencia conectada.
 
 | Antes | Ahora |
 |---|---|
 | Encabezado genérico | Conclusión descriptiva del balance del bimestre |
-| Cuatro tarjetas como punto de partida | Historia principal, balance gráfico y cuatro indicadores conservados |
+| Tarjeta de portada extensa | Cuatro indicadores compactos y gráficas visibles al inicio |
 | Una curva con coberturas variables | Evolución con las mismas empresas en todos los periodos elegidos |
 | Navegación plana | Lectura del estudio, personas y trabajo, fuente y control |
 | Selector y tabla para casi todo | Pestañas, barras por dimensión, categorías y detalle completo desplegable |
@@ -17,9 +27,9 @@ La entrega inicial organizaba gran parte del estudio como pregunta y tabla. La r
 
 ## Probar sin instalar
 
-Abre [catch_rh_vacantes_v2.html](catch_rh_vacantes_v2.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
+Abre [catch_rh_panorama_v3.html](catch_rh_panorama_v3.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
 
-Puedes probar panorama, navegación, filtros, comparación, exploradores, agenda y decisiones. Los reportes, la importación, el benchmark protegido y los cambios auditados completos requieren ejecutar la aplicación; la vista previa no se conecta al estudio real ni almacena cambios en él.
+Puedes probar panorama, navegación, filtros, comparación, exploradores, agenda, decisiones y seguimiento de vacantes. Los reportes, la importación, el benchmark protegido y los cambios auditados completos requieren ejecutar la aplicación; la vista previa no se conecta al estudio real ni almacena cambios en él.
 
 Regenerar después de editar la interfaz:
 

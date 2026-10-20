@@ -49,3 +49,11 @@ Las **19 pruebas JavaScript** pasaron: las 15 anteriores y cuatro recorridos par
 Se verificó la cobertura del catálogo contra la base real: ninguna métrica presente quedó fuera del catálogo. Antes de aplicar la migración aditiva se creó un respaldo local privado. `node --check` pasó para `app.js`, `trabajo.js` y `demo.js`.
 
 Continúa pendiente la inspección visual en navegador real y en las cuatro resoluciones indicadas. Los tests DOM no verifican píxeles ni animaciones renderizadas. La advertencia de deprecación de TestClient/httpx continúa sin errores de prueba.
+
+## Panorama visual · versión 3
+
+Pasaron las **22 pruebas JavaScript** (8 de cálculo y 14 de DOM). Además de la regresión anterior, se comprobó que motivos y vacantes usan el último bimestre seleccionado y las empresas filtradas; que la cobertura y el acceso al plan se actualizan; que los ceros siguen visibles y los faltantes no se inventan; y que un error en la consulta de motivos no bloquea el resto del panorama. La prueba de inicio verifica que no existe la tarjeta de portada anterior.
+
+`node --check web/app.js` pasó y el HTML autónomo se regeneró desde el código actual y los mismos 1 456 registros ficticios. No hubo cambios de backend, importación o cálculos estadísticos. Las 73 pruebas Python corresponden a la revisión previa y no se presentan como una nueva ejecución en esta iteración.
+
+Sigue pendiente la inspección visual en un navegador real: no había un controlador de navegador disponible. Happy DOM comprueba estructura y eventos, no píxeles, dimensiones renderizadas ni animaciones. No se publicó un sitio; la entrega queda en Git y en el HTML autónomo con nombre de versión nuevo.

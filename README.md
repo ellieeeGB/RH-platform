@@ -4,7 +4,7 @@ Plataforma de consultoría RH en español. Convierte la encuesta bimestral de em
 
 ## Ver el rediseño
 
-Abre [la vista previa interactiva](documentacion/catch_rh_vacantes_v2.html) para explorar el diseño sin instalar. Usa **datos ficticios** y guarda los planes de prueba en ese navegador; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
+Abre [la vista previa interactiva](documentacion/catch_rh_panorama_v3.html) para explorar el diseño sin instalar. Usa **datos ficticios** y guarda los planes de prueba en ese navegador; la aplicación utiliza la misma interfaz con el estudio que importes. [Qué cambió](documentacion/REDISENO_VISUAL.md).
 
 ## Empezar en tres pasos
 
@@ -42,7 +42,7 @@ Eso activa un estudio **ficticio** con 8 empresas y 7 bimestres, generado con se
 - Vacantes y acciones: puestos pendientes, plazas cubiertas, prioridad, fecha objetivo, notas y tareas con área a cargo. Guardado en base, historial por versión y protección ante ediciones simultáneas.
 - Todo el estudio: catálogo buscable de las 183 métricas del diccionario, 11 temas y cobertura de respuestas según los filtros. Títulos cortos editables sin alterar la pregunta original.
 - Movimiento breve en gráficas, tarjetas y diálogos, con control manual y respeto de la preferencia de accesibilidad del sistema.
-- Panorama con titular calculado, balance visual y prioridades enlazadas; agenda de consultoría, mapa empresa–bimestre y exploradores con barras y categorías.
+- Panorama visual compacto: indicadores, evolución junto al balance, motivos de salida, vacantes declaradas y cobertura. Accesos directos al seguimiento y al detalle, sin una tarjeta de portada. Agenda de consultoría, mapa empresa–bimestre y exploradores con barras y categorías.
 - Filtros de empresa múltiple y bimestres; todos los periodos; variación anterior/interanual con empresas pareadas; vista guardada localmente, tema oscuro, historia, consultas por intención y escenario aritmético.
 - Calidad visible, historial gráfico de atípicos, sensibilidad con/sin una empresa, exclusión/corrección auditada y control de cambios concurrentes.
 - Exportación CSV neutralizada y reporte HTML con portada, índice, secciones y metodología. Abre Reporte y usa Imprimir → Guardar como PDF.

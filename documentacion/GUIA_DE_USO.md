@@ -16,6 +16,14 @@ Abre la lista de empresas y marca una o varias. Abre Bimestres y elige uno o pul
 
 **Guardar vista** recuerda selección y sección en ese navegador. No comparte datos con otras personas ni crea un enlace público.
 
+## Leer el nuevo panorama
+
+Los cuatro indicadores de arriba resumen el último bimestre seleccionado. La evolución permite alternar rotación, balance y plantilla; conserva las mismas empresas en todos los periodos de la gráfica. A su lado, el balance muestra contrataciones y bajas de las empresas que reportaron ambos datos.
+
+Debajo encontrarás motivos de salida, vacantes próximas y cobertura de rotación. Los dos primeros corresponden también al último bimestre seleccionado. Pulsa **Organizar puestos y acciones** para abrir tu seguimiento. **Todos los motivos** abre el desglose completo.
+
+El anillo muestra cuántas empresas tienen una tasa calculable; no es una calificación del desempeño. Para ver el benchmark, abre **Rotación frente al grupo de referencia**. La tabla de todas las cifras continúa en el siguiente desplegable.
+
 ## Entender una cifra
 
 Mira el `n`: es la cantidad de empresas con datos suficientes para ese cálculo. La población total de la encuesta no siempre es el denominador. Debajo de la gráfica hay una tabla equivalente. En cada sección puedes abrir una pregunta y bajar hasta la celda de origen: hoja, fila y columna.
