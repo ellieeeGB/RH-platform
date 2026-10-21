@@ -1,6 +1,12 @@
 # Verificación de la entrega
 
-**Revisión vigente: 20 de octubre de 2026.** Pasaron **87 pruebas Python y 22 JavaScript** con el Excel privado mediante `make test`, además de los controles de estructura, enlaces, configuración y HTML reproducible. La revisión anterior se conserva debajo como historial. Véase [AUDITORIA_PIPELINE.md](AUDITORIA_PIPELINE.md) para las correcciones, el alcance y la reproducción.
+**Revisión vigente: 21 de octubre de 2026.** Pasaron **96 pruebas Python y 26 JavaScript** mediante `make test`, incluidas las integraciones con el Excel privado. Después de los últimos ajustes de escalas y etiquetas se repitieron las nueve pruebas de presentación y las 26 JavaScript, también correctas. Véanse [MEJORAS_VISUALES_V4.md](MEJORAS_VISUALES_V4.md) y [AUDITORIA_PIPELINE.md](AUDITORIA_PIPELINE.md) para alcance y reproducción.
+
+La versión 4 comprueba descargas autenticadas con renovación de sesión, filtros y permisos, categorías de texto, porcentajes, escalas 0–10, valores exactos, catálogo por temas, comparación y reporte autónomo. Se renderizó el reporte del estudio real en 25 páginas y se inspeccionaron todas sus páginas para revisar gráficos, etiquetas, tablas y saltos. Los archivos de revisión y el estudio permanecen privados. WeasyPrint se utilizó exclusivamente para esta comprobación; no es una dependencia de la aplicación.
+
+**Límite pendiente:** no hubo controlador de navegador disponible. Happy DOM verifica estructura y eventos, y la revisión de impresión verifica el reporte; ninguna sustituye la inspección interactiva en Chrome/Firefox y móvil. No se publicó un despliegue. La advertencia de deprecación de TestClient/httpx no produjo fallos.
+
+Las revisiones siguientes se conservan como historial; sus conteos y funciones corresponden a versiones anteriores.
 
 Fecha: 18 de octubre de 2026. Entorno: Python 3.12, SQLite y Node para comprobar sintaxis JavaScript.
 

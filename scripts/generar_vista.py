@@ -1,6 +1,6 @@
 """Empaqueta la interfaz real como vista autónoma con los CSV ficticios del repositorio."""
 from pathlib import Path
-import argparse,json,sys
+import argparse,base64,json,sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from aplicacion.importador import leer_archivo,cargar_diccionario
 from aplicacion.metricas import validar
@@ -25,13 +25,15 @@ def main():
     s=(ROOT/'web/index.html').read_text()
     s=s.replace('<link rel="stylesheet" href="/static/estilos.css">',f'<style>{css}</style>')
     s=s.replace('<script src="/static/lectura.js" defer></script>','').replace('<script src="/static/app.js" defer></script>','').replace('<script src="/static/trabajo.js" defer></script>','')
-    s=s.replace('<title>Catch · People Intelligence</title>','<title>Catch · Versión 3 · Panorama visual</title>')
-    s=s.replace('<body>','<body><div class="demo-banner">VERSIÓN 3 · PANORAMA VISUAL · DATOS FICTICIOS · PLANES DEMO EN ESTE NAVEGADOR</div>')
+    s=s.replace('/static/recursos/catch-consulting.png','data:image/png;base64,'+base64.b64encode((ROOT/'web/recursos/catch-consulting.png').read_bytes()).decode())
+    s=s.replace('<script src="/static/visuales.js" defer></script>','')
+    s=s.replace('<title>Catch · People Intelligence</title>','<title>Catch · Versión 4 · Lecturas visuales</title>')
+    s=s.replace('<body>','<body><div class="demo-banner">VERSIÓN 4 · LECTURAS VISUALES · DATOS FICTICIOS · PLANES DEMO EN ESTE NAVEGADOR</div>')
     s=s.replace('</head>','<style>.demo-banner{padding:8px 16px;background:#f8dfb1;color:#563e19;font:700 10px/1.5 Arial,sans-serif;letter-spacing:.6px;text-align:center;position:relative;z-index:30}.shell>aside{top:31px}@media(max-width:767px){.shell>aside{top:auto}}</style></head>')
     payload=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')
-    scripts='\n'.join((ROOT/'web'/p).read_text() for p in ['lectura.js','demo.js','trabajo.js','app.js'])
+    scripts='\n'.join((ROOT/'web'/p).read_text() for p in ['lectura.js','demo.js','trabajo.js','visuales.js','app.js'])
     s=s.replace('</body>',f'<script>window.CATCH_DEMO={payload};\n{scripts}</script></body>')
-    out=ROOT/'documentacion/catch_rh_panorama_v3.html'
+    out=ROOT/'documentacion/catch_rh_visual_v4.html'
     if args.comprobar:
         if not out.exists() or out.read_text()!=s:raise SystemExit('Vista desactualizada. Ejecuta make vista y guarda el HTML actualizado.')
         print('Vista HTML sincronizada con el código y los datos ficticios.');return

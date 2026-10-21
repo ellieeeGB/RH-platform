@@ -33,6 +33,8 @@ def definiciones(diccionario):
         if c['pregunta'] not in r['preguntas']:r['preguntas'].append(c['pregunta'])
         if c['unidad'] not in r['unidades']:r['unidades'].append(c['unidad'])
         label=c.get('subopcion') or c['dimension']
+        if label.strip().lower() in {'open-ended response','response'}:
+            label='Total reportado' if c['unidad'] not in {'texto','seleccion'} else 'Respuesta declarada'
         if re.match(r'^[0-9a-f]{8}:',c['dimension']):
             # El prefijo separa cuestionarios de distinto personal. No se elimina el contexto.
             q=c['pregunta'].lower()

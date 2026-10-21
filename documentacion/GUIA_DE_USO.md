@@ -14,7 +14,7 @@ Si tu archivo tiene columnas nuevas con pregunta y subopción, se conservan. Si 
 
 Abre la lista de empresas y marca una o varias. Abre Bimestres y elige uno o pulsa **Seleccionar todos**. Pulsa **Aplicar filtros**. La tarjeta de plantilla corresponde al último bimestre seleccionado; la gráfica muestra toda la selección. Un cliente solo tendrá su propia empresa.
 
-**Guardar vista** recuerda selección y sección en ese navegador. No comparte datos con otras personas ni crea un enlace público.
+En las secciones de Personas y trabajo, elige la pregunta y el **Bimestre de la lectura**. Se inicia con el último bimestre seleccionado. Los valores exactos de todos los periodos elegidos siguen disponibles en el detalle inferior.
 
 ## Leer el nuevo panorama
 
@@ -26,7 +26,7 @@ El anillo muestra cuántas empresas tienen una tasa calculable; no es una califi
 
 ## Entender una cifra
 
-Mira el `n`: es la cantidad de empresas con datos suficientes para ese cálculo. La población total de la encuesta no siempre es el denominador. Debajo de la gráfica hay una tabla equivalente. En cada sección puedes abrir una pregunta y bajar hasta la celda de origen: hoja, fila y columna.
+Mira **empresas con respuesta** y **respuestas disponibles**. Si encuentras `n` en un archivo anterior, significa el número de observaciones: puede contar empresas o respuestas, según la etiqueta. La población total de la encuesta no siempre es el denominador. Debajo de la gráfica hay una tabla equivalente. En cada sección puedes abrir una pregunta y bajar hasta la celda de origen: hoja, fila y columna.
 
 ## Registrar puestos y organizar el plan de acción
 
@@ -42,13 +42,9 @@ Si activas otro estudio, los planes anteriores se conservan asociados a su impor
 
 ## Encontrar información de todo el estudio
 
-Abre **Todo el estudio**. Busca palabras de las preguntas y subopciones, como «comedor», «turnos», «contingencias» o «practicantes». Puedes filtrar por tema o por disponibilidad de respuestas. **Abrir análisis** lleva a la pregunta, con gráficos, categorías y tablas completas.
+Abre **Todo el estudio**. Busca palabras de las preguntas y subopciones, como «comedor», «turnos», «contingencias» o «practicantes». Elige un tema: verás ocho preguntas por página. Puedes filtrar por disponibilidad de respuestas; **Ver gráficos** abre la lectura. **Volver a temas** recupera el índice.
 
 La cobertura cambia con empresa y bimestre. «Sin respuesta utilizable» incluye faltantes y exclusiones; no significa cero. Los textos e intervalos se cuentan por separado y no se convierten en números. La versión actual del diccionario contiene 183 métricas: las preguntas nuevas también aparecen, aunque todavía no tengan un título corto específico.
-
-## Ajustar el movimiento
-
-Las barras, curvas, tarjetas y diálogos usan animaciones breves. Pulsa **Movimiento** en la barra para reducirlas durante la sesión. También se respeta la preferencia de movimiento reducido del sistema operativo.
 
 ## Resolver un atípico
 
@@ -56,9 +52,13 @@ En **Calidad de datos**, elige Atípicos de plantilla. Compara el historial de l
 
 Escribe un motivo de al menos 10 caracteres. La bitácora conserva el valor anterior y el nuevo. Si aparece «Los datos cambiaron», recarga y revisa lo que hizo otro usuario. No se sobrescriben cambios concurrentes a escondidas.
 
-## Exportar y presentar
+## Descargar CSV y reporte
 
-**Reporte** abre un documento para los filtros actuales. Usa el menú Imprimir de tu navegador y selecciona Guardar como PDF. **Exportar CSV** descarga hechos normalizados autorizados. **Modo historia** presenta los hallazgos uno por uno para una reunión.
+**Reporte** descarga un HTML autónomo para las empresas seleccionadas. Los gráficos temáticos corresponden al último bimestre elegido; la evolución muestra todos los seleccionados. Abre el archivo descargado y usa Imprimir → Guardar como PDF. Las cifras exactas por empresa se despliegan; abre ese detalle antes de imprimir si quieres incluirlo.
+
+**Descargar CSV**, en la barra superior, descarga los hechos normalizados autorizados de todos los bimestres seleccionados. Ambas descargas renuevan automáticamente la sesión cuando todavía puede renovarse. Si la sesión terminó definitivamente, vuelve a iniciar sesión y repite la descarga.
+
+Las categorías de texto se muestran por frecuencia de empresas. Los conteos se suman dentro de un mismo bimestre; porcentajes y costos usan promedios explícitos cuando hay varias respuestas. Con una sola respuesta se muestra el valor exacto. No se imputan faltantes.
 
 **Pregúntale al estudio** acepta temas disponibles, por ejemplo «motivos de baja» o «vacantes». Es un buscador por intención, no un chat que inventa explicaciones. Ctrl+K lleva a la caja de consulta.
 

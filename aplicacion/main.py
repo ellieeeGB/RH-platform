@@ -1,4 +1,4 @@
-import csv,html,io,json,os,secrets,time
+import base64,csv,hashlib,io,json,os,secrets,time
 from threading import Lock
 from typing import Literal
 from fastapi import FastAPI,Request,Response,HTTPException,UploadFile,File,Form,Depends
@@ -12,6 +12,7 @@ from .metricas import serie,resumen_empresas,validar,hallazgos,desglose,pronosti
 from .servicio import activa,consulta,persistir,auditar,seudonimo,benchmark
 from . import planes,catalogo
 from .planes import EntradaPlan
+from .presentacion import lectura_visual
 from .seguridad import autenticar,iniciar_sesion,cookies,rol,limitar,hash_token,ph
 
 def crear_app(url=None):
@@ -45,6 +46,9 @@ def crear_app(url=None):
         response.headers.update({'X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
           'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
           'Cache-Control':'no-store','Permissions-Policy':'camera=(), microphone=(), geolocation=()'})
+        if req.url.path=='/api/reporte':
+            digest=base64.b64encode(hashlib.sha256((RAIZ/'web/reporte.css').read_bytes()).digest()).decode()
+            response.headers['Content-Security-Policy']=response.headers['Content-Security-Policy'].replace("style-src 'self'","style-src 'self' 'sha256-"+digest+"'")
         if os.environ.get('RH_COOKIE_SECURE')=='1':response.headers['Strict-Transport-Security']='max-age=31536000'
         return response
 
@@ -130,15 +134,19 @@ def crear_app(url=None):
         r=benchmark(db,u,bimestre,dimension);auditar(db,u.nombre,'ver_benchmark',{'bimestre':bimestre,'dimension':dimension});db.commit();return r
 
     @app.get('/api/explorar')
-    def explorar(metrica:str,empresas:str='',periodos:str='',pagina:int=1,u=Depends(identity),db=Depends(db_dep)):
+    def explorar(metrica:str,empresas:str='',periodos:str='',pagina:int=1,corte:str='',u=Depends(identity),db=Depends(db_dep)):
         fs=consulta(db,u,filtros_lista(empresas),filtros_lista(periodos),metricas=[metrica])
         page=max(1,pagina);start=(page-1)*100
         rows=fs[start:start+100]
         if u.rol=='cliente':
             rows=[{**f,'empresa':seudonimo(f['empresa'])} for f in rows]
         imp=activa(db)
+        definition=next((d for d in catalogo.definiciones(imp.diccionario) if d['metrica']==metrica),{}) if imp else {}
+        if corte and periodos and corte not in filtros_lista(periodos):raise HTTPException(422,'El bimestre debe estar entre los seleccionados.')
+        lectura=lectura_visual(fs,definition,corte or (sorted(filtros_lista(periodos))[-1] if periodos else None))
         auditar(db,u.nombre,'explorar',{'metrica':metrica,'pagina':page,'rol':u.rol});db.commit()
         return {'resumen':desglose(fs,metrica),'filas':rows,'total':len(fs),'pagina':page,
+                'lectura':lectura,
                 'definiciones':[c for c in (imp.diccionario.values() if imp else []) if c['metrica']==metrica and c['accion']=='incluir']}
 
     @app.get('/api/calidad')
@@ -251,20 +259,12 @@ def crear_app(url=None):
 
     @app.get('/api/reporte',response_class=HTMLResponse)
     def reporte(empresas:str='',periodos:str='',u=Depends(identity),db=Depends(db_dep)):
-        fs=consulta(db,u,filtros_lista(empresas),filtros_lista(periodos));points=serie(fs);findings=hallazgos(points)
-        def esc(v):return html.escape(str(v if v is not None else 'Sin dato'))
-        sections=[]
-        for title,metric in [('Reclutamiento','contrataciones_desglose'),('Rotación por motivo','bajas_motivo'),('Vacantes próximas','vacantes_proximas'),('Negociaciones','negociacion_estatus'),('Capacitación','capacitacion_horas'),('Fuentes de reclutamiento','fuentes_uso'),('Beneficios','costo_transporte')]:
-            entries=desglose(fs,metric)
-            sections.append('<section><h2>'+esc(title)+'</h2><table><tr><th>Dimensión</th><th>Mediana</th><th>Unidad</th><th>n empresas / respuestas</th><th>Respuestas declaradas</th></tr>'+''.join(f"<tr><td>{esc(d['dimension'])}</td><td>{esc(d['mediana'])}</td><td>{esc(d['unidad'])}</td><td>{d['n_empresas_respuestas']} / {d['n_respuestas']}</td><td>{esc('; '.join(str(k)+': '+str(v) for k,v in d['categorias'].items()))}</td></tr>" for d in entries)+'</table></section>')
-        body='<!doctype html><html lang="es-MX"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/static/reporte.css"><title>Reporte bimestral · Catch</title><main>'
-        body+='<header><p>CATCH CONSULTING · REPORTE</p><h1>Personas, evidencia<br>y decisiones.</h1><p>'+esc(', '.join(p['bimestre'] for p in points))+'</p><p>Preparado para '+esc(seudonimo(u.empresa) if u.rol=='cliente' else 'Consultoría')+'</p></header>'
-        body+='<h2>Índice</h2><p>Antecedentes · Resumen ejecutivo · Evolución · Reclutamiento · Rotación · Vacantes · Negociaciones · Capacitación · Fuentes · Beneficios · Anexo metodológico</p>'
-        body+='<h2>Antecedentes</h2><p>Encuesta agregada por empresa y bimestre. Resultados descriptivos de participantes; no representan por sí solos a toda la industria.</p><h2>Resumen ejecutivo</h2>'
-        body+=''.join('<article><h3>'+esc(f['titulo'])+'</h3><p>'+esc(f['evidencia'])+'</p><p>'+esc(f['accion'])+'</p></article>' for f in findings)
-        body+='<h2>Evolución</h2><table><tr><th>Bimestre</th><th>Plantilla</th><th>Altas</th><th>Bajas</th><th>Rotación %</th><th>n</th></tr>'+''.join('<tr>'+''.join('<td>'+esc(p[k])+'</td>' for k in ['bimestre','plantilla','contrataciones','bajas','rotacion','n_rotacion'])+'</tr>' for p in points)+'</table>'
-        body+=''.join(sections)+'<h2>Anexo metodológico</h2><p>Rotación = bajas / (plantilla operativa + administrativa reportada) × 100. Sin imputación. La plantilla no se suma entre bimestres. Las medianas de varias fechas usan observaciones empresa–bimestre, con n de empresas distinto de n de valores. Porcentajes y escalas no se suman. Los intervalos son descriptivos y no prueban causalidad. Exportar a PDF desde Imprimir → Guardar como PDF.</p><p>Incidencias de validación en esta selección: '+str(len(validar(fs)))+'</p></main></html>'
-        auditar(db,u.nombre,'exportar_reporte',{'bimestres':[p['bimestre'] for p in points]});db.commit();return body
+        from .reporte import generar
+        fs=consulta(db,u,filtros_lista(empresas),filtros_lista(periodos));imp=activa(db)
+        if u.rol=='cliente':
+            fs=[{**f,'empresa':seudonimo(f['empresa'])} for f in fs]
+        body=generar(fs,imp.diccionario if imp else {},seudonimo(u.empresa) if u.rol=='cliente' else 'Consultoría',filtros_lista(periodos))
+        auditar(db,u.nombre,'exportar_reporte',{'bimestres':filtros_lista(periodos)});db.commit();return body
 
     @app.get('/api/catalogo')
     def catalogo_estudio(empresas:str='',periodos:str='',u=Depends(identity),db=Depends(db_dep)):

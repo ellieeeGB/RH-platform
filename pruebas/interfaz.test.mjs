@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
-const html=readFileSync(new URL('../documentacion/catch_rh_panorama_v3.html',import.meta.url),'utf8');
+const html=readFileSync(new URL('../documentacion/catch_rh_visual_v4.html',import.meta.url),'utf8');
 async function start(t){
  const w=new Window({url:'https://vista.local',settings:{enableJavaScriptEvaluation:true,disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
  t.after(()=>w.happyDOM.close());w.document.write(html);await w.happyDOM.whenAsyncComplete();return w;
@@ -32,8 +32,8 @@ test('Calidad muestra sensibilidad sin alterar el dato ficticio',async t=>{
  w.CATCH_DEMO.incidencias.push({codigo:'atipico_plantilla',empresa:'COMPAÑIA 1',bimestre:'2025-07',detalle:'Señal ficticia para comprobar interacción',historial:[{bimestre:'2025-05',valor:195},{bimestre:'2025-07',valor:195}]});
  const before=JSON.stringify(w.CATCH_DEMO.hechos);await click(w,'[data-view="calidad"]');await click(w,'[data-impact="0"]');assert.equal(d.querySelector('#dialog').open,true);assert.match(d.querySelector('#dialogContent').textContent,/No modifica el estudio/);assert.match(d.querySelector('#dialogContent').textContent,/Sin registro/);assert.equal(JSON.stringify(w.CATCH_DEMO.hechos),before);
 });
-test('Presentación abre evidencia y la agenda conserva sus accesos',async t=>{
- const w=await start(t),d=w.document;await click(w,'#story');assert.equal(d.querySelector('#dialog').open,true);await click(w,'#storyNext');assert.match(d.querySelector('.story-number').textContent,/2 DE 3/);await click(w,'#storyEvidence');assert.equal(d.querySelector('#dialog').open,false);assert.equal(d.querySelector('#breadcrumb').textContent,'Rotación');
+test('Se retiran presentar y mis vistas; la agenda conserva sus accesos',async t=>{
+ const w=await start(t),d=w.document;assert.equal(d.querySelector('#story'),null);assert.equal(d.querySelector('.saved-views'),null);
  await click(w,'[data-view="agenda"]');assert.equal(d.querySelectorAll('.priority').length,3);assert.equal(d.querySelectorAll('.topic-links button').length,3);
 });
 test('Selección vacía se rechaza y el tema conserva la navegación',async t=>{
@@ -47,19 +47,18 @@ test('El escenario actualiza el resultado y rechaza una plantilla negativa',asyn
  change('bajas','150');assert.match(d.querySelector('#scenarioResult').textContent,/superan/);
 });
 
-test('Cargar estudio es visible desde la barra y el movimiento puede reducirse',async t=>{
- const w=await start(t),d=w.document;
+test('Logo en acceso y plataforma, carga visible y sin control manual de movimiento',async t=>{
+ const w=await start(t),d=w.document;assert.equal(d.querySelectorAll('img[alt="Catch Consulting"]').length,2);
  assert.equal(d.querySelector('#uploadTop').hidden,false);await click(w,'#uploadTop');assert.ok(d.querySelector('#uploadForm'));
- await click(w,'#motion');assert.equal(d.body.classList.contains('reduce-motion'),true);assert.equal(d.querySelector('#motion').getAttribute('aria-pressed'),'true');
- await click(w,'#motion');assert.equal(d.body.classList.contains('reduce-motion'),false);
+ assert.equal(d.querySelector('#motion'),null);assert.equal(d.querySelector('[data-view="otros"]'),null);
 });
 test('Catálogo encuentra preguntas de todo el estudio y muestra cobertura real de la demo',async t=>{
  const w=await start(t),d=w.document;await click(w,'[data-view="catalogo"]');
- assert.equal(d.querySelector('.catalog-count strong').textContent,'183');assert.equal(d.querySelectorAll('.catalog-result').length,183);
+ assert.equal(d.querySelector('.catalog-count strong').textContent,'183');assert.equal(d.querySelector('#catalogDetail').hidden,true);assert.ok(d.querySelectorAll('.catalog-result').length<=8);
  const search=d.querySelector('#catalogSearch');search.value='contingencia';search.dispatchEvent(new w.Event('input',{bubbles:true}));
  assert.ok(d.querySelectorAll('.catalog-result').length>0);assert.ok(d.querySelectorAll('.catalog-result').length<183);
  await click(w,'[data-open-metric]');assert.match(d.querySelector('.metric-story h2').textContent.toLowerCase(),/contingencia/);
- assert.match(d.querySelector('#metricVisual').textContent,/No hay respuestas/);
+ assert.match(d.querySelector('#metricVisual').textContent,/No hay respuestas válidas/);
 });
 test('Vacante demo guarda notas y acciones, se edita y conserva historial sin cambiar la encuesta',async t=>{
  const w=await start(t),d=w.document,before=JSON.stringify(w.CATCH_DEMO.hechos);
@@ -114,4 +113,34 @@ test('Un fallo de motivos no bloquea indicadores ni vacantes del panorama',async
  w.fetch=(url,options)=>url.includes('metrica=bajas_motivo')?Promise.reject(new Error('Fallo de consulta de prueba')):original(url,options);
  await click(w,'#apply');assert.match(d.querySelector('#overviewReasons').textContent,/No fue posible/);
  assert.equal(d.querySelectorAll('.metric-card').length,4);assert.equal(d.querySelectorAll('#overviewDemand strong').length,2);
+});
+
+test('CSV renueva sesión antes de descargar y conserva filtros; reporte usa la misma ruta',async t=>{
+ const w=await start(t),d=w.document;w.CATCH_DEMO=null;
+ const calls=[],downloads=[];let expired=true;
+ w.setTimeout=()=>0;w.URL.createObjectURL=()=> 'blob:https://vista.local/prueba';w.URL.revokeObjectURL=()=>{};
+ d.addEventListener('click',e=>{if(e.target.matches('a[download]')){e.preventDefault();downloads.push(e.target.download);}});
+ w.fetch=async(url,options)=>{calls.push({url,options});if(url==='/api/auth/refresh'){expired=false;return {ok:true,status:200};}if(expired)return {ok:false,status:401,json:async()=>({detail:'Inicie sesión.'})};return {ok:true,status:200,blob:async()=>new w.Blob(['contenido'])};};
+ await click(w,'#exportCsv');assert.equal(calls[0].url.startsWith('/api/exportar?'),true);assert.equal(calls[1].url,'/api/auth/refresh');assert.equal(calls[2].url,calls[0].url);
+ assert.equal(calls[1].options.headers['X-CSRF-Token'],'demo-local');assert.equal(downloads[0],'catch_estudio_normalizado.csv');assert.equal(d.querySelector('#app').hidden,false);
+ await click(w,'#report');assert.equal(downloads[1],'catch_reporte_visual.html');assert.match(calls.at(-1).url,/periodos=/);
+});
+test('Descarga con renovación rechazada vuelve al acceso y explica el motivo',async t=>{
+ const w=await start(t),d=w.document;w.CATCH_DEMO=null;
+ w.fetch=async()=>({ok:false,status:401,json:async()=>({detail:'La sesión terminó.'})});
+ await click(w,'#exportCsv');assert.equal(d.querySelector('#login').hidden,false);assert.match(d.querySelector('#loginError').textContent,/sesión terminó/);assert.equal(d.querySelector('#exportCsv').disabled,false);
+});
+test('Texto en contexto usa frecuencias; porcentajes muestran símbolo y lectura de un bimestre',async t=>{
+ const w=await start(t),d=w.document;
+ await click(w,'[data-view="contexto"]');assert.equal(d.querySelector('#metricPeriod').value,'2025-07');
+ await click(w,'[data-metric-tab="genero"]');assert.match(d.querySelector('#metricVisual').textContent,/%/);assert.doesNotMatch(d.querySelector('#metricVisual').textContent,/porcentaje|Mediana/);
+ const metric=d.querySelector('#metric');metric.value='sector';metric.dispatchEvent(new w.Event('change',{bubbles:true}));await w.happyDOM.whenAsyncComplete();
+ assert.ok(d.querySelector('.categorical'));assert.match(d.querySelector('#metricVisual').textContent,/empresas declaran|empresa declara/);assert.doesNotMatch(d.querySelector('#metricVisual').textContent,/promedio|Valor central/);
+});
+test('Catálogo muestra ocho preguntas por página y la comparación identifica la métrica',async t=>{
+ const w=await start(t),d=w.document;await click(w,'[data-view="catalogo"]');await click(w,'[data-topic="contexto"]');
+ assert.equal(d.querySelector('#catalogDetail').hidden,false);assert.equal(d.querySelectorAll('.catalog-result').length,8);const first=d.querySelector('.catalog-result').textContent;
+ await click(w,'#catalogNext');assert.notEqual(d.querySelector('.catalog-result').textContent,first);await click(w,'#catalogBack');assert.equal(d.querySelector('#catalogDetail').hidden,true);
+ await click(w,'[data-view="comparar"]');assert.match(d.querySelector('#comparisonTitle').textContent,/Rotación.*%/);assert.match(d.querySelector('.heat-cell').textContent,/%/);
+ const metric=d.querySelector('#mapMetric');metric.value='plantilla';metric.dispatchEvent(new w.Event('change'));assert.match(d.querySelector('#comparisonTitle').textContent,/Plantilla/);assert.match(d.querySelector('.heatmap caption').textContent,/Plantilla/);
 });

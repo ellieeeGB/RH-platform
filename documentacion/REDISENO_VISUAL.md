@@ -1,6 +1,9 @@
 # Rediseño visual y narrativo
 
-## Panorama vigente · versión 3
+La versión vigente es la **4**, documentada en [MEJORAS_VISUALES_V4.md](MEJORAS_VISUALES_V4.md). Se conserva el panorama compacto y se rediseñaron las lecturas temáticas y el reporte.
+
+
+## Panorama compacto · base de la versión actual
 
 El inicio abre con un titular breve y cuatro indicadores compactos. La gráfica de evolución queda junto al balance de contrataciones y bajas; ambas usan escalas y cifras visibles. Debajo aparecen tres vistas: motivos de salida, vacantes declaradas y un anillo de cobertura de rotación. El color del anillo indica cobertura, no calificación de calidad ni riesgo.
 
@@ -8,7 +11,7 @@ Las tarjetas grandes de conversación se conservan en Agenda. En Panorama se sus
 
 Motivos y vacantes consultan el **último bimestre seleccionado**, con las empresas autorizadas y seleccionadas. Las barras muestran hasta tres motivos por volumen reportado, con su n; no son porcentajes del total ni sustituyen la reconciliación de bajas. La demanda nunca suma vacantes de varios bimestres. La curva conserva la cohorte constante del diseño anterior.
 
-Se eliminaron el componente de portada y sus estilos sin uso. El diseño distribuye el contenido en columnas en escritorio y lo apila en pantallas pequeñas. La vista HTML se entrega como `catch_rh_panorama_v3.html`, con el rótulo visible «VERSIÓN 3 · PANORAMA VISUAL».
+Se eliminaron el componente de portada y sus estilos sin uso. El diseño distribuye el contenido en columnas en escritorio y lo apila en pantallas pequeñas. La vista HTML se entrega como `catch_rh_visual_v4.html`, con el rótulo visible «VERSIÓN 3 · PANORAMA VISUAL».
 
 ## Evolución del diseño
 
@@ -27,7 +30,7 @@ La entrega inicial organizaba gran parte del estudio como pregunta y tabla. La r
 
 ## Probar sin instalar
 
-Abre [catch_rh_panorama_v3.html](catch_rh_panorama_v3.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
+Abre [catch_rh_visual_v4.html](catch_rh_visual_v4.html) en tu navegador. Es un archivo autónomo de diseño con **ocho empresas ficticias y siete bimestres**. La interfaz se empaqueta desde los mismos archivos que sirve la aplicación.
 
 Puedes probar panorama, navegación, filtros, comparación, exploradores, agenda, decisiones y seguimiento de vacantes. Los reportes, la importación, el benchmark protegido y los cambios auditados completos requieren ejecutar la aplicación; la vista previa no se conecta al estudio real ni almacena cambios en él.
 

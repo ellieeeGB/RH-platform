@@ -27,11 +27,30 @@
   });
   return {detalle,serie,hallazgos:[],nota:'Plantilla: foto de cada bimestre. Rotación: bajas / (operativos + administrativos) × 100.',pronostico:{disponible:false,motivo:'La vista de diseño usa datos ficticios. La referencia temporal completa está disponible en la aplicación.'}};
  }
- function explore(fs,metric,page){
+ function groupedCategories(groups){const key=s=>s.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,''),simple=groups.filter(g=>g.categorias.length===1&&!g.declaraciones.length&&key(g.etiqueta)===key(g.categorias[0].etiqueta)),others=groups.filter(g=>!simple.includes(g)&&(g.categorias.length||g.declaraciones.length));return simple.length>1?[{etiqueta:'Opciones seleccionadas',categorias:simple.map(g=>g.categorias[0]),declaraciones:[]},...others]:[...simple,...others];}
+ function visualNumber(f){
+  if(valid(f))return f.valor;if(f.excluido||f.estado!=='texto_no_numerico'||f.unidad!=='escala_0_10')return null;
+  const text=(f.texto||'').trim();if(/^0\s*[-–]\s*No Utilizada\.?$/i.test(text))return 0;if(/^10\s*[-–]\s*Todas mis contrataciones son por este medio\.?$/i.test(text))return 10;return null;
+ }
+ function visualReading(facts,metric,corte){
+  const definition=data.catalogo.find(d=>d.metrica===metric)||{},periodos=[...new Set(facts.map(f=>f.bimestre))].sort(),bimestre=corte||periodos.at(-1),current=facts.filter(f=>f.bimestre===bimestre);
+  const usable=f=>!f.excluido&&(valid(f)||Boolean(f.texto&&['texto','texto_no_numerico','intervalo_no_puntual'].includes(f.estado)));
+  const groups=new Map();current.forEach(f=>{const key=f.dimension+'|'+f.unidad;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(f);});
+  const grupos=[...groups.values()].map(rows=>{
+   const dim=rows[0].dimension,unit=rows[0].unidad,categorical=['texto','seleccion','hora_del_dia'].includes(unit),ns=categorical?[]:rows.filter(f=>visualNumber(f)!==null),values=ns.map(visualNumber),cats=new Map(),notes=new Map();
+   let metodo=['personas','eventos','horas'].includes(unit)?'suma':'promedio';const valor=values.length?values.reduce((s,v)=>s+v,0)/(metodo==='suma'?1:values.length):null;if(values.length===1)metodo='exacto';
+   for(const f of rows){if(!usable(f))continue;const target=categorical?cats:notes,label=categorical?(f.texto||(unit==='hora_del_dia'?`${String(Math.floor(f.valor)).padStart(2,'0')}:${String(Math.round(f.valor%1*60)).padStart(2,'0')}`:String(f.valor))):(visualNumber(f)===null?f.texto:'');if(label){if(!target.has(label))target.set(label,new Set());target.get(label).add(f.empresa);}}
+   const counts=m=>[...m].map(([etiqueta,es])=>({etiqueta,empresas:es.size})).sort((a,b)=>b.empresas-a.empresas||a.etiqueta.localeCompare(b.etiqueta));
+   return {dimension:dim,etiqueta:definition.dimensiones?.[dim]||dim,unidad:unit,valor,metodo,empresas:new Set(rows.filter(usable).map(f=>f.empresa)).size,respuestas:rows.filter(usable).length,numericas:values.length,empresas_numericas:new Set(ns.map(f=>f.empresa)).size,minimo:values.length?Math.min(...values):null,maximo:values.length?Math.max(...values):null,categorias:counts(cats),declaraciones:counts(notes),sin_respuesta:rows.filter(f=>!usable(f)).length};
+  });
+  const estados={};current.forEach(f=>{const key=f.excluido?'excluido':f.estado;estados[key]=(estados[key]||0)+1;});
+  return {bimestre,periodos,periodos_con_respuesta:[...new Set(facts.filter(usable).map(f=>f.bimestre))].sort(),grupos,graficos_texto:groupedCategories(grupos),porcentajes_menores_a_uno:current.filter(f=>f.unidad==='porcentaje'&&valid(f)&&f.valor>0&&f.valor<1).length,empresas:new Set(current.map(f=>f.empresa)).size,empresas_respuesta:new Set(current.filter(usable).map(f=>f.empresa)).size,respuestas:current.filter(usable).length,sin_respuesta:current.filter(f=>!usable(f)).length,escalas_etiquetadas:current.filter(f=>!valid(f)&&visualNumber(f)!==null).length,estados};
+ }
+ function explore(fs,metric,page,corte){
   const facts=fs.filter(f=>f.metrica===metric),groups=new Map();facts.forEach(f=>{if(!groups.has(f.dimension))groups.set(f.dimension,[]);groups.get(f.dimension).push(f);});
   const resumen=[...groups].map(([dimension,g])=>{const ns=g.filter(valid),texts=g.filter(f=>f.texto&&!f.excluido),categorias={};texts.forEach(f=>categorias[f.texto]=(categorias[f.texto]||0)+1);
    return {dimension,unidad:g[0].unidad,n_valores:ns.length,n_empresas:new Set(ns.map(f=>f.empresa)).size,n_respuestas:ns.length+texts.length,n_empresas_respuestas:new Set([...ns,...texts].map(f=>f.empresa)).size,mediana:L.mediana(ns.map(f=>f.valor)),suma:ns.length?ns.reduce((s,f)=>s+f.valor,0):null,categorias};});
-  return {resumen,filas:facts.slice((page-1)*100,page*100),total:facts.length,pagina:page,definiciones:data.diccionario.filter(d=>d.metrica===metric)};
+  return {lectura:visualReading(facts,metric,corte),resumen,filas:facts.slice((page-1)*100,page*100),total:facts.length,pagina:page,definiciones:data.diccionario.filter(d=>d.metrica===metric)};
  }
  const storeKey='catch-demo-planes-v1';
  let plans=[];
@@ -67,7 +86,7 @@
   else if(route==='/catalogo')body=coverage(fs);
   else if(route==='/planes'||route.startsWith('/planes/')){const result=planRequest(route,u,options);body=result.body;status=result.status||200;}
   else if(route==='/panel')body=panel(fs);
-  else if(route==='/explorar')body=explore(fs,u.searchParams.get('metrica'),Number(u.searchParams.get('pagina')||1));
+  else if(route==='/explorar')body=explore(fs,u.searchParams.get('metrica'),Number(u.searchParams.get('pagina')||1),u.searchParams.get('corte'));
   else if(route==='/benchmark')body={disponible:false,motivo:'Esta vista usa ocho empresas ficticias. El benchmark protegido se consulta en la aplicación con el estudio importado.'};
   else if(route==='/calidad'){
    const visible=new Set(fs.map(f=>f.empresa+'|'+f.bimestre)),issues=data.incidencias.filter(x=>visible.has(x.empresa+'|'+x.bimestre)),counts={},estados={};issues.forEach(x=>counts[x.codigo]=(counts[x.codigo]||0)+1);fs.forEach(x=>estados[x.estado]=(estados[x.estado]||0)+1);

@@ -61,6 +61,6 @@ El diccionario de normalización sigue siendo `configuracion/diccionario_columna
 
 ## Movimiento y demostración
 
-Las transiciones de tarjetas/diálogos, el crecimiento de barras y el trazado de curvas son breves. El botón Movimiento y `prefers-reduced-motion` las desactivan. No hay animación continua de cifras ni cambios de valores decorativos.
+Las transiciones de tarjetas/diálogos, el crecimiento de barras y el trazado de curvas son breves. La preferencia del sistema `prefers-reduced-motion` las desactiva automáticamente; se retiró el control manual. No hay animación continua de cifras ni cambios de valores decorativos.
 
 La vista HTML usa datos ficticios y el mismo catálogo de preguntas. Es normal que muchas preguntas no tengan respuestas demo. Los planes de prueba se guardan en `localStorage`; el navegador puede restringirlo en archivos locales. En ese caso se muestra un error y no se afirma que el plan se guardó. En la aplicación real se guardan en SQLite mediante la API autenticada.

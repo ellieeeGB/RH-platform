@@ -10,6 +10,7 @@ verificar:
 	node --check web/trabajo.js
 	node --check web/lectura.js
 	node --check web/demo.js
+	node --check web/visuales.js
 vista:
 	$(PYTHON) scripts/generar_vista.py
 test: verificar
